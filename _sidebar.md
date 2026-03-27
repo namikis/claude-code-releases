@@ -1,3 +1,4 @@
 - [現行機能一覧](CURRENT_FEATURES.md)
+- [実行履歴](HISTORY.md)
 - **調査レポート**
   - [2026-03-28 新機能調査](reports/2026-03-28_claude-code-new-features-march-2026.md)
