@@ -1,6 +1,6 @@
 # Claude Code 現行機能一覧
 
-**最終更新:** 2026-03-28
+**最終更新:** 2026-03-28（v2.1.86 + プラットフォーム更新反映）
 
 Claude Codeは、コードベースの読み取り・ファイル編集・コマンド実行・開発ツール統合を行うAIコーディングアシスタント。ターミナル、IDE、デスクトップアプリ、ブラウザで利用可能。
 
@@ -30,7 +30,7 @@ Claude Codeは、コードベースの読み取り・ファイル編集・コマ
 ### Git / GitHub / GitLab 連携
 - 変更のステージング、コミットメッセージ作成、ブランチ作成、PR作成
 - GitHub Actions / GitLab CI/CD でコードレビュー・Issueトリアージを自動化
-- GitHub Code Review（全PRの自動レビュー）
+- **GitHub Code Review**（研究プレビュー、Team/Enterprise）: 複数エージェントが並行でPRを精査。重大度ランク付きインラインコメント。大規模PR（1,000行以上）で84%に平均7.5件の指摘。平均レビュー時間約20分。トークン課金（$15-25/レビュー）
 
 ### Computer Use（デスクトップ操作）
 - **リリース状態**: 研究プレビュー（Pro / Max、macOS限定）
@@ -65,7 +65,7 @@ Claude Codeは、コードベースの読み取り・ファイル編集・コマ
 - AIツール統合のオープンソース標準。数百の外部ツール・データソースに接続可能
 - **接続例**: GitHub、Slack、Jira、Sentry、Notion、Asana、PostgreSQL、Google Drive、Figma等
 - HTTP / SSE / stdio の3種類のトランスポートをサポート
-- OAuth 2.0認証対応
+- OAuth 2.0認証対応（RFC 9728 Protected Resource Metadata ディスカバリー準拠）
 - `claude mcp add` でサーバー追加、`/mcp` で管理
 - チャネル機能: MCPサーバーがセッションにメッセージをプッシュ可能（Telegram、Discord、webhook対応）
 
@@ -107,7 +107,9 @@ Claude Codeは、コードベースの読み取り・ファイル編集・コマ
 | `InstructionsLoaded` | 指示読み込み時 |
 
 - `settings.json` またはサブエージェント/スキルのフロントマターで定義
-- `if` フィールドで条件付き実行が可能
+- `if` フィールドで条件付き実行が可能（パーミッションルール構文、例: `Bash(git *)`）
+- PreToolUse フックが `AskUserQuestion` に対して `updatedInput` で自動応答可能（ヘッドレス統合向け）
+- `CLAUDE_CODE_MCP_SERVER_NAME` / `CLAUDE_CODE_MCP_SERVER_URL` 環境変数でヘッダーヘルパーにサーバー情報を提供
 
 ### Plugins（プラグイン）
 - スキル、エージェント、MCPサーバーをパッケージ化して配布
@@ -191,6 +193,7 @@ claude -p --json-schema '{"type":"object",...}' "query"
 | `--teleport` | Webセッションをローカルに転送 |
 | `--mcp-config` | MCP設定ファイル指定 |
 | `--json-schema` | 構造化JSON出力 |
+| `--enable-auto-mode` | Auto Mode を有効化（Shift+Tab でサイクル切替） |
 
 ---
 
@@ -256,10 +259,13 @@ claude -p --json-schema '{"type":"object",...}' "query"
 |------|------|
 | **デフォルトモデル** | Claude Opus 4.6 |
 | **出力トークン上限** | デフォルト64k、上限128k（Opus/Sonnet 4.6） |
-| **コンテキスト** | Max/Team/Enterprise: 1Mトークン |
+| **コンテキスト** | 1Mトークン（Opus 4.6/Sonnet 4.6はGA、ベータヘッダー不要。メディア上限600画像/PDFページ） |
 | **Fast Mode** | 同じOpus 4.6モデルで高速出力。`/fast` でトグル |
 | **努力レベル** | `low` / `medium` / `high` / `max`（Opus 4.6のみ） |
 | **サードパーティ** | Amazon Bedrock、Google Vertex AI、Microsoft Foundry対応 |
+| **Extended Thinking 表示制御** | `thinking.display: "omitted"` でthinkingコンテンツをストリーミングから省略可能（signature保持） |
+| **Models API 機能照会** | `GET /v1/models` が `max_input_tokens`、`max_tokens`、`capabilities` を返すように（3月18日〜） |
+| **modelOverrides** | モデルピッカーのエントリをカスタムプロバイダーモデルID（Bedrock ARN等）にマッピング |
 
 ---
 
@@ -279,4 +285,5 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 ## 更新履歴
 
+- 2026-03-28: v2.1.86反映。1Mコンテキスト GA、Extended Thinking表示制御、Models API機能フィールド、MCP OAuth RFC 9728、Code Review詳細追記、modelOverrides追加（[調査レポート](reports/2026-03-28_v2.1.86-and-platform-updates.md)）
 - 2026-03-28: 公式ドキュメント（code.claude.com/docs/ja）に基づき全面改訂。機能カテゴリを再構成し網羅的に記載（[調査レポート](reports/2026-03-28_claude-code-new-features-march-2026.md)）
