@@ -50,17 +50,19 @@ log "=== 日次更新ジョブ開始 ==="
 
 # --- Step 1: 新リリースの事前チェック ---
 log "Step 1: GitHub Releases API で新リリースを確認..."
-if ! bash "${PROJECT_DIR}/scripts/check-new-release.sh" >> "$LOGFILE" 2>&1; then
-  exit_code=$?
-  if [[ $exit_code -eq 1 ]]; then
-    log "新しいリリースはありません。ジョブを終了します。"
-    history_append "スキップ" "新リリースなし"
-    commit_history_and_exit 0 "新リリースなし"
-  else
-    log "ERROR: リリースチェックに失敗しました (exit: ${exit_code})"
-    history_append "エラー" "API接続失敗"
-    commit_history_and_exit 1 "API接続失敗"
-  fi
+set +e
+bash "${PROJECT_DIR}/scripts/check-new-release.sh" >> "$LOGFILE" 2>&1
+exit_code=$?
+set -e
+
+if [[ $exit_code -eq 1 ]]; then
+  log "新しいリリースはありません。ジョブを終了します。"
+  history_append "スキップ" "新リリースなし"
+  commit_history_and_exit 0 "新リリースなし"
+elif [[ $exit_code -ge 2 ]]; then
+  log "ERROR: リリースチェックに失敗しました (exit: ${exit_code})"
+  history_append "エラー" "API接続失敗"
+  commit_history_and_exit 1 "API接続失敗"
 fi
 
 # --- Step 2: 調査エージェントを実行 ---
