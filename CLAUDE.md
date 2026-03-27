@@ -9,6 +9,9 @@ Claude Codeの新機能・アップデートを追跡するドキュメントリ
 - `index.html`, `_sidebar.md`, `.nojekyll` — docsifyサイト用
 - `.claude/agents/` — 調査エージェント定義
 - `.claude/skills/` — スキル定義（research, agent-creator）
+- `scripts/` — 自動化スクリプト（日次更新ジョブ）
+- `logs/` — 実行ログ（gitignore対象）
+- `com.claude-code-releases.daily-update.plist` — macOS launchd ジョブ定義
 
 ## ワークフロー
 
