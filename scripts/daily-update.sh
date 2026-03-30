@@ -12,6 +12,9 @@ RUN_DATE=$(date '+%Y-%m-%d %H:%M')
 
 mkdir -p "$LOG_DIR"
 
+# Claude CLI がファイルディスクリプタ不足でクラッシュするのを防止
+ulimit -n 2147483646 2>/dev/null || ulimit -n 10240 2>/dev/null || true
+
 log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*" | tee -a "$LOGFILE"; }
 
 # 公開用履歴に1行追記する
