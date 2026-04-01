@@ -17,12 +17,12 @@ Claude Codeの機能・アップデートを追跡するドキュメントサイ
 
 ## 日次自動更新ジョブ
 
-毎日 **08:30 JST** に macOS launchd で以下のパイプラインが自動実行されます。
+毎日 **11:00 JST** に macOS launchd で以下のパイプラインが自動実行されます。
 
 ### フロー
 
 ```
-launchd (08:00 JST)
+launchd (11:00 JST)
   │
   ├─ Step 1: GitHub Releases API で最新バージョンを取得
   │   └─ CURRENT_FEATURES.md に既出 → 終了（何もしない）
@@ -50,7 +50,7 @@ launchd (08:00 JST)
 |---------|------|
 | `scripts/daily-update.sh` | オーケストレーションスクリプト（チェック→調査→コミット→プッシュ） |
 | `scripts/check-new-release.sh` | GitHub Releases API で新バージョンの有無を判定 |
-| `com.claude-code-releases.daily-update.plist` | macOS launchd ジョブ定義（毎日 08:30） |
+| `com.claude-code-releases.daily-update.plist` | macOS launchd ジョブ定義（毎日 11:00） |
 | `logs/` | 実行ログ（`.gitignore` で除外済み） |
 
 ### デプロイ環境
