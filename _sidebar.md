@@ -1,6 +1,7 @@
 - [現行機能一覧](CURRENT_FEATURES.md)
 - [実行履歴](HISTORY.md)
 - **調査レポート**
+  - [2026-04-02 v2.1.88-90 & ソースコードリーク](reports/2026-04-02_v2.1.88-90-and-source-leak.md)
   - [2026-03-30 v2.1.87 & Mythosリーク](reports/2026-03-30_v2.1.87-and-mythos-leak.md)
   - [2026-03-28 v2.1.86 & プラットフォーム更新](reports/2026-03-28_v2.1.86-and-platform-updates.md)
   - [2026-03-28 新機能調査](reports/2026-03-28_claude-code-new-features-march-2026.md)

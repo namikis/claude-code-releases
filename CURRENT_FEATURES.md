@@ -1,6 +1,6 @@
 # Claude Code 現行機能一覧
 
-**最終更新:** 2026-03-30（v2.1.87 + Claude Mythosリーク情報反映）
+**最終更新:** 2026-04-02（v2.1.90 + ソースコードリーク事件反映）
 
 Claude Codeは、コードベースの読み取り・ファイル編集・コマンド実行・開発ツール統合を行うAIコーディングアシスタント。ターミナル、IDE、デスクトップアプリ、ブラウザで利用可能。
 
@@ -48,6 +48,8 @@ Claude Codeは、コードベースの読み取り・ファイル編集・コマ
 - **リリース状態**: 研究プレビュー（Team、管理者承認要）
 - セーフガードがアクションを事前レビューし、安全と判断されたものを自動実行
 - Sonnet 4.6 または Opus 4.6 が必要
+- 拒否されたコマンドが通知表示され、`/permissions` → Recentタブで`r`キーによりリトライ可能（v2.1.89）
+- 「pushしないで」等の明示的ユーザー境界を尊重（v2.1.90で修正）
 
 ### Remote Control
 - ローカルセッションをスマートフォンや別デバイスのブラウザから継続操作
@@ -106,10 +108,13 @@ Claude Codeは、コードベースの読み取り・ファイル編集・コマ
 | `WorktreeCreate` / `WorktreeRemove` | Worktree作成/削除時 |
 | `ConfigChange` | 設定変更時 |
 | `InstructionsLoaded` | 指示読み込み時 |
+| `PermissionDenied` | Auto Mode分類器の拒否後に発火。`{retry: true}`でリトライ指示可能 |
 
 - `settings.json` またはサブエージェント/スキルのフロントマターで定義
 - `if` フィールドで条件付き実行が可能（パーミッションルール構文、例: `Bash(git *)`）
 - PreToolUse フックが `AskUserQuestion` に対して `updatedInput` で自動応答可能（ヘッドレス統合向け）
+- PreToolUse フックが `"defer"` 決定を返すと、ヘッドレスセッションがツール呼び出し時に一時停止し、`-p --resume`で再評価可能（v2.1.89）
+- フック出力が50K文字を超える場合、ディスクに保存しファイルパス+プレビューをコンテキストに注入（v2.1.89）
 - `CLAUDE_CODE_MCP_SERVER_NAME` / `CLAUDE_CODE_MCP_SERVER_URL` 環境変数でヘッダーヘルパーにサーバー情報を提供
 
 ### Plugins（プラグイン）
@@ -171,6 +176,9 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - `--bare` フラグ: フック/LSP/プラグインをスキップする軽量モード（約14%高速）
 - `--output-format`: `text` / `json` / `stream-json`
 - `--max-turns`, `--max-budget-usd`: 制限付き実行
+- `CLAUDE_CODE_NO_FLICKER=1`: alt-screenレンダリング+仮想化スクロールバックでフリッカーフリー表示（v2.1.89）
+- `MCP_CONNECTION_NONBLOCKING=true`: `-p`モードでMCP接続待ちをスキップ（v2.1.89）
+- `CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE`: `git pull`失敗時にマーケットプレイスキャッシュを保持（v2.1.90）
 
 ---
 
@@ -229,6 +237,8 @@ claude -p --json-schema '{"type":"object",...}' "query"
 | `/rename` | セッション名変更 |
 | `/desktop` | Desktop Appで続行 |
 | `/export` | 会話エクスポート |
+| `/powerup` | アニメーションデモ付きインタラクティブレッスン（v2.1.90） |
+| `/buddy` | ターミナルペット。18種族のクリーチャーを孵化（April Fools 2026、v2.1.89） |
 
 ---
 
@@ -259,12 +269,12 @@ claude -p --json-schema '{"type":"object",...}' "query"
 | 項目 | 詳細 |
 |------|------|
 | **デフォルトモデル** | Claude Opus 4.6 |
-| **出力トークン上限** | デフォルト64k、上限128k（Opus/Sonnet 4.6） |
-| **コンテキスト** | 1Mトークン（Opus 4.6/Sonnet 4.6はGA、ベータヘッダー不要。メディア上限600画像/PDFページ） |
+| **出力トークン上限** | デフォルト64k、上限128k（Opus/Sonnet 4.6）。Message Batches APIでは300k（`output-300k-2026-03-24`ベータヘッダー要） |
+| **コンテキスト** | 1Mトークン（Opus 4.6/Sonnet 4.6はGA、ベータヘッダー不要。メディア上限600画像/PDFページ）。Sonnet 4.5/4の1Mベータは2026年4月30日で終了予定 |
 | **Fast Mode** | 同じOpus 4.6モデルで高速出力。`/fast` でトグル |
 | **努力レベル** | `low` / `medium` / `high` / `max`（Opus 4.6のみ） |
 | **サードパーティ** | Amazon Bedrock、Google Vertex AI、Microsoft Foundry対応 |
-| **Extended Thinking 表示制御** | `thinking.display: "omitted"` でthinkingコンテンツをストリーミングから省略可能（signature保持） |
+| **Extended Thinking 表示制御** | `thinking.display: "omitted"` でthinkingコンテンツをストリーミングから省略可能（signature保持）。インタラクティブセッションではthinking summaryがデフォルト無効化（`showThinkingSummaries: true`で復元、v2.1.89） |
 | **Models API 機能照会** | `GET /v1/models` が `max_input_tokens`、`max_tokens`、`capabilities` を返すように（3月18日〜） |
 | **modelOverrides** | モデルピッカーのエントリをカスタムプロバイダーモデルID（Bedrock ARN等）にマッピング |
 
@@ -284,6 +294,16 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 ---
 
+## セキュリティインシデント
+
+### v2.1.88 ソースコードリーク（2026年3月31日）
+- v2.1.88のnpmパッケージに59.8MBのソースマップファイルが誤って含まれ、512,000行以上のTypeScriptコードが流出
+- セキュリティ研究者が発見・公表し、Anthropicが同日中にnpmから削除
+- 顧客データや認証情報の漏洩はなし。「ヒューマンエラーによるリリースパッケージングの問題」と声明
+- 44個のフィーチャーフラグ、3層メモリアーキテクチャ、未発表モデル"Capybara"への参照が含まれていた
+
+---
+
 ## 次世代モデル情報
 
 ### Claude Mythos（コードネーム "Capybara"）
@@ -296,8 +316,18 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 ---
 
+## 廃止予定
+
+| モデル/機能 | 廃止日 | 移行先 |
+|------------|--------|--------|
+| Claude Haiku 3 (`claude-3-haiku-20240307`) | 2026-04-19 | Claude Haiku 4.5 |
+| Sonnet 4.5/4 の1Mコンテキストベータ (`context-1m-2025-08-07`) | 2026-04-30 | Sonnet 4.6 / Opus 4.6（1M GA） |
+
+---
+
 ## 更新履歴
 
+- 2026-04-02: v2.1.88〜v2.1.90反映。ソースコードリーク事件、PreToolUse defer、PermissionDeniedフック、/powerup、/buddy、Auto Mode改善、パフォーマンス改善、Message Batches API 300k、Sonnet 4.5/4 1Mベータ終了予告（[調査レポート](reports/2026-04-02_v2.1.88-90-and-source-leak.md)）
 - 2026-03-30: v2.1.87反映。Dispatch修正、Claude Mythosリーク情報追加（[調査レポート](reports/2026-03-30_v2.1.87-and-mythos-leak.md)）
 - 2026-03-28: v2.1.86反映。1Mコンテキスト GA、Extended Thinking表示制御、Models API機能フィールド、MCP OAuth RFC 9728、Code Review詳細追記、modelOverrides追加（[調査レポート](reports/2026-03-28_v2.1.86-and-platform-updates.md)）
 - 2026-03-28: 公式ドキュメント（code.claude.com/docs/ja）に基づき全面改訂。機能カテゴリを再構成し網羅的に記載（[調査レポート](reports/2026-03-28_claude-code-new-features-march-2026.md)）
