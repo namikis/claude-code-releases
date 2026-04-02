@@ -32,8 +32,9 @@ history_append() {
 |------|-----------|------|
 HEADER
   fi
-  # テーブル末尾に1行追加
-  echo "| ${RUN_DATE} | ${status} | ${detail} |" >> "$HISTORY_FILE"
+  # ヘッダー行の直後（3行目）に新しい行を挿入（降順を維持）
+  local new_row="| ${RUN_DATE} | ${status} | ${detail} |"
+  sed -i '' "s@|------|-----------|------|@|------|-----------|------|\n${new_row}@" "$HISTORY_FILE"
 }
 
 # history_append 後に HISTORY.md をコミット・プッシュして終了するヘルパー
