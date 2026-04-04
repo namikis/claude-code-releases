@@ -1,6 +1,6 @@
 # Claude Code 現行機能一覧
 
-**最終更新:** 2026-04-02（v2.1.90 + ソースコードリーク事件反映）
+**最終更新:** 2026-04-04（v2.1.92 + Bedrockウィザード・forceRemoteSettingsRefresh反映）
 
 Claude Codeは、コードベースの読み取り・ファイル編集・コマンド実行・開発ツール統合を行うAIコーディングアシスタント。ターミナル、IDE、デスクトップアプリ、ブラウザで利用可能。
 
@@ -142,6 +142,8 @@ Claude Codeは、コードベースの読み取り・ファイル編集・コマ
 - `settings.json`（プロジェクト/ユーザー/ローカル）で設定管理
 - 権限（`permissions.allow` / `permissions.deny`）、環境変数、フック等を定義
 - `managed-settings.d/` でポリシーフラグメントのドロップイン管理
+- `disableSkillShellExecution`: スキル・カスタムスラッシュコマンド・プラグインコマンド内のインラインシェル実行を無効化（v2.1.91）
+- `forceRemoteSettingsRefresh`: 起動時にリモートmanaged settingsの最新取得を強制。失敗時はエラー終了（v2.1.92）
 
 ---
 
@@ -179,6 +181,11 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - `CLAUDE_CODE_NO_FLICKER=1`: alt-screenレンダリング+仮想化スクロールバックでフリッカーフリー表示（v2.1.89）
 - `MCP_CONNECTION_NONBLOCKING=true`: `-p`モードでMCP接続待ちをスキップ（v2.1.89）
 - `CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE`: `git pull`失敗時にマーケットプレイスキャッシュを保持（v2.1.90）
+- MCP ツール結果永続化オーバーライド: `_meta["anthropic/maxResultSizeChars"]` で最大500Kまでの大きな結果を截断せず保持（v2.1.91）
+- プラグインが `bin/` 配下に実行ファイルを同梱し、Bashツールからベアコマンドとして呼び出し可能（v2.1.91）
+- `forceRemoteSettingsRefresh` ポリシー設定: 起動時にリモートmanaged settingsを必ず最新取得、失敗時はエラー終了（fail-closed）（v2.1.92）
+- Bedrock インタラクティブセットアップウィザード: ログイン画面からAWS認証・リージョン設定・モデルピンニングを対話的に設定（v2.1.92）
+- Proユーザーにプロンプトキャッシュ期限切れヒントをフッター表示（v2.1.92）
 
 ---
 
@@ -195,6 +202,7 @@ claude -p --json-schema '{"type":"object",...}' "query"
 | `--effort` | 努力レベル（`low` / `medium` / `high` / `max`） |
 | `--agent` | 指定エージェントとしてセッション実行 |
 | `--bare` | 最小限モード（高速起動） |
+| `--remote-control-session-name-prefix` | Remote Controlセッション名プレフィックス（デフォルト: ホスト名） |
 | `--channels` | MCPチャネル有効化（研究プレビュー） |
 | `--chrome` | Chrome統合を有効化 |
 | `--remote` | Webセッション作成 |
@@ -232,11 +240,13 @@ claude -p --json-schema '{"type":"object",...}' "query"
 | `/simplify` | コード品質レビュー・修正 |
 | `/rewind` | チェックポイントへ巻き戻し |
 | `/stats` | 使用統計の可視化 |
+| `/cost` | モデル別・キャッシュヒット別コスト内訳表示（サブスクリプションユーザー向け、v2.1.92） |
 | `/fast` | Fast Mode切替 |
 | `/color` | プロンプトバーの色変更 |
 | `/rename` | セッション名変更 |
 | `/desktop` | Desktop Appで続行 |
 | `/export` | 会話エクスポート |
+| `/release-notes` | インタラクティブバージョンピッカーでリリースノート閲覧（v2.1.92） |
 | `/powerup` | アニメーションデモ付きインタラクティブレッスン（v2.1.90） |
 | `/buddy` | ターミナルペット。18種族のクリーチャーを孵化（April Fools 2026、v2.1.89） |
 
@@ -327,6 +337,7 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 ## 更新履歴
 
+- 2026-04-04: v2.1.91〜v2.1.92反映。forceRemoteSettingsRefresh、Bedrockセットアップウィザード、/cost詳細化、/release-notesピッカー、MCP結果永続化500K、disableSkillShellExecution、プラグイン実行ファイル、/tag・/vim削除、Writeツール高速化（[調査レポート](reports/2026-04-04_v2.1.91-92-and-platform-updates.md)）
 - 2026-04-02: v2.1.88〜v2.1.90反映。ソースコードリーク事件、PreToolUse defer、PermissionDeniedフック、/powerup、/buddy、Auto Mode改善、パフォーマンス改善、Message Batches API 300k、Sonnet 4.5/4 1Mベータ終了予告（[調査レポート](reports/2026-04-02_v2.1.88-90-and-source-leak.md)）
 - 2026-03-30: v2.1.87反映。Dispatch修正、Claude Mythosリーク情報追加（[調査レポート](reports/2026-03-30_v2.1.87-and-mythos-leak.md)）
 - 2026-03-28: v2.1.86反映。1Mコンテキスト GA、Extended Thinking表示制御、Models API機能フィールド、MCP OAuth RFC 9728、Code Review詳細追記、modelOverrides追加（[調査レポート](reports/2026-03-28_v2.1.86-and-platform-updates.md)）
