@@ -60,17 +60,20 @@ exit_code=$?
 set -e
 
 if [[ $exit_code -eq 1 ]]; then
-  log "新しいリリースはありません。ジョブを終了します。"
-  history_append "スキップ" "新リリースなし"
-  commit_history_and_exit 0 "新リリースなし"
+  log "新しいリリースはありません。Layer 2/3 ニュース調査を実行します..."
+  AGENT_PROMPT="【ニュースモード】新しいCLIリリースはありません。Layer 2（公式ブログ・APIドキュメント）と Layer 3（ニュースメディア）のみを調査し、新しい発表・予定・噂レベルの情報がないか確認してください。新情報があればレポートとCURRENT_FEATURES.mdを更新し、_sidebar.mdにもリンクを追加してください。新情報がなければファイルを一切変更しないでください。"
+  HISTORY_LABEL="ニュース調査"
 elif [[ $exit_code -ge 2 ]]; then
   log "ERROR: リリースチェックに失敗しました (exit: ${exit_code})"
   history_append "エラー" "API接続失敗"
   commit_history_and_exit 1 "API接続失敗"
+else
+  AGENT_PROMPT="最新のClaude Codeリリースを調査し、レポートとCURRENT_FEATURES.mdを更新してください。_sidebar.mdにも新しいレポートへのリンクを追加してください。"
+  HISTORY_LABEL="リリース調査"
 fi
 
 # --- Step 2: 調査エージェントを実行 ---
-log "Step 2: 調査エージェントを実行中..."
+log "Step 2: 調査エージェントを実行中（${HISTORY_LABEL}）..."
 cd "$PROJECT_DIR"
 
 if ! "$CLAUDE_BIN" \
@@ -78,7 +81,7 @@ if ! "$CLAUDE_BIN" \
   --allowedTools "WebSearch,WebFetch,Read,Write,Bash,Glob,Grep,Edit" \
   --print \
   --output-format text \
-  "最新のClaude Codeリリースを調査し、レポートとCURRENT_FEATURES.mdを更新してください。_sidebar.mdにも新しいレポートへのリンクを追加してください。" \
+  "$AGENT_PROMPT" \
   >> "$LOGFILE" 2>&1; then
   log "ERROR: 調査エージェントが異常終了しました"
   history_append "エラー" "Claude CLI異常終了"
@@ -94,21 +97,21 @@ git -C "$PROJECT_DIR" add -A
 
 if git -C "$PROJECT_DIR" diff --cached --quiet; then
   log "実質的な変更はありませんでした。ジョブを終了します。"
-  history_append "スキップ" "エージェント実行済み・差分なし"
-  commit_history_and_exit 0 "差分なし"
+  history_append "スキップ" "${HISTORY_LABEL}完了・差分なし"
+  commit_history_and_exit 0 "${HISTORY_LABEL}・差分なし"
 fi
 
 # 検出したバージョンをログから取得
 detected_ver=$(grep -o 'v[0-9]\+\.[0-9]\+\.[0-9]\+' "$LOGFILE" | tail -1 || echo "")
-detail="更新完了"
-[[ -n "$detected_ver" ]] && detail="更新完了 (${detected_ver})"
+detail="${HISTORY_LABEL}更新完了"
+[[ -n "$detected_ver" ]] && detail="${HISTORY_LABEL}更新完了 (${detected_ver})"
 history_append "成功" "$detail"
 
 # HISTORY.md の変更もステージに含める
 git -C "$PROJECT_DIR" add HISTORY.md
 
 COMMIT_DATE=$(date +%Y-%m-%d)
-COMMIT_MSG="docs: ${COMMIT_DATE} 日次リリース調査更新
+COMMIT_MSG="docs: ${COMMIT_DATE} 日次${HISTORY_LABEL}更新
 
 Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>"
 
