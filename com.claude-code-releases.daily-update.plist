@@ -8,7 +8,7 @@
     <key>ProgramArguments</key>
     <array>
         <string>/bin/bash</string>
-        <string>/Users/tairyu/Desktop/program/claude-code-releases/scripts/daily-update.sh</string>
+        <string>/Users/tairyu/program/claude-code-releases/scripts/daily-update.sh</string>
     </array>
 
     <key>StartCalendarInterval</key>
@@ -20,13 +20,13 @@
     </dict>
 
     <key>StandardOutPath</key>
-    <string>/Users/tairyu/Desktop/program/claude-code-releases/logs/launchd-stdout.log</string>
+    <string>/Users/tairyu/program/claude-code-releases/logs/launchd-stdout.log</string>
 
     <key>StandardErrorPath</key>
-    <string>/Users/tairyu/Desktop/program/claude-code-releases/logs/launchd-stderr.log</string>
+    <string>/Users/tairyu/program/claude-code-releases/logs/launchd-stderr.log</string>
 
     <key>WorkingDirectory</key>
-    <string>/Users/tairyu/Desktop/program/claude-code-releases</string>
+    <string>/Users/tairyu/program/claude-code-releases</string>
 
     <key>EnvironmentVariables</key>
     <dict>

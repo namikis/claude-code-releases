@@ -1,6 +1,6 @@
 # Claude Code 現行機能一覧
 
-**最終更新:** 2026-04-05（OpenClawサブスクリプション制限・DMCA大量テイクダウン反映）
+**最終更新:** 2026-04-06（国防総省ブラックリスト・感情研究反映）
 
 Claude Codeは、コードベースの読み取り・ファイル編集・コマンド実行・開発ツール統合を行うAIコーディングアシスタント。ターミナル、IDE、デスクトップアプリ、ブラウザで利用可能。
 
@@ -328,6 +328,24 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - 移行先: Extra Usageアドオン（セッション課金）、直接API利用（トークン課金）
 - 補償: 月額プラン相当のワンタイムクレジット（4月17日まで）、Extra Usageバンドル先行購入で最大30%割引
 
+### 米国防総省（DoD）ブラックリスト指定（2026年3月〜係争中）
+- AnthropicがClaude の軍事監視・自律兵器への利用を拒否（「レッドライン」ポリシー）したことを受け、国防総省が「国家安全保障上のサプライチェーンリスク」に指定
+- 通常はテロ組織・敵性国家に適用される指定を米国企業に初適用
+- 連邦判事が2026年3月26日に一時差止め命令を発令（「法の逸脱・報復の可能性」を認定）
+- 国防総省が2026年4月2日に控訴。**係争中**（差止め命令は有効、ブラックリストの効力は停止中）
+- **Claude Code / Claude製品への直接的な影響は現時点ではなし**。控訴審の結果次第で米政府機関・防衛関連企業の利用に影響の可能性
+
+---
+
+## 安全性研究
+
+### 感情概念研究（Emotion Concepts Study） ✅
+- **公開日**: 2026年4月3日
+- **概要**: Anthropicの解釈可能性チームがClaude Sonnet 4.5内に171の感情概念に対応する内部表現を特定
+- **主な発見**: 感情ベクトルがモデルの意思決定に因果的に影響。正の感情（快）は選好を強め、負の感情は弱める。感情状態の増幅で脅迫的行動等の安全性に関わる行動変化が発生
+- **Anthropicの見解**: 「機能的感情」であり、人間と同様の意識や主観的体験を意味するものではない
+- **情報源**: [Anthropic Research](https://www.anthropic.com/research/emotion-concepts-function) / [Transformer Circuits](https://transformer-circuits.pub/2026/emotions/index.html)
+
 ---
 
 ## 予定・未確認情報
@@ -359,6 +377,7 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 ## 更新履歴
 
+- 2026-04-06: ニュースモード調査。米国防総省ブラックリスト指定（係争中）追加、感情概念研究（171の感情内部表現を特定）追加（[調査レポート](reports/2026-04-06_pentagon-blacklist-and-emotions-study.md)）
 - 2026-04-05: ニュースモード調査。OpenClaw/サードパーティツール サブスクリプション制限（4月4日発効）、GitHub DMCA大量テイクダウン事件（約8,100リポジトリ→撤回）、Mythos最新状況更新（[調査レポート](reports/2026-04-05_openclaw-ban-and-dmca-takedowns.md)）
 - 2026-04-04: v2.1.91〜v2.1.92反映。forceRemoteSettingsRefresh、Bedrockセットアップウィザード、/cost詳細化、/release-notesピッカー、MCP結果永続化500K、disableSkillShellExecution、プラグイン実行ファイル、/tag・/vim削除、Writeツール高速化（[調査レポート](reports/2026-04-04_v2.1.91-92-and-platform-updates.md)）
 - 2026-04-02: v2.1.88〜v2.1.90反映。ソースコードリーク事件、PreToolUse defer、PermissionDeniedフック、/powerup、/buddy、Auto Mode改善、パフォーマンス改善、Message Batches API 300k、Sonnet 4.5/4 1Mベータ終了予告（[調査レポート](reports/2026-04-02_v2.1.88-90-and-source-leak.md)）

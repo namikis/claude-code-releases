@@ -1,6 +1,7 @@
 - [現行機能一覧](CURRENT_FEATURES.md)
 - [実行履歴](HISTORY.md)
 - **調査レポート**
+  - [2026-04-06 国防総省ブラックリスト & 感情研究](reports/2026-04-06_pentagon-blacklist-and-emotions-study.md)
   - [2026-04-05 OpenClawサブスク制限 & DMCAテイクダウン](reports/2026-04-05_openclaw-ban-and-dmca-takedowns.md)
   - [2026-04-04 v2.1.91-92 & プラットフォーム更新](reports/2026-04-04_v2.1.91-92-and-platform-updates.md)
   - [2026-04-02 v2.1.88-90 & ソースコードリーク](reports/2026-04-02_v2.1.88-90-and-source-leak.md)
