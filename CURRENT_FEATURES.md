@@ -1,6 +1,6 @@
 # Claude Code 現行機能一覧
 
-**最終更新:** 2026-04-04（v2.1.92 + Bedrockウィザード・forceRemoteSettingsRefresh反映）
+**最終更新:** 2026-04-05（OpenClawサブスクリプション制限・DMCA大量テイクダウン反映）
 
 Claude Codeは、コードベースの読み取り・ファイル編集・コマンド実行・開発ツール統合を行うAIコーディングアシスタント。ターミナル、IDE、デスクトップアプリ、ブラウザで利用可能。
 
@@ -314,6 +314,20 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - 顧客データや認証情報の漏洩はなし。「ヒューマンエラーによるリリースパッケージングの問題」と声明
 - 44個のフィーチャーフラグ、3層メモリアーキテクチャ、未発表モデル"Capybara"への参照が含まれていた
 
+### GitHub DMCA大量テイクダウン事件（2026年4月1日）
+- ソースコードリーク対応として、AnthropicがGitHubにDMCA著作権テイクダウン通知を提出
+- **約8,100リポジトリ**がテイクダウンされたが、Anthropicの公開Claude Codeリポジトリの正規フォークも誤って含まれていた
+- Boris Cherny（Claude Code責任者）が「事故」と認め、大部分のテイクダウン通知を撤回
+- 最終的に1リポジトリ + 96フォーク（流出コードを含むもの）のみに限定
+- 流出コードを元にしたオープンソースプロジェクト「**OpenCode**」が急成長（GPT、DeepSeek、Gemini等あらゆるLLM対応）
+
+### OpenClaw/サードパーティツール サブスクリプション制限（2026年4月4日）
+- Claude Pro/Maxサブスクリプションによるサードパーティエージェントツール（OpenClaw、NanoClaw、OpenCode等）へのアクセスを遮断
+- 公式ツール（Claude.ai、Claude Code CLI、Claude Desktop、Claude Cowork）は影響なし
+- 理由: サードパーティハーネスがプロンプトキャッシュ最適化を欠き、インフラに「過大な負荷」
+- 移行先: Extra Usageアドオン（セッション課金）、直接API利用（トークン課金）
+- 補償: 月額プラン相当のワンタイムクレジット（4月17日まで）、Extra Usageバンドル先行購入で最大30%割引
+
 ---
 
 ## 予定・未確認情報
@@ -329,7 +343,8 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - サイバー防御組織への限定早期アクセスを先行計画。正式リリース日は未発表
 - Opusより高価な新プレミアムティアになる見込み
 - **発覚**: 2026年3月26日、CMS設定ミスによるデータリークで存在が判明。Anthropicが確認
-- **最終確認日**: 2026-04-02
+- **最新状況（4月）**: トレーニング完了済み。限定的な早期アクセス顧客に試験提供中。公開APIにエンドポイント・ベータフラグなし。「運用コストが高く一般リリースの準備未完了」。ASL-4安全性閾値に該当する可能性があり遅延の恐れ。メディア推測では4月後半〜5月中旬の限定リリース
+- **最終確認日**: 2026-04-05
 
 ---
 
@@ -344,6 +359,7 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 ## 更新履歴
 
+- 2026-04-05: ニュースモード調査。OpenClaw/サードパーティツール サブスクリプション制限（4月4日発効）、GitHub DMCA大量テイクダウン事件（約8,100リポジトリ→撤回）、Mythos最新状況更新（[調査レポート](reports/2026-04-05_openclaw-ban-and-dmca-takedowns.md)）
 - 2026-04-04: v2.1.91〜v2.1.92反映。forceRemoteSettingsRefresh、Bedrockセットアップウィザード、/cost詳細化、/release-notesピッカー、MCP結果永続化500K、disableSkillShellExecution、プラグイン実行ファイル、/tag・/vim削除、Writeツール高速化（[調査レポート](reports/2026-04-04_v2.1.91-92-and-platform-updates.md)）
 - 2026-04-02: v2.1.88〜v2.1.90反映。ソースコードリーク事件、PreToolUse defer、PermissionDeniedフック、/powerup、/buddy、Auto Mode改善、パフォーマンス改善、Message Batches API 300k、Sonnet 4.5/4 1Mベータ終了予告（[調査レポート](reports/2026-04-02_v2.1.88-90-and-source-leak.md)）
 - 2026-03-30: v2.1.87反映。Dispatch修正、Claude Mythosリーク情報追加（[調査レポート](reports/2026-03-30_v2.1.87-and-mythos-leak.md)）
