@@ -1,6 +1,6 @@
 # Claude Code 現行機能一覧
 
-**最終更新:** 2026-04-06（国防総省ブラックリスト・感情研究反映）
+**最終更新:** 2026-04-07（M365全プラン展開・deny-ruleバイパス脆弱性反映）
 
 Claude Codeは、コードベースの読み取り・ファイル編集・コマンド実行・開発ツール統合を行うAIコーディングアシスタント。ターミナル、IDE、デスクトップアプリ、ブラウザで利用可能。
 
@@ -292,6 +292,14 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 ---
 
+## Microsoft 365 連携 ✅
+- **リリース状態**: ✅ GA（全プラン — Free / Pro / Max / Team / Enterprise）
+- **対象プラットフォーム**: Claude.ai（Web / Desktop / Mobile）
+- **概要**: Microsoft 365のビジネスデータ（Outlook、Teams、SharePoint、OneDrive）をClaude会話内で検索・分析。読み取り専用（送信・編集・投稿は不可）
+- **初出**: 2025年10月（Team/Enterprise限定）→ 2026年4月6日に全プラン展開
+- **制限**: M365ビジネスアカウントのみ。組織管理者がMicrosoft Entra経由で事前有効化必要
+- **情報源**: [Claude Help Center](https://support.claude.com/en/articles/12542951-enable-and-use-the-microsoft-365-connector) / [UC Today](https://www.uctoday.com/productivity-automation/anthropic-expands-claude-microsoft-365-integration-for-all-user-plans/)
+
 ## Slack連携
 - `@Claude` メンションでバグレポート→PR作成のルーティング
 
@@ -320,6 +328,13 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - Boris Cherny（Claude Code責任者）が「事故」と認め、大部分のテイクダウン通知を撤回
 - 最終的に1リポジトリ + 96フォーク（流出コードを含むもの）のみに限定
 - 流出コードを元にしたオープンソースプロジェクト「**OpenCode**」が急成長（GPT、DeepSeek、Gemini等あらゆるLLM対応）
+
+### deny-ruleバイパス脆弱性 CC-643（2026年4月1日発見・修正）
+- Adversa AI（テルアビブ）が発見。`bashPermissions.ts` のパフォーマンス最適化に起因
+- 50個超のサブコマンド（`&&`/`||`/`;` 連結）を含むシェルコマンドでdeny-rule評価がスキップされ、確認プロンプトにフォールバック
+- 悪意ある `CLAUDE.md` 経由のプロンプトインジェクションでSSH鍵・クレデンシャル窃取のリスク
+- v2.1.90で修正。CVE未割り当て。Anthropicから公式声明なし
+- **情報源**: [The Register](https://www.theregister.com/2026/04/01/claude_code_rule_cap_raises/) / [Adversa AI](https://adversa.ai/blog/claude-code-security-bypass-deny-rules-disabled/)
 
 ### OpenClaw/サードパーティツール サブスクリプション制限（2026年4月4日）
 - Claude Pro/Maxサブスクリプションによるサードパーティエージェントツール（OpenClaw、NanoClaw、OpenCode等）へのアクセスを遮断
@@ -377,6 +392,7 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 ## 更新履歴
 
+- 2026-04-07: ニュースモード調査。Microsoft 365コネクタ全プラン展開（Free含む）追加、deny-ruleバイパス脆弱性CC-643の詳細追加（[調査レポート](reports/2026-04-07_m365-expansion-and-deny-rule-vulnerability.md)）
 - 2026-04-06: ニュースモード調査。米国防総省ブラックリスト指定（係争中）追加、感情概念研究（171の感情内部表現を特定）追加（[調査レポート](reports/2026-04-06_pentagon-blacklist-and-emotions-study.md)）
 - 2026-04-05: ニュースモード調査。OpenClaw/サードパーティツール サブスクリプション制限（4月4日発効）、GitHub DMCA大量テイクダウン事件（約8,100リポジトリ→撤回）、Mythos最新状況更新（[調査レポート](reports/2026-04-05_openclaw-ban-and-dmca-takedowns.md)）
 - 2026-04-04: v2.1.91〜v2.1.92反映。forceRemoteSettingsRefresh、Bedrockセットアップウィザード、/cost詳細化、/release-notesピッカー、MCP結果永続化500K、disableSkillShellExecution、プラグイン実行ファイル、/tag・/vim削除、Writeツール高速化（[調査レポート](reports/2026-04-04_v2.1.91-92-and-platform-updates.md)）
