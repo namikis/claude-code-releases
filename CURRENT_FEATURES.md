@@ -1,6 +1,6 @@
 # Claude Code 現行機能一覧
 
-**最終更新:** 2026-04-08（v2.1.94・Mythos Preview/Project Glasswing・Claude in Bedrock反映）
+**最終更新:** 2026-04-09（v2.1.96-97・Claude Managed Agents・ant CLI反映）
 
 Claude Codeは、コードベースの読み取り・ファイル編集・コマンド実行・開発ツール統合を行うAIコーディングアシスタント。ターミナル、IDE、デスクトップアプリ、ブラウザで利用可能。
 
@@ -197,6 +197,23 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - プラグインスキル（`"skills": ["./"]`）がディレクトリ名ではなくフロントマター `name` を呼び出し名に使用（v2.1.94）
 - `--resume` がリポジトリのworktree間で直接動作するように改善（v2.1.94）
 - CJK/マルチバイトテキストがstream-jsonでUTF-8分割時にU+FFFDに破損する問題を修正（v2.1.94）
+- Bedrock 403認証リグレッション修正: `AWS_BEARER_TOKEN_BEDROCK`/`CLAUDE_CODE_SKIP_BEDROCK_AUTH` 使用時の認証失敗を修正（v2.1.96）
+- Focus View トグル（`Ctrl+O`）: `NO_FLICKER`モードでプロンプト・1行ツールサマリー・最終レスポンスのみ表示（v2.1.97）
+- `refreshInterval` ステータスライン設定: N秒ごとにステータスラインコマンドを再実行（v2.1.97）
+- `workspace.git_worktree`: ステータスラインJSON入力にworktree情報を追加（v2.1.97）
+- `/agents` に `● N running` インジケータ: ライブサブエージェントインスタンス数をタイプ横に表示（v2.1.97）
+- Cedar ポリシーファイル（`.cedar`、`.cedarpolicy`）のシンタックスハイライト（v2.1.97）
+- Accept Edits 安全コマンド自動承認: 環境変数/プロセスラッパー付きコマンドを自動承認（v2.1.97）
+- Auto Mode / bypass-permissions でサンドボックスネットワークアクセスプロンプトを自動承認（v2.1.97）
+- ペースト/添付画像をReadツールと同じトークンバジェットに圧縮（v2.1.97）
+- CJK句読点後のスラッシュコマンド・`@`メンション補完トリガー（v2.1.97）
+- Bridgeセッションカードにローカルgitリポジトリ・ブランチ・作業ディレクトリを表示（v2.1.97）
+- `sandbox.network.allowMachLookup` がmacOSで有効化（v2.1.97）
+- `/claude-api` スキルがManaged Agentsカバレッジを追加（v2.1.97）
+- MCP HTTP/SSE 再接続時の~50 MB/時メモリリーク修正（v2.1.97）
+- MCP OAuth `oauth.authServerMetadataUrl` 再起動後のトークンリフレッシュ修正（v2.1.97）
+- 429リトライに指数バックオフ最小値適用（~13秒枯渇問題の修正）（v2.1.97）
+- NO_FLICKERモード: 8件超のレンダリング・互換性修正（zellij、Warp、Windows Terminal、CJK、メモリリーク等）（v2.1.97）
 
 ---
 
@@ -321,6 +338,25 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - Claude Codeのツール・機能を活用したカスタムエージェントを構築
 - オーケストレーション・ツールアクセス・権限を完全制御
 
+## Claude Managed Agents 🧪
+- **リリース状態**: 🧪 パブリックベータ（全APIアカウントにデフォルト有効）
+- **発表日**: 2026年4月8日
+- **ベータヘッダー**: `managed-agents-2026-04-01`（SDKは自動設定）
+- **概要**: クラウドホスト型AIエージェント基盤。エージェントループ・ツール実行・ランタイムをAnthropicインフラで完全管理。ファイル操作、コマンド実行、Web検索、MCP接続をセキュアなコンテナで実行
+- **コアコンセプト**: Agent（モデル・ツール定義）→ Environment（コンテナテンプレート）→ Session（実行インスタンス）→ Events（SSEストリーミング）
+- **組み込みツール**: Bash、File operations（Read/Write/Edit/Glob/Grep）、Web search/fetch、MCP servers
+- **研究プレビュー機能**: Outcomes、Multi-agent、Memory（要アクセス申請）
+- **アーキテクチャ**: Brain/Hands/Session分離設計。p50 TTFT約60%削減、p95で90%超改善
+- **レート制限**: 作成系60 req/min、読み取り系600 req/min
+- **早期採用**: Notion、Rakuten、Asana、Vibecode、Sentry
+- **情報源**: [公式ドキュメント](https://platform.claude.com/docs/en/managed-agents/overview) / [Engineering Blog](https://www.anthropic.com/engineering/managed-agents)
+
+## `ant` CLI 🧪
+- **リリース状態**: 🧪 パブリックベータ
+- **発表日**: 2026年4月8日
+- **概要**: Claude API用コマンドラインクライアント。高速APIインタラクション、Claude Codeネイティブ統合、APIリソースのYAMLバージョニング
+- **情報源**: [公式ドキュメント](https://platform.claude.com/docs/en/api/sdks/cli)
+
 ---
 
 ## セキュリティインシデント
@@ -417,6 +453,7 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 ## 更新履歴
 
+- 2026-04-09: v2.1.96-97反映。Focus View（Ctrl+O）、refreshIntervalステータスライン、Accept Edits安全コマンド自動承認、MCP HTTP/SSEメモリリーク修正、NO_FLICKER多数修正。Claude Managed Agentsパブリックベータ開始（全APIアカウント）。ant CLIパブリックベータ開始（[調査レポート](reports/2026-04-09_v2.1.96-97-managed-agents-and-ant-cli.md)）
 - 2026-04-08: v2.1.94反映。Bedrock Mantle対応、デフォルト努力レベルhigh化、UserPromptSubmitフック拡張。Claude Mythos Previewが❓→🔬に昇格（Project Glasswing正式発表）。Claude in Bedrock Messages API研究プレビュー。Google/Broadcom TPUパートナーシップ。Claude.ai大規模障害（4月6-7日）（[調査レポート](reports/2026-04-08_v2.1.94-mythos-preview-and-glasswing.md)）
 - 2026-04-07: ニュースモード調査。Microsoft 365コネクタ全プラン展開（Free含む）追加、deny-ruleバイパス脆弱性CC-643の詳細追加（[調査レポート](reports/2026-04-07_m365-expansion-and-deny-rule-vulnerability.md)）
 - 2026-04-06: ニュースモード調査。米国防総省ブラックリスト指定（係争中）追加、感情概念研究（171の感情内部表現を特定）追加（[調査レポート](reports/2026-04-06_pentagon-blacklist-and-emotions-study.md)）
