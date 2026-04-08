@@ -1,6 +1,7 @@
 - [現行機能一覧](CURRENT_FEATURES.md)
 - [実行履歴](HISTORY.md)
 - **調査レポート**
+  - [2026-04-08 v2.1.94・Mythos Preview・Project Glasswing](reports/2026-04-08_v2.1.94-mythos-preview-and-glasswing.md)
   - [2026-04-07 M365全プラン展開 & deny-rule脆弱性](reports/2026-04-07_m365-expansion-and-deny-rule-vulnerability.md)
   - [2026-04-06 国防総省ブラックリスト & 感情研究](reports/2026-04-06_pentagon-blacklist-and-emotions-study.md)
   - [2026-04-05 OpenClawサブスク制限 & DMCAテイクダウン](reports/2026-04-05_openclaw-ban-and-dmca-takedowns.md)
