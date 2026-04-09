@@ -1,6 +1,7 @@
 - [現行機能一覧](CURRENT_FEATURES.md)
 - [実行履歴](HISTORY.md)
 - **調査レポート**
+  - [2026-04-10 v2.1.98・Advisor Tool・Cowork GA](reports/2026-04-10_v2.1.98-advisor-tool-and-cowork-ga.md)
   - [2026-04-09 v2.1.96-97・Managed Agents・ant CLI](reports/2026-04-09_v2.1.96-97-managed-agents-and-ant-cli.md)
   - [2026-04-08 v2.1.94・Mythos Preview・Project Glasswing](reports/2026-04-08_v2.1.94-mythos-preview-and-glasswing.md)
   - [2026-04-07 M365全プラン展開 & deny-rule脆弱性](reports/2026-04-07_m365-expansion-and-deny-rule-vulnerability.md)

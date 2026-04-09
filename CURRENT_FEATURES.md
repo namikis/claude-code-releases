@@ -1,6 +1,6 @@
 # Claude Code 現行機能一覧
 
-**最終更新:** 2026-04-09（v2.1.96-97・Claude Managed Agents・ant CLI反映）
+**最終更新:** 2026-04-10（v2.1.98・Advisor Tool・Claude Cowork GA反映）
 
 Claude Codeは、コードベースの読み取り・ファイル編集・コマンド実行・開発ツール統合を行うAIコーディングアシスタント。ターミナル、IDE、デスクトップアプリ、ブラウザで利用可能。
 
@@ -15,7 +15,7 @@ Claude Codeは、コードベースの読み取り・ファイル編集・コマ
 | **Terminal CLI** | ファイル編集、コマンド実行、プロジェクト管理をコマンドラインから直接操作 |
 | **VS Code** | インライン差分表示、@メンション、プラン確認、会話履歴をエディタ内で |
 | **JetBrains** | IntelliJ、PyCharm、WebStorm等のプラグイン。差分表示とコンテキスト共有 |
-| **Desktop App** | スタンドアロンアプリ。差分の視覚的確認、複数セッション並行、スケジュール実行 |
+| **Desktop App (Cowork)** | スタンドアロンアプリ。差分の視覚的確認、複数セッション並行、スケジュール実行。✅ GA（全有料プラン）。エンタープライズ機能: RBAC、グループ支出制限、利用分析、OpenTelemetry拡張、Zoom MCPコネクタ、ツール単位コネクタ制御（4月9日GA化） |
 | **Web** | ブラウザで利用（claude.ai/code）。ローカルセットアップ不要。長時間タスクの実行に最適 |
 | **iOS App** | iPhoneからタスク送信・モニタリング |
 
@@ -198,6 +198,17 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - `--resume` がリポジトリのworktree間で直接動作するように改善（v2.1.94）
 - CJK/マルチバイトテキストがstream-jsonでUTF-8分割時にU+FFFDに破損する問題を修正（v2.1.94）
 - Bedrock 403認証リグレッション修正: `AWS_BEARER_TOKEN_BEDROCK`/`CLAUDE_CODE_SKIP_BEDROCK_AUTH` 使用時の認証失敗を修正（v2.1.96）
+- Google Vertex AIインタラクティブセットアップウィザード: ログイン画面からGCP認証・リージョン設定・モデルピンニングを対話的に設定（v2.1.98）
+- `CLAUDE_CODE_PERFORCE_MODE`: 読み取り専用ファイルへのEdit/Write/NotebookEditを失敗させ`p4 edit`ヒントを表示（v2.1.98）
+- Monitorツール: バックグラウンドスクリプトからのイベントストリーミング対応（v2.1.98）
+- サブプロセスPID名前空間サンドボックス: Linux環境で`CLAUDE_CODE_SUBPROCESS_ENV_SCRUB`設定時に適用（v2.1.98）
+- `CLAUDE_CODE_SCRIPT_CAPS`: セッション単位のスクリプト呼び出し回数制限（v2.1.98）
+- `--exclude-dynamic-system-prompt-sections`: printモードでクロスユーザープロンプトキャッシュ改善（v2.1.98）
+- LSP `clientInfo`: language serverへの自己識別情報送信（v2.1.98）
+- `/agents` タブレイアウト: Running/Libraryの2タブ構成に改善（v2.1.98）
+- `/reload-plugins` がプラグイン提供スキルを再起動なしで取得可能に（v2.1.98）
+- Vim mode: `j`/`k`がNORMALモードで履歴ナビゲーション対応（v2.1.98）
+- フックエラー表示にstderrの最初の行を含め自己診断可能に（v2.1.98）
 - Focus View トグル（`Ctrl+O`）: `NO_FLICKER`モードでプロンプト・1行ツールサマリー・最終レスポンスのみ表示（v2.1.97）
 - `refreshInterval` ステータスライン設定: N秒ごとにステータスラインコマンドを再実行（v2.1.97）
 - `workspace.git_worktree`: ステータスラインJSON入力にworktree情報を追加（v2.1.97）
@@ -239,6 +250,7 @@ claude -p --json-schema '{"type":"object",...}' "query"
 | `--mcp-config` | MCP設定ファイル指定 |
 | `--json-schema` | 構造化JSON出力 |
 | `--enable-auto-mode` | Auto Mode を有効化（Shift+Tab でサイクル切替） |
+| `--exclude-dynamic-system-prompt-sections` | printモードでクロスユーザープロンプトキャッシュ改善（v2.1.98） |
 
 ---
 
@@ -351,6 +363,13 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - **早期採用**: Notion、Rakuten、Asana、Vibecode、Sentry
 - **情報源**: [公式ドキュメント](https://platform.claude.com/docs/en/managed-agents/overview) / [Engineering Blog](https://www.anthropic.com/engineering/managed-agents)
 
+## Advisor Tool（API） 🧪
+- **リリース状態**: 🧪 パブリックベータ
+- **発表日**: 2026年4月9日
+- **ベータヘッダー**: `advisor-tool-2026-03-01`
+- **概要**: 高速なエグゼキューターモデル（Sonnet/Haiku）にアドバイザーモデル（Opus等）を組み合わせるAPIツール。長期的なエージェントワークロードでアドバイザー単体に近い品質を、エグゼキューターモデルのレートで実現
+- **情報源**: [Claude Platform Release Notes](https://platform.claude.com/docs/en/release-notes/overview) / [Advisor Tool Docs](https://platform.claude.com/docs/en/agents-and-tools/tool-use/advisor-tool)
+
 ## `ant` CLI 🧪
 - **リリース状態**: 🧪 パブリックベータ
 - **発表日**: 2026年4月8日
@@ -358,6 +377,14 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - **情報源**: [公式ドキュメント](https://platform.claude.com/docs/en/api/sdks/cli)
 
 ---
+
+## セキュリティ修正（v2.1.98）
+
+- Bashツールバックスラッシュフラグバイパス: バックスラッシュエスケープされたフラグが読み取り専用として自動許可→任意コード実行の脆弱性を修正
+- 複合Bashコマンドがauto/bypass-permissionsモードで安全チェック・明示的askルールをバイパスする問題を修正
+- env-varプレフィックス付き読み取り専用コマンドが既知安全変数以外でもプロンプトなしで実行される問題を修正
+- `/dev/tcp/...`・`/dev/udp/...`へのリダイレクトが自動許可される問題を修正
+- `grep -f FILE`/`rg -f FILE`で作業ディレクトリ外パターンファイル読み取り時にプロンプト未表示の問題を修正
 
 ## セキュリティインシデント
 
@@ -453,6 +480,7 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 ## 更新履歴
 
+- 2026-04-10: v2.1.98反映。Vertex AIセットアップウィザード、Perforceモード、Monitorツール、PIDサンドボックス、セキュリティ修正5件、バグ修正30件超。Advisor Toolパブリックベータ開始。Claude Cowork GA化（研究プレビュー→全有料プラン一般提供、エンタープライズ機能追加）（[調査レポート](reports/2026-04-10_v2.1.98-advisor-tool-and-cowork-ga.md)）
 - 2026-04-09: v2.1.96-97反映。Focus View（Ctrl+O）、refreshIntervalステータスライン、Accept Edits安全コマンド自動承認、MCP HTTP/SSEメモリリーク修正、NO_FLICKER多数修正。Claude Managed Agentsパブリックベータ開始（全APIアカウント）。ant CLIパブリックベータ開始（[調査レポート](reports/2026-04-09_v2.1.96-97-managed-agents-and-ant-cli.md)）
 - 2026-04-08: v2.1.94反映。Bedrock Mantle対応、デフォルト努力レベルhigh化、UserPromptSubmitフック拡張。Claude Mythos Previewが❓→🔬に昇格（Project Glasswing正式発表）。Claude in Bedrock Messages API研究プレビュー。Google/Broadcom TPUパートナーシップ。Claude.ai大規模障害（4月6-7日）（[調査レポート](reports/2026-04-08_v2.1.94-mythos-preview-and-glasswing.md)）
 - 2026-04-07: ニュースモード調査。Microsoft 365コネクタ全プラン展開（Free含む）追加、deny-ruleバイパス脆弱性CC-643の詳細追加（[調査レポート](reports/2026-04-07_m365-expansion-and-deny-rule-vulnerability.md)）
