@@ -1,6 +1,6 @@
 # Claude Code 現行機能一覧
 
-**最終更新:** 2026-04-10（v2.1.98・Advisor Tool・Claude Cowork GA反映）
+**最終更新:** 2026-04-11（v2.1.101・CoreWeave提携反映）
 
 Claude Codeは、コードベースの読み取り・ファイル編集・コマンド実行・開発ツール統合を行うAIコーディングアシスタント。ターミナル、IDE、デスクトップアプリ、ブラウザで利用可能。
 
@@ -203,6 +203,9 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - Monitorツール: バックグラウンドスクリプトからのイベントストリーミング対応（v2.1.98）
 - サブプロセスPID名前空間サンドボックス: Linux環境で`CLAUDE_CODE_SUBPROCESS_ENV_SCRUB`設定時に適用（v2.1.98）
 - `CLAUDE_CODE_SCRIPT_CAPS`: セッション単位のスクリプト呼び出し回数制限（v2.1.98）
+- `CLAUDE_CODE_CERT_STORE=bundled`: デフォルトでOSの認証局証明書ストアを信頼するようになったため、バンドルCA限定に戻すオプション（v2.1.101）
+- `/team-onboarding`: ローカルのClaude Code使用履歴からチームメイト向けオンボーディングガイドを自動生成（v2.1.101）
+- `/ultraplan`等のリモートセッション機能がデフォルトクラウド環境を自動作成（Web事前セットアップ不要）（v2.1.101）
 - `--exclude-dynamic-system-prompt-sections`: printモードでクロスユーザープロンプトキャッシュ改善（v2.1.98）
 - LSP `clientInfo`: language serverへの自己識別情報送信（v2.1.98）
 - `/agents` タブレイアウト: Running/Libraryの2タブ構成に改善（v2.1.98）
@@ -287,6 +290,7 @@ claude -p --json-schema '{"type":"object",...}' "query"
 | `/desktop` | Desktop Appで続行 |
 | `/export` | 会話エクスポート |
 | `/release-notes` | インタラクティブバージョンピッカーでリリースノート閲覧（v2.1.92） |
+| `/team-onboarding` | チームメイト向けオンボーディングガイド自動生成（v2.1.101） |
 | `/powerup` | アニメーションデモ付きインタラクティブレッスン（v2.1.90） |
 | `/buddy` | ターミナルペット。18種族のクリーチャーを孵化（April Fools 2026、v2.1.89） |
 
@@ -378,8 +382,13 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 ---
 
-## セキュリティ修正（v2.1.98）
+## セキュリティ修正
 
+### v2.1.101（2026年4月10日）
+- POSIX `which`コマンドインジェクション: LSPバイナリ検出のフォールバックにおけるコマンドインジェクション脆弱性を修正
+- `permissions.deny`ルールバイパス: PreToolUseフックの`permissionDecision: "ask"`がdenyルールをプロンプトにダウングレードできる問題を修正
+
+### v2.1.98（2026年4月9日）
 - Bashツールバックスラッシュフラグバイパス: バックスラッシュエスケープされたフラグが読み取り専用として自動許可→任意コード実行の脆弱性を修正
 - 複合Bashコマンドがauto/bypass-permissionsモードで安全チェック・明示的askルールをバイパスする問題を修正
 - env-varプレフィックス付き読み取り専用コマンドが既知安全変数以外でもプロンプトなしで実行される問題を修正
@@ -413,6 +422,12 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - ログイン、音声モード、標準チャットに影響
 - 4月7日 14:32 UTCに復旧。4月8日時点で正常稼働
 - **情報源**: [TechRadar](https://www.techradar.com/news/live/claude-anthropic-down-outage-april-6-2026) / [IBTimes](https://www.ibtimes.com.au/claude-ai-down-again-claude-ai-down-again-anthropic-faces-fresh-outage-frustrating-users-april-1865701)
+
+### CoreWeave-Anthropic 複数年GPUクラウド契約（2026年4月10日）
+- AnthropicがCoreWeaveのGPUクラウドインフラを複数年契約で利用。Claude AIモデルの本番推論ワークロードに活用
+- Nvidia GPU（具体的アーキテクチャ非公開）、段階的インフラ展開と拡張オプション付き
+- CoreWeaveのプラットフォームに主要AIモデルプロバイダー10社中9社が参加
+- **情報源**: [CNBC](https://www.cnbc.com/2026/04/10/coreweave-anthropic-claude-ai-deal.html) / [Bloomberg](https://www.bloomberg.com/news/articles/2026-04-10/anthropic-agrees-to-rent-coreweave-ai-capacity-to-power-claude)
 
 ### Google/Broadcom 次世代TPUパートナーシップ（2026年4月6日）
 - Anthropicが Google・Broadcom と次世代TPU数ギガワット規模の容量契約を締結（2027年稼働開始予定）
@@ -453,6 +468,12 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 確度凡例: 📢 発表のみ（公式アナウンス済み・未提供） / ❓ 噂・未確認（リーク・メディア報道のみ）
 
+### Anthropicカスタムチップ設計 ❓
+- **確度**: ❓ 噂・未確認（メディア報道のみ、公式発表なし）
+- **情報源**: [TechBriefly](https://techbriefly.com/2026/04/10/anthropic-explores-custom-ai-chip-design-to-power-claude-models/)
+- **概要**: Anthropicが高度なAIシステムに必要なチップ不足に対応するため、独自AIチップの設計を検討中。3名の関係者情報に基づく報道。Meta、OpenAI、Googleと同様のパターン
+- **最終確認日**: 2026-04-11
+
 ### Claude Mythos Preview（コードネーム "Capybara"） 🔬
 - **確度**: 🔬 研究プレビュー（招待制・防御的サイバーセキュリティ用途限定）
 - **発表日**: 2026年4月7日（[Project Glasswing](https://www.anthropic.com/glasswing)）
@@ -480,6 +501,7 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 ## 更新履歴
 
+- 2026-04-11: v2.1.100-101反映。`/team-onboarding`コマンド、OS CA証明書ストアデフォルト信頼、`/ultraplan`自動クラウド環境作成、コマンドインジェクション脆弱性修正、メモリリーク修正、deny権限バイパス修正、30件超のバグ修正。CoreWeave-Anthropic複数年GPUクラウド契約。Anthropicカスタムチップ設計検討（噂）（[調査レポート](reports/2026-04-11_v2.1.100-101-and-coreweave-deal.md)）
 - 2026-04-10: v2.1.98反映。Vertex AIセットアップウィザード、Perforceモード、Monitorツール、PIDサンドボックス、セキュリティ修正5件、バグ修正30件超。Advisor Toolパブリックベータ開始。Claude Cowork GA化（研究プレビュー→全有料プラン一般提供、エンタープライズ機能追加）（[調査レポート](reports/2026-04-10_v2.1.98-advisor-tool-and-cowork-ga.md)）
 - 2026-04-09: v2.1.96-97反映。Focus View（Ctrl+O）、refreshIntervalステータスライン、Accept Edits安全コマンド自動承認、MCP HTTP/SSEメモリリーク修正、NO_FLICKER多数修正。Claude Managed Agentsパブリックベータ開始（全APIアカウント）。ant CLIパブリックベータ開始（[調査レポート](reports/2026-04-09_v2.1.96-97-managed-agents-and-ant-cli.md)）
 - 2026-04-08: v2.1.94反映。Bedrock Mantle対応、デフォルト努力レベルhigh化、UserPromptSubmitフック拡張。Claude Mythos Previewが❓→🔬に昇格（Project Glasswing正式発表）。Claude in Bedrock Messages API研究プレビュー。Google/Broadcom TPUパートナーシップ。Claude.ai大規模障害（4月6-7日）（[調査レポート](reports/2026-04-08_v2.1.94-mythos-preview-and-glasswing.md)）
