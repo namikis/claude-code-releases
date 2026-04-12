@@ -1,6 +1,7 @@
 - [現行機能一覧](CURRENT_FEATURES.md)
 - [実行履歴](HISTORY.md)
 - **調査レポート**
+  - [2026-04-12 キリスト教サミット・Managed Agents価格](reports/2026-04-12_christian-summit-and-managed-agents-pricing.md)
   - [2026-04-11 v2.1.100-101・CoreWeave提携](reports/2026-04-11_v2.1.100-101-and-coreweave-deal.md)
   - [2026-04-10 v2.1.98・Advisor Tool・Cowork GA](reports/2026-04-10_v2.1.98-advisor-tool-and-cowork-ga.md)
   - [2026-04-09 v2.1.96-97・Managed Agents・ant CLI](reports/2026-04-09_v2.1.96-97-managed-agents-and-ant-cli.md)

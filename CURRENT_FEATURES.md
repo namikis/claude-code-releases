@@ -1,6 +1,6 @@
 # Claude Code 現行機能一覧
 
-**最終更新:** 2026-04-11（v2.1.101・CoreWeave提携反映）
+**最終更新:** 2026-04-12（キリスト教指導者サミット・Managed Agents価格詳細反映）
 
 Claude Codeは、コードベースの読み取り・ファイル編集・コマンド実行・開発ツール統合を行うAIコーディングアシスタント。ターミナル、IDE、デスクトップアプリ、ブラウザで利用可能。
 
@@ -363,6 +363,8 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - **組み込みツール**: Bash、File operations（Read/Write/Edit/Glob/Grep）、Web search/fetch、MCP servers
 - **研究プレビュー機能**: Outcomes、Multi-agent、Memory（要アクセス申請）
 - **アーキテクチャ**: Brain/Hands/Session分離設計。p50 TTFT約60%削減、p95で90%超改善
+- **価格（ベータ）**: 入力 $3-5/Mトークン、出力 $15-25/Mトークン（Sonnet/Opus）、アクティブランタイム $0.08/時間
+- **Credential Vault**: OAuth認証でサードパーティサービスに安全接続（ClickUp、Slack、Notion対応）
 - **レート制限**: 作成系60 req/min、読み取り系600 req/min
 - **早期採用**: Notion、Rakuten、Asana、Vibecode、Sentry
 - **情報源**: [公式ドキュメント](https://platform.claude.com/docs/en/managed-agents/overview) / [Engineering Blog](https://www.anthropic.com/engineering/managed-agents)
@@ -428,6 +430,12 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - Nvidia GPU（具体的アーキテクチャ非公開）、段階的インフラ展開と拡張オプション付き
 - CoreWeaveのプラットフォームに主要AIモデルプロバイダー10社中9社が参加
 - **情報源**: [CNBC](https://www.cnbc.com/2026/04/10/coreweave-anthropic-claude-ai-deal.html) / [Bloomberg](https://www.bloomberg.com/news/articles/2026-04-10/anthropic-agrees-to-rent-coreweave-ai-capacity-to-power-claude)
+
+### キリスト教指導者サミット（2026年4月11日報道）
+- Anthropicが本社（サンフランシスコ）に15名の著名なキリスト教思想家を招き、Claudeの道徳的形成・倫理に関する2日間の会合を開催
+- 議題: Claudeの「精神的発達」、「Claudeは神の子か」という問い、AI倫理の宗教的視点
+- DoDブラックリスト指定や軍事利用拒否ポリシーの文脈での取り組み。他宗教グループからも助言を求める計画
+- **情報源**: [Washington Post](https://www.washingtonpost.com/technology/2026/04/11/anthropic-christians-claude-morals/) / [Gizmodo](https://gizmodo.com/how-do-we-make-sure-that-claude-behaves-itself-anthropic-invited-15-christians-for-a-summit-2000743766)
 
 ### Google/Broadcom 次世代TPUパートナーシップ（2026年4月6日）
 - Anthropicが Google・Broadcom と次世代TPU数ギガワット規模の容量契約を締結（2027年稼働開始予定）
@@ -501,6 +509,7 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 ## 更新履歴
 
+- 2026-04-12: ニュースモード調査。キリスト教指導者サミット（AI倫理・道徳的枠組み、4月11日報道）追加。Managed Agents価格情報詳細化（ベータ価格体系、Credential Vault/OAuth対応）（[調査レポート](reports/2026-04-12_christian-summit-and-managed-agents-pricing.md)）
 - 2026-04-11: v2.1.100-101反映。`/team-onboarding`コマンド、OS CA証明書ストアデフォルト信頼、`/ultraplan`自動クラウド環境作成、コマンドインジェクション脆弱性修正、メモリリーク修正、deny権限バイパス修正、30件超のバグ修正。CoreWeave-Anthropic複数年GPUクラウド契約。Anthropicカスタムチップ設計検討（噂）（[調査レポート](reports/2026-04-11_v2.1.100-101-and-coreweave-deal.md)）
 - 2026-04-10: v2.1.98反映。Vertex AIセットアップウィザード、Perforceモード、Monitorツール、PIDサンドボックス、セキュリティ修正5件、バグ修正30件超。Advisor Toolパブリックベータ開始。Claude Cowork GA化（研究プレビュー→全有料プラン一般提供、エンタープライズ機能追加）（[調査レポート](reports/2026-04-10_v2.1.98-advisor-tool-and-cowork-ga.md)）
 - 2026-04-09: v2.1.96-97反映。Focus View（Ctrl+O）、refreshIntervalステータスライン、Accept Edits安全コマンド自動承認、MCP HTTP/SSEメモリリーク修正、NO_FLICKER多数修正。Claude Managed Agentsパブリックベータ開始（全APIアカウント）。ant CLIパブリックベータ開始（[調査レポート](reports/2026-04-09_v2.1.96-97-managed-agents-and-ant-cli.md)）
