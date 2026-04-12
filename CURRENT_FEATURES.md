@@ -1,6 +1,6 @@
 # Claude Code 現行機能一覧
 
-**最終更新:** 2026-04-12（Managed Agents深掘り調査反映）
+**最終更新:** 2026-04-13（Mythos規制当局対応・IPO噂追加）
 
 Claude Codeは、コードベースの読み取り・ファイル編集・コマンド実行・開発ツール統合を行うAIコーディングアシスタント。ターミナル、IDE、デスクトップアプリ、ブラウザで利用可能。
 
@@ -482,6 +482,12 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 確度凡例: 📢 発表のみ（公式アナウンス済み・未提供） / ❓ 噂・未確認（リーク・メディア報道のみ）
 
+### Anthropic IPO計画 ❓
+- **確度**: ❓ 噂・未確認（金融分析サイトの投機的報道のみ）
+- **情報源**: [TradingKey](https://www.tradingkey.com/analysis/stocks/us-stocks/261773210-ai-anthropic-claude-mythos-ipo-tradingkey)
+- **概要**: 2026年10月にIPO予定、目標評価額$380B（3,800億ドル）。Mythosリリース遅延がIPOプロセスに影響する可能性あり。安全性重視の姿勢が機関投資家にアピールする一方、API収益予測下方修正・規制強化リスクも指摘
+- **最終確認日**: 2026-04-13
+
 ### Anthropicカスタムチップ設計 ❓
 - **確度**: ❓ 噂・未確認（メディア報道のみ、公式発表なし）
 - **情報源**: [TechBriefly](https://techbriefly.com/2026/04/10/anthropic-explores-custom-ai-chip-design-to-power-claude-models/)
@@ -496,11 +502,12 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - 全主要OS・ブラウザで数千のゼロデイ脆弱性を発見（27年間未検出のOpenBSDバグ、16年間未検出のFFmpegバグ等）
 - **Project Glasswing**: 12の創設パートナー（AWS、Apple、Broadcom、Cisco、CrowdStrike、Google、JPMorganChase、Linux Foundation、Microsoft、NVIDIA、Palo Alto Networks）＋40以上の重要インフラ管理組織
 - **一般公開は予定されていない**: デュアルユースの懸念。自身のセーフガードを突破する能力を持つ。Anthropicが政府に大規模サイバー攻撃リスクを警告
+- **規制当局の緊急対応**（4月12日報道）: 米FRB・財務省、英イングランド銀行、カナダ銀行が緊急会合を実施。グローバル金融・医療・エネルギーインフラへのサイバー攻撃リスクを協議
 - **価格（研究プレビュー終了後）**: 入力 $25/M tokens、出力 $125/M tokens
 - $100Mのモデル使用クレジットを参加組織に提供。OSS基金に$4M寄付
 - **経緯**: 2026年3月26日にCMS設定ミスで存在が判明（❓噂）→ 4月7日にProject Glasswingとして正式発表（🔬研究プレビュー）
 - **情報源**: [Anthropic公式](https://www.anthropic.com/glasswing) / [Fortune](https://fortune.com/2026/04/07/anthropic-claude-mythos-model-project-glasswing-cybersecurity/) / [TechCrunch](https://techcrunch.com/2026/04/07/anthropic-mythos-ai-model-preview-security/) / [CNBC](https://www.cnbc.com/2026/04/07/anthropic-claude-mythos-ai-hackers-cyberattacks.html)
-- **最終確認日**: 2026-04-08
+- **最終確認日**: 2026-04-13
 
 ---
 
@@ -515,6 +522,7 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 ## 更新履歴
 
+- 2026-04-13: ニュースモード調査。Mythos規制当局緊急対応（FRB・財務省・英国銀行・カナダ銀行）追加。Anthropic IPO計画（❓噂: 2026年10月、$380B評価額）追加（[調査レポート](reports/2026-04-13_mythos-regulatory-response-and-ipo-rumor.md)）
 - 2026-04-12: Managed Agents深掘り調査。コアコンセプト・Agent定義・Environment設定・Session管理・Events&ストリーミング・組み込みツール・カスタムツール・Skills・MCPコネクタ・Credential Vault・アーキテクチャ・研究プレビュー機能（Outcomes/Multi-agent/Memory）を網羅的に記載（[深掘り調査](investigations/2026-04-12_claude-managed-agents.md)）
 - 2026-04-12: ニュースモード調査。キリスト教指導者サミット（AI倫理・道徳的枠組み、4月11日報道）追加。Managed Agents価格情報詳細化（ベータ価格体系、Credential Vault/OAuth対応）（[調査レポート](reports/2026-04-12_christian-summit-and-managed-agents-pricing.md)）
 - 2026-04-11: v2.1.100-101反映。`/team-onboarding`コマンド、OS CA証明書ストアデフォルト信頼、`/ultraplan`自動クラウド環境作成、コマンドインジェクション脆弱性修正、メモリリーク修正、deny権限バイパス修正、30件超のバグ修正。CoreWeave-Anthropic複数年GPUクラウド契約。Anthropicカスタムチップ設計検討（噂）（[調査レポート](reports/2026-04-11_v2.1.100-101-and-coreweave-deal.md)）
