@@ -2,6 +2,10 @@
 
 Claude Codeの機能・アップデートを追跡するドキュメントサイト。
 
+## リポジトリ
+
+**https://github.com/namikis/claude-code-releases**
+
 ## サイト
 
 **https://namikis.github.io/claude-code-releases/**
