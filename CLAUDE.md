@@ -5,10 +5,11 @@ Claude Codeの新機能・アップデートを追跡するドキュメントリ
 ## プロジェクト構成
 
 - `CURRENT_FEATURES.md` — 現行機能一覧（累積ドキュメント）
-- `reports/` — 個別の調査レポート
+- `reports/` — 日次調査レポート
+- `investigations/` — 深掘り調査レポート
 - `index.html`, `_sidebar.md`, `.nojekyll` — docsifyサイト用
 - `.claude/agents/` — 調査エージェント定義
-- `.claude/skills/` — スキル定義（research, agent-creator）
+- `.claude/skills/` — スキル定義（research, agent-creator, deep-dive）
 - `scripts/` — 自動化スクリプト（日次更新ジョブ）
 - `logs/` — 実行ログ（gitignore対象）
 - `com.claude-code-releases.daily-update.plist` — macOS launchd ジョブ定義
@@ -19,6 +20,7 @@ Claude Codeの新機能・アップデートを追跡するドキュメントリ
 2. `reports/` にレポートを保存
 3. `CURRENT_FEATURES.md` を更新
 4. `_sidebar.md` にレポートへのリンクを追加
+5. 深掘り調査（`/deep-dive`）で特定トピックを詳細調査 → `investigations/` に保存
 
 ## 応答言語
 
