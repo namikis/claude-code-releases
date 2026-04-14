@@ -1,6 +1,6 @@
 # Claude Code 現行機能一覧
 
-**最終更新:** 2026-04-13（Mythos規制当局対応・IPO噂追加）
+**最終更新:** 2026-04-14（v2.1.105反映・Word Add-in GA・Opus 4.7リーク追加）
 
 Claude Codeは、コードベースの読み取り・ファイル編集・コマンド実行・開発ツール統合を行うAIコーディングアシスタント。ターミナル、IDE、デスクトップアプリ、ブラウザで利用可能。
 
@@ -105,6 +105,7 @@ Claude Codeは、コードベースの読み取り・ファイル編集・コマ
 | `CwdChanged` | カレントディレクトリ変更時 |
 | `FileChanged` | ファイル変更検出時 |
 | `TaskCreated` | タスク作成時 |
+| `PreCompact` | コンパクション開始前。exit code 2または`{"decision":"block"}`でブロック可能（v2.1.105） |
 | `PostCompact` | コンパクション完了後 |
 | `StopFailure` | APIエラーによるターン終了時 |
 | `WorktreeCreate` / `WorktreeRemove` | Worktree作成/削除時 |
@@ -124,6 +125,7 @@ Claude Codeは、コードベースの読み取り・ファイル編集・コマ
 - スキル、エージェント、MCPサーバーをパッケージ化して配布
 - `claude plugin install` でマーケットプレイスからインストール
 - プラグイン提供のMCPサーバー・エージェント・スキルが自動的に利用可能に
+- バックグラウンドモニター: manifest の `monitors` キーでセッション開始時またはスキル呼び出し時に自動起動するモニターを定義可能（v2.1.105）
 
 ### Chrome拡張 🧪
 - `--chrome` フラグでブラウザ自動化・Webテスト・ライブデバッグが可能
@@ -203,6 +205,16 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - Monitorツール: バックグラウンドスクリプトからのイベントストリーミング対応（v2.1.98）
 - サブプロセスPID名前空間サンドボックス: Linux環境で`CLAUDE_CODE_SUBPROCESS_ENV_SCRUB`設定時に適用（v2.1.98）
 - `CLAUDE_CODE_SCRIPT_CAPS`: セッション単位のスクリプト呼び出し回数制限（v2.1.98）
+- EnterWorktreeツールに`path`パラメータ追加: 既存worktreeへの切り替えが可能に（v2.1.105）
+- `/proactive`が`/loop`のエイリアスに（v2.1.105）
+- APIストリーム5分タイムアウト: データなし5分でストリーム中断→非ストリーミングリトライ（v2.1.105）
+- ネットワークエラー即時リトライメッセージ: サイレントスピナーではなく即座に表示（v2.1.105）
+- ファイル書き込み表示切り詰め: minified JSON等の長い単一行をUI上で切り詰め（v2.1.105）
+- `/doctor`自動修正: ステータスアイコン表示、`f`キーでClaude自動修正（v2.1.105）
+- スキル説明文キャップ250→1,536文字に拡大（v2.1.105）
+- WebFetch `<style>`/`<script>`除去: CSSヘビーページのコンテンツバジェット消費問題を解消（v2.1.105）
+- squash-mergeされたPRのworktreeも自動クリーンアップ（v2.1.105）
+- MCP大出力切り詰めプロンプト改善: フォーマット固有レシピ（`jq`等）を提示（v2.1.105）
 - `CLAUDE_CODE_CERT_STORE=bundled`: デフォルトでOSの認証局証明書ストアを信頼するようになったため、バンドルCA限定に戻すオプション（v2.1.101）
 - `/team-onboarding`: ローカルのClaude Code使用履歴からチームメイト向けオンボーディングガイドを自動生成（v2.1.101）
 - `/ultraplan`等のリモートセッション機能がデフォルトクラウド環境を自動作成（Web事前セットアップ不要）（v2.1.101）
@@ -279,7 +291,7 @@ claude -p --json-schema '{"type":"object",...}' "query"
 | `/remote-control` | Remote Control有効化 |
 | `/schedule` | スケジュールタスク管理 |
 | `/batch` | 大規模並列変更 |
-| `/loop` | 定期実行 |
+| `/loop` | 定期実行（`/proactive`はエイリアス、v2.1.105） |
 | `/simplify` | コード品質レビュー・修正 |
 | `/rewind` | チェックポイントへ巻き戻し |
 | `/stats` | 使用統計の可視化 |
@@ -341,6 +353,15 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - **初出**: 2025年10月（Team/Enterprise限定）→ 2026年4月6日に全プラン展開
 - **制限**: M365ビジネスアカウントのみ。組織管理者がMicrosoft Entra経由で事前有効化必要
 - **情報源**: [Claude Help Center](https://support.claude.com/en/articles/12542951-enable-and-use-the-microsoft-365-connector) / [UC Today](https://www.uctoday.com/productivity-automation/anthropic-expands-claude-microsoft-365-integration-for-all-user-plans/)
+
+## Microsoft Office Add-ins ✅
+- **リリース状態**: ✅ GA（Pro / Max / Team / Enterprise）
+- **対象プラットフォーム**: Windows / Mac / Web版Office
+- **概要**: Word・Excel・PowerPointのネイティブAdd-inとしてClaude統合。Microsoft AppSourceマーケットプレイスから入手可能
+- **Word Add-in**（2026年4月13日GA）: 長文レビュー、コメントスレッド処理、修正赤線表示、セクション作成、条項編集。書式・スタイル・番号付け保持
+- **クロスアプリ共有コンテキスト**: Word・Excel・PowerPoint間で会話とデータの文脈を維持
+- **インフラ接続**: Amazon Bedrock、Google Vertex AI、Microsoft Foundry経由も可能
+- **情報源**: [OpenPR](https://www.openpr.com/news/4468672/anthropic-rolls-out-claude-for-word-add-in-now-full-microsoft)
 
 ## Slack連携
 - `@Claude` メンションでバグレポート→PR作成のルーティング
@@ -488,6 +509,18 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - **概要**: 2026年10月にIPO予定、目標評価額$380B（3,800億ドル）。Mythosリリース遅延がIPOプロセスに影響する可能性あり。安全性重視の姿勢が機関投資家にアピールする一方、API収益予測下方修正・規制強化リスクも指摘
 - **最終確認日**: 2026-04-13
 
+### Claude Opus 4.7 ❓
+- **確度**: ❓ 噂・未確認（「World of AI」報道→Geeky Gadgets転載。公式発表なし）
+- **情報源**: [Geeky Gadgets](https://www.geeky-gadgets.com/claude-opus-4-7-leak-anthropic-updates/)
+- **概要**: AnthropicがClaude Opus 4.7をリリース準備中との報道。内部API参照が発見されたとの情報。Opus 4.6のパフォーマンスが「意図的にスケールバック」されたとの憶測あり。具体的な能力・発表時期は不明
+- **最終確認日**: 2026-04-14
+
+### Anthropic Full-Stack AI Studio ❓
+- **確度**: ❓ 噂・未確認（同上記事内での言及。公式発表なし）
+- **情報源**: [Geeky Gadgets](https://www.geeky-gadgets.com/claude-opus-4-7-leak-anthropic-updates/)
+- **概要**: Google AI Studioに類似するフルスタックアプリ作成プラットフォームをAnthropicが開発中との報道。詳細は限定的
+- **最終確認日**: 2026-04-14
+
 ### Anthropicカスタムチップ設計 ❓
 - **確度**: ❓ 噂・未確認（メディア報道のみ、公式発表なし）
 - **情報源**: [TechBriefly](https://techbriefly.com/2026/04/10/anthropic-explores-custom-ai-chip-design-to-power-claude-models/)
@@ -503,6 +536,7 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - **Project Glasswing**: 12の創設パートナー（AWS、Apple、Broadcom、Cisco、CrowdStrike、Google、JPMorganChase、Linux Foundation、Microsoft、NVIDIA、Palo Alto Networks）＋40以上の重要インフラ管理組織
 - **一般公開は予定されていない**: デュアルユースの懸念。自身のセーフガードを突破する能力を持つ。Anthropicが政府に大規模サイバー攻撃リスクを警告
 - **規制当局の緊急対応**（4月12日報道）: 米FRB・財務省、英イングランド銀行、カナダ銀行が緊急会合を実施。グローバル金融・医療・エネルギーインフラへのサイバー攻撃リスクを協議
+- **英国AI安全性研究所評価**（4月14日公開）: エキスパートCTFで73%成功率。32ステップ企業ネットワークシミュレーション「The Last Ones」を完走した最初のAI（10回中3回成功、平均22/32ステップ。Opus 4.6は平均16ステップ）。1回の評価で最大1億トークン使用
 - **価格（研究プレビュー終了後）**: 入力 $25/M tokens、出力 $125/M tokens
 - $100Mのモデル使用クレジットを参加組織に提供。OSS基金に$4M寄付
 - **経緯**: 2026年3月26日にCMS設定ミスで存在が判明（❓噂）→ 4月7日にProject Glasswingとして正式発表（🔬研究プレビュー）
@@ -522,6 +556,7 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 ## 更新履歴
 
+- 2026-04-14: v2.1.105反映。PreCompactフックブロッキング対応、プラグインバックグラウンドモニター、EnterWorktree既存worktreeサポート、`/proactive`→`/loop`エイリアス、APIストリーム5分タイムアウト、スキル説明文キャップ拡大（250→1536文字）、WebFetchスタイル/スクリプト除去、20件超のバグ修正。Microsoft Office Word Add-in GA（Office三大アプリ完全統合）。英国AI安全性研究所Mythos評価（CTF 73%、TLO完走初AI）。Claude Opus 4.7リーク（❓噂）。Full-Stack AI Studio（❓噂）（[調査レポート](reports/2026-04-14_v2.1.105-word-addin-and-opus-4.7-leak.md)）
 - 2026-04-13: ニュースモード調査。Mythos規制当局緊急対応（FRB・財務省・英国銀行・カナダ銀行）追加。Anthropic IPO計画（❓噂: 2026年10月、$380B評価額）追加（[調査レポート](reports/2026-04-13_mythos-regulatory-response-and-ipo-rumor.md)）
 - 2026-04-12: Managed Agents深掘り調査。コアコンセプト・Agent定義・Environment設定・Session管理・Events&ストリーミング・組み込みツール・カスタムツール・Skills・MCPコネクタ・Credential Vault・アーキテクチャ・研究プレビュー機能（Outcomes/Multi-agent/Memory）を網羅的に記載（[深掘り調査](investigations/2026-04-12_claude-managed-agents.md)）
 - 2026-04-12: ニュースモード調査。キリスト教指導者サミット（AI倫理・道徳的枠組み、4月11日報道）追加。Managed Agents価格情報詳細化（ベータ価格体系、Credential Vault/OAuth対応）（[調査レポート](reports/2026-04-12_christian-summit-and-managed-agents-pricing.md)）

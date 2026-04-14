@@ -1,6 +1,7 @@
 - [現行機能一覧](CURRENT_FEATURES.md)
 - [実行履歴](HISTORY.md)
 - **調査レポート**
+  - [2026-04-14 v2.1.105・Word Add-in GA・Opus 4.7リーク](reports/2026-04-14_v2.1.105-word-addin-and-opus-4.7-leak.md)
   - [2026-04-13 Mythos規制当局対応・IPO噂](reports/2026-04-13_mythos-regulatory-response-and-ipo-rumor.md)
   - [2026-04-12 キリスト教サミット・Managed Agents価格](reports/2026-04-12_christian-summit-and-managed-agents-pricing.md)
   - [2026-04-11 v2.1.100-101・CoreWeave提携](reports/2026-04-11_v2.1.100-101-and-coreweave-deal.md)
