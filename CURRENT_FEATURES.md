@@ -1,6 +1,6 @@
 # Claude Code 現行機能一覧
 
-**最終更新:** 2026-04-14（Claude for Office深掘り調査反映・Office Add-ins詳細化）
+**最終更新:** 2026-04-15（v2.1.107-108反映・Routines研究プレビュー・デスクトップ再設計・Sonnet 4/Opus 4廃止予告）
 
 Claude Codeは、コードベースの読み取り・ファイル編集・コマンド実行・開発ツール統合を行うAIコーディングアシスタント。ターミナル、IDE、デスクトップアプリ、ブラウザで利用可能。
 
@@ -15,7 +15,7 @@ Claude Codeは、コードベースの読み取り・ファイル編集・コマ
 | **Terminal CLI** | ファイル編集、コマンド実行、プロジェクト管理をコマンドラインから直接操作 |
 | **VS Code** | インライン差分表示、@メンション、プラン確認、会話履歴をエディタ内で |
 | **JetBrains** | IntelliJ、PyCharm、WebStorm等のプラグイン。差分表示とコンテキスト共有 |
-| **Desktop App (Cowork)** | スタンドアロンアプリ。差分の視覚的確認、複数セッション並行、スケジュール実行。✅ GA（全有料プラン）。エンタープライズ機能: RBAC、グループ支出制限、利用分析、OpenTelemetry拡張、Zoom MCPコネクタ、ツール単位コネクタ制御（4月9日GA化） |
+| **Desktop App (Cowork)** | スタンドアロンアプリ。✅ GA（全有料プラン）。2026年4月14日に全面再設計：統合ターミナル、サイドチャット（`⌘+;`/`Ctrl+;`）、改善Diffビューア、ファイルエディタ、HTML/PDFプレビュー、再配置可能ペイン（Preview/Plan/Diff/Tasks/Terminal/Chat）、複数セッション並行。エンタープライズ: RBAC、グループ支出制限、利用分析、OpenTelemetry拡張、Zoom MCPコネクタ、ツール単位コネクタ制御 |
 | **Web** | ブラウザで利用（claude.ai/code）。ローカルセットアップ不要。長時間タスクの実行に最適 |
 | **iOS App** | iPhoneからタスク送信・モニタリング |
 
@@ -156,7 +156,8 @@ Claude Codeは、コードベースの読み取り・ファイル編集・コマ
 
 | 方法 | 説明 |
 |------|------|
-| **クラウドスケジュール** | Anthropic管理インフラで実行。PCオフでも動作。`/schedule` で作成 |
+| **Routines（ルーティン）** 🔬 | クラウド実行の自動化。スケジュール/API/GitHubイベントトリガー。PCオフでも動作。Pro 5回/日、Max 15回/日、Team/Enterprise 25回/日。claude.ai/code/routines または `/schedule` で管理（v2.1.108〜、2026年4月14日研究プレビュー） |
+| **クラウドスケジュール** | Routinesのスケジュールトリガー。hourly/daily/weekdays/weeklyプリセット + カスタムcron式（最小1時間） |
 | **デスクトップスケジュール** | ローカルマシンで実行。ローカルファイル・ツールに直接アクセス |
 | **`/loop`** | CLIセッション内でプロンプトを定期実行。デプロイ監視やPRポーリングに |
 | **GitHub Actions** | PRレビュー・Issueトリアージを自動化 |
@@ -215,6 +216,16 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - WebFetch `<style>`/`<script>`除去: CSSヘビーページのコンテンツバジェット消費問題を解消（v2.1.105）
 - squash-mergeされたPRのworktreeも自動クリーンアップ（v2.1.105）
 - MCP大出力切り詰めプロンプト改善: フォーマット固有レシピ（`jq`等）を提示（v2.1.105）
+- `ENABLE_PROMPT_CACHING_1H`: 全プラットフォーム（API key / Bedrock / Vertex / Foundry）で1時間プロンプトキャッシュTTLを有効化。`FORCE_PROMPT_CACHING_5M` で5分TTL強制（v2.1.108）
+- Recap機能: セッション復帰時に文脈サマリーを自動提供。`/config` で設定、`/recap` で手動呼び出し。`CLAUDE_CODE_ENABLE_AWAY_SUMMARY` でテレメトリ無効時にも強制有効化（v2.1.108）
+- 組み込みスラッシュコマンド（`/init`、`/review`、`/security-review`）をSkillツール経由でモデルが発見・呼び出し可能に（v2.1.108）
+- `/undo` が `/rewind` のエイリアスに（v2.1.108）
+- `/model` が会話中のモデル切替時に未キャッシュ再読み込みの警告を表示（v2.1.108）
+- `/resume` ピッカーがカレントディレクトリのセッションをデフォルト表示、`Ctrl+A` で全プロジェクト（v2.1.108）
+- エラーメッセージ改善: サーバーレート制限 vs プラン使用制限の区別、5xx/529に status.claude.com リンク、未知コマンドに候補提案（v2.1.108）
+- 言語グラマーをオンデマンドロードしメモリフットプリント削減（v2.1.108）
+- プロンプトキャッシュ無効時の起動警告（v2.1.108）
+- thinking hints を長時間操作中により早く表示（v2.1.107）
 - `CLAUDE_CODE_CERT_STORE=bundled`: デフォルトでOSの認証局証明書ストアを信頼するようになったため、バンドルCA限定に戻すオプション（v2.1.101）
 - `/team-onboarding`: ローカルのClaude Code使用履歴からチームメイト向けオンボーディングガイドを自動生成（v2.1.101）
 - `/ultraplan`等のリモートセッション機能がデフォルトクラウド環境を自動作成（Web事前セットアップ不要）（v2.1.101）
@@ -293,7 +304,8 @@ claude -p --json-schema '{"type":"object",...}' "query"
 | `/batch` | 大規模並列変更 |
 | `/loop` | 定期実行（`/proactive`はエイリアス、v2.1.105） |
 | `/simplify` | コード品質レビュー・修正 |
-| `/rewind` | チェックポイントへ巻き戻し |
+| `/recap` | セッション復帰時の文脈サマリー表示。`/config` で自動有効化設定可能（v2.1.108） |
+| `/rewind` | チェックポイントへ巻き戻し（`/undo` はエイリアス、v2.1.108） |
 | `/stats` | 使用統計の可視化 |
 | `/cost` | モデル別・キャッシュヒット別コスト内訳表示（サブスクリプションユーザー向け、v2.1.92） |
 | `/fast` | Fast Mode切替 |
@@ -556,11 +568,14 @@ claude -p --json-schema '{"type":"object",...}' "query"
 |------------|--------|--------|
 | Claude Haiku 3 (`claude-3-haiku-20240307`) | 2026-04-19 | Claude Haiku 4.5 |
 | Sonnet 4.5/4 の1Mコンテキストベータ (`context-1m-2025-08-07`) | 2026-04-30 | Sonnet 4.6 / Opus 4.6（1M GA） |
+| Claude Sonnet 4 (`claude-sonnet-4-20250514`) | 2026-06-15 | Claude Sonnet 4.6（4月14日廃止予告） |
+| Claude Opus 4 (`claude-opus-4-20250514`) | 2026-06-15 | Claude Opus 4.6（4月14日廃止予告） |
 
 ---
 
 ## 更新履歴
 
+- 2026-04-15: v2.1.107-108反映。`ENABLE_PROMPT_CACHING_1H`環境変数、recap機能、`/undo`エイリアス、Skillツール経由の組み込みコマンド発見、メモリフットプリント削減、14件のバグ修正。**Routines（ルーティン）研究プレビュー開始**（スケジュール/API/GitHubイベント駆動のクラウド自動化）。**デスクトップアプリ全面再設計**（統合ターミナル、サイドチャット、再配置可能ペイン、ファイルプレビュー）。Claude Sonnet 4 / Opus 4の廃止予告（2026年6月15日）（[調査レポート](reports/2026-04-15_v2.1.107-108-routines-and-desktop-redesign.md)）
 - 2026-04-14: Claude for Office深掘り調査。Office Add-insセクションを大幅拡充（各アプリ別機能詳細、プラン別対応表、クロスアプリ共有コンテキスト、Skills、制限事項、プラットフォーム対応状況）（[深掘り調査](investigations/2026-04-14_claude-for-office.md)）
 - 2026-04-14: v2.1.105反映。PreCompactフックブロッキング対応、プラグインバックグラウンドモニター、EnterWorktree既存worktreeサポート、`/proactive`→`/loop`エイリアス、APIストリーム5分タイムアウト、スキル説明文キャップ拡大（250→1536文字）、WebFetchスタイル/スクリプト除去、20件超のバグ修正。Microsoft Office Word Add-in GA（Office三大アプリ完全統合）。英国AI安全性研究所Mythos評価（CTF 73%、TLO完走初AI）。Claude Opus 4.7リーク（❓噂）。Full-Stack AI Studio（❓噂）（[調査レポート](reports/2026-04-14_v2.1.105-word-addin-and-opus-4.7-leak.md)）
 - 2026-04-13: ニュースモード調査。Mythos規制当局緊急対応（FRB・財務省・英国銀行・カナダ銀行）追加。Anthropic IPO計画（❓噂: 2026年10月、$380B評価額）追加（[調査レポート](reports/2026-04-13_mythos-regulatory-response-and-ipo-rumor.md)）
