@@ -1,6 +1,6 @@
 # Claude Code 現行機能一覧
 
-**最終更新:** 2026-04-14（v2.1.105反映・Word Add-in GA・Opus 4.7リーク追加）
+**最終更新:** 2026-04-14（Claude for Office深掘り調査反映・Office Add-ins詳細化）
 
 Claude Codeは、コードベースの読み取り・ファイル編集・コマンド実行・開発ツール統合を行うAIコーディングアシスタント。ターミナル、IDE、デスクトップアプリ、ブラウザで利用可能。
 
@@ -355,13 +355,18 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - **情報源**: [Claude Help Center](https://support.claude.com/en/articles/12542951-enable-and-use-the-microsoft-365-connector) / [UC Today](https://www.uctoday.com/productivity-automation/anthropic-expands-claude-microsoft-365-integration-for-all-user-plans/)
 
 ## Microsoft Office Add-ins ✅
-- **リリース状態**: ✅ GA（Pro / Max / Team / Enterprise）
-- **対象プラットフォーム**: Windows / Mac / Web版Office
-- **概要**: Word・Excel・PowerPointのネイティブAdd-inとしてClaude統合。Microsoft AppSourceマーケットプレイスから入手可能
-- **Word Add-in**（2026年4月13日GA）: 長文レビュー、コメントスレッド処理、修正赤線表示、セクション作成、条項編集。書式・スタイル・番号付け保持
-- **クロスアプリ共有コンテキスト**: Word・Excel・PowerPoint間で会話とデータの文脈を維持
+- **リリース状態**: ✅ GA（Excel・Word）/ 🧪 ベータ（PowerPoint）
+- **対象プラン**: Pro（Excelのみ）/ Max（Excel・PowerPoint）/ Team・Enterprise（全アプリ）
+- **対象プラットフォーム**: Windows / Mac / Web版Office / iPad（Excelのみ）。Android非対応
+- **概要**: Word・Excel・PowerPointのネイティブAdd-inとしてClaude統合。Microsoft AppSourceマーケットプレイスから入手可能。Insert > Get Add-ins で「Claude by Anthropic」を検索してインストール
+- **Word Add-in**（2026年4月13日GA）: 長文レビュー、コメントスレッド処理、Track Changes統合（AIの編集が変更追跡として表示）、セマンティック検索、テンプレート入力。書式・スタイル・番号付け保持。法務向けに契約条件要約・乖離条項特定・修正案分析機能
+- **Excel Add-in**（2026年1月24日〜）: データ分析（セルレベル引用付き）、数式デバッグ（#REF!等）、ピボットテーブル作成・編集、チャート生成、条件付き書式、モデル選択（Sonnet 4.6 / Opus 4.6）。MCPコネクタでS&P Global・LSEG・Daloopa・Pitchbook・Moody's・FactSet連携。マクロ・VBA非対応
+- **PowerPoint Add-in**（2026年2月〜）: テンプレート認識（レイアウト・フォント・色・マスター自動読み取り）、自然言語からデッキ構造生成、箇条書き→チャート変換、コネクタ機能
+- **クロスアプリ共有コンテキスト**（2026年3月〜）: Word・Excel・PowerPoint間で会話とデータの文脈を維持。設定で「Let Claude work across files」をオン。操作対象は現在開いているファイルのみ
+- **Skills**: チーム内で再利用可能なワークフロー。LBOモデリング・DCF分析・コンパラブル分析等のプリロード済みスキルあり。`/`コマンドで呼び出し
 - **インフラ接続**: Amazon Bedrock、Google Vertex AI、Microsoft Foundry経由も可能
-- **情報源**: [OpenPR](https://www.openpr.com/news/4468672/anthropic-rolls-out-claude-for-word-add-in-now-full-microsoft)
+- **制限事項**: チャット履歴はセッション間で非保存。データは30日以内に自動削除。外部信頼できないファイルはプロンプトインジェクションリスクあり
+- **情報源**: [Claude Help Center](https://support.claude.com/en/articles/14465370-use-claude-for-word) / [Claude Blog](https://claude.com/blog/claude-excel-powerpoint-updates) / [OpenPR](https://www.openpr.com/news/4468672/anthropic-rolls-out-claude-for-word-add-in-now-full-microsoft)（[深掘り調査](investigations/2026-04-14_claude-for-office.md)）
 
 ## Slack連携
 - `@Claude` メンションでバグレポート→PR作成のルーティング
@@ -556,6 +561,7 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 ## 更新履歴
 
+- 2026-04-14: Claude for Office深掘り調査。Office Add-insセクションを大幅拡充（各アプリ別機能詳細、プラン別対応表、クロスアプリ共有コンテキスト、Skills、制限事項、プラットフォーム対応状況）（[深掘り調査](investigations/2026-04-14_claude-for-office.md)）
 - 2026-04-14: v2.1.105反映。PreCompactフックブロッキング対応、プラグインバックグラウンドモニター、EnterWorktree既存worktreeサポート、`/proactive`→`/loop`エイリアス、APIストリーム5分タイムアウト、スキル説明文キャップ拡大（250→1536文字）、WebFetchスタイル/スクリプト除去、20件超のバグ修正。Microsoft Office Word Add-in GA（Office三大アプリ完全統合）。英国AI安全性研究所Mythos評価（CTF 73%、TLO完走初AI）。Claude Opus 4.7リーク（❓噂）。Full-Stack AI Studio（❓噂）（[調査レポート](reports/2026-04-14_v2.1.105-word-addin-and-opus-4.7-leak.md)）
 - 2026-04-13: ニュースモード調査。Mythos規制当局緊急対応（FRB・財務省・英国銀行・カナダ銀行）追加。Anthropic IPO計画（❓噂: 2026年10月、$380B評価額）追加（[調査レポート](reports/2026-04-13_mythos-regulatory-response-and-ipo-rumor.md)）
 - 2026-04-12: Managed Agents深掘り調査。コアコンセプト・Agent定義・Environment設定・Session管理・Events&ストリーミング・組み込みツール・カスタムツール・Skills・MCPコネクタ・Credential Vault・アーキテクチャ・研究プレビュー機能（Outcomes/Multi-agent/Memory）を網羅的に記載（[深掘り調査](investigations/2026-04-12_claude-managed-agents.md)）

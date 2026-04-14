@@ -17,4 +17,5 @@
   - [2026-03-28 v2.1.86 & プラットフォーム更新](reports/2026-03-28_v2.1.86-and-platform-updates.md)
   - [2026-03-28 新機能調査](reports/2026-03-28_claude-code-new-features-march-2026.md)
 - **深掘り調査**
+  - [2026-04-14 Claude for Office](investigations/2026-04-14_claude-for-office.md)
   - [2026-04-12 Claude Managed Agents](investigations/2026-04-12_claude-managed-agents.md)
