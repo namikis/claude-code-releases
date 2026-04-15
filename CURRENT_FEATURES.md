@@ -1,6 +1,6 @@
 # Claude Code 現行機能一覧
 
-**最終更新:** 2026-04-15（v2.1.107-108反映・Routines研究プレビュー・デスクトップ再設計・Sonnet 4/Opus 4廃止予告）
+**最終更新:** 2026-04-16（v2.1.109-110反映・TUIフルスクリーンコマンド・プッシュ通知ツール・4月15日大規模障害・パフォーマンス低下問題報道）
 
 Claude Codeは、コードベースの読み取り・ファイル編集・コマンド実行・開発ツール統合を行うAIコーディングアシスタント。ターミナル、IDE、デスクトップアプリ、ブラウザで利用可能。
 
@@ -184,7 +184,7 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - `--bare` フラグ: フック/LSP/プラグインをスキップする軽量モード（約14%高速）
 - `--output-format`: `text` / `json` / `stream-json`
 - `--max-turns`, `--max-budget-usd`: 制限付き実行
-- `CLAUDE_CODE_NO_FLICKER=1`: alt-screenレンダリング+仮想化スクロールバックでフリッカーフリー表示（v2.1.89）
+- `CLAUDE_CODE_NO_FLICKER=1`: alt-screenレンダリング+仮想化スクロールバックでフリッカーフリー表示（v2.1.89）。v2.1.110以降は `/tui fullscreen` でセッション中に切り替え可能
 - `MCP_CONNECTION_NONBLOCKING=true`: `-p`モードでMCP接続待ちをスキップ（v2.1.89）
 - `CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE`: `git pull`失敗時にマーケットプレイスキャッシュを保持（v2.1.90）
 - MCP ツール結果永続化オーバーライド: `_meta["anthropic/maxResultSizeChars"]` で最大500Kまでの大きな結果を截断せず保持（v2.1.91）
@@ -226,6 +226,15 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - 言語グラマーをオンデマンドロードしメモリフットプリント削減（v2.1.108）
 - プロンプトキャッシュ無効時の起動警告（v2.1.108）
 - thinking hints を長時間操作中により早く表示（v2.1.107）
+- Extended Thinkingインジケータにローテーションプログレスヒント追加（v2.1.109）
+- `/tui`コマンドと`tui`設定: `/tui fullscreen`でセッション中にフリッカーフリーレンダリングに切り替え可能（v2.1.110）
+- `Ctrl+O`がノーマル↔バーボストランスクリプトのトグルに変更、`/focus`が独立コマンドに分離（v2.1.110）
+- `autoScrollEnabled`設定: フルスクリーンモードで自動スクロール無効化（v2.1.110）
+- プッシュ通知ツール: Remote Control + 「Push when Claude decides」設定時にモバイルへプッシュ通知送信（v2.1.110）
+- 外部エディタ（`Ctrl+G`）にClaude最終応答をコメント付きコンテキストとして表示するオプション（v2.1.110）
+- `--resume`/`--continue`が期限切れでないスケジュールタスクを復活（v2.1.110）
+- `/plugin` Installedタブ: お気に入り・注意必要アイテムを上部表示（v2.1.110）
+- `/doctor`: 複数設定スコープで定義されたMCPサーバーへの警告追加（v2.1.110）
 - `CLAUDE_CODE_CERT_STORE=bundled`: デフォルトでOSの認証局証明書ストアを信頼するようになったため、バンドルCA限定に戻すオプション（v2.1.101）
 - `/team-onboarding`: ローカルのClaude Code使用履歴からチームメイト向けオンボーディングガイドを自動生成（v2.1.101）
 - `/ultraplan`等のリモートセッション機能がデフォルトクラウド環境を自動作成（Web事前セットアップ不要）（v2.1.101）
@@ -306,6 +315,8 @@ claude -p --json-schema '{"type":"object",...}' "query"
 | `/simplify` | コード品質レビュー・修正 |
 | `/recap` | セッション復帰時の文脈サマリー表示。`/config` で自動有効化設定可能（v2.1.108） |
 | `/rewind` | チェックポイントへ巻き戻し（`/undo` はエイリアス、v2.1.108） |
+| `/tui` | TUIモード切替。`/tui fullscreen` でフリッカーフリーレンダリング（v2.1.110） |
+| `/focus` | Focus View独立トグル（`Ctrl+O`から分離、v2.1.110） |
 | `/stats` | 使用統計の可視化 |
 | `/cost` | モデル別・キャッシュヒット別コスト内訳表示（サブスクリプションユーザー向け、v2.1.92） |
 | `/fast` | Fast Mode切替 |
@@ -469,6 +480,20 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - 4月7日 14:32 UTCに復旧。4月8日時点で正常稼働
 - **情報源**: [TechRadar](https://www.techradar.com/news/live/claude-anthropic-down-outage-april-6-2026) / [IBTimes](https://www.ibtimes.com.au/claude-ai-down-again-claude-ai-down-again-anthropic-faces-fresh-outage-frustrating-users-april-1865701)
 
+### Claude.ai/API/Code大規模障害（2026年4月15日）✅ 解決済み
+- 10:53 AM ETに障害確認。11:03 AM ETに一時修正後、11:40 AM ETに再発。1:42 PM ETに完全解決（約3時間）
+- Claude.ai、Claude API、Claude Codeの全サービスに影響。ログイン障害、チャット中断、使用制限表示不具合
+- 15,000件超のユーザー報告。既存ログインセッションは継続可能だが、新規ログインは不可
+- Anthropicはユーザー需要の急増を原因として説明（3月〜4月にかけて繰り返す障害パターン）
+- **情報源**: [CNBC](https://www.cnbc.com/2026/04/15/anthropic-outage-elevated-errors-claude-chatbot-code-api.html) / [TechRadar](https://www.techradar.com/news/live/claude-anthropic-down-outage-april-15-2026)
+
+### Claudeパフォーマンス低下問題・ユーザー反発（2026年2月後半〜4月報道）
+- Anthropicがデフォルトの努力レベルをmediumに引き下げ（トークン節約目的）、ユーザーへの透明な通知なし
+- Stella Laurenzo（AMD AI部門SD）が6,852セッション分析で67%パフォーマンス低下を文書化。Microsoft研究者も同様の批判
+- Boris Cherny（Claude Code責任者）がTeam/Enterpriseのデフォルトをhighに変更テスト中と認める。v2.1.94でmedium→highに対応済み
+- IPO（$30B超ARR）を控え、透明性ブランドへの影響が懸念される
+- **情報源**: [Fortune](https://fortune.com/2026/04/14/anthropic-claude-performance-decline-user-complaints-backlash-lack-of-transparency-accusations-compute-crunch/) / [VentureBeat](https://venturebeat.com/technology/is-anthropic-nerfing-claude-users-increasingly-report-performance) / [The Register](https://www.theregister.com/2026/04/13/claude_outage_quality_complaints/)
+
 ### CoreWeave-Anthropic 複数年GPUクラウド契約（2026年4月10日）
 - AnthropicがCoreWeaveのGPUクラウドインフラを複数年契約で利用。Claude AIモデルの本番推論ワークロードに活用
 - Nvidia GPU（具体的アーキテクチャ非公開）、段階的インフラ展開と拡張オプション付き
@@ -575,6 +600,7 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 ## 更新履歴
 
+- 2026-04-16: v2.1.109-110反映。`/tui`コマンド（フルスクリーンフリッカーフリーレンダリング切り替え）、プッシュ通知ツール、`autoScrollEnabled`設定、`Ctrl+O`/`/focus`分離、Extended Thinkingローテーションヒント、`--resume`/`--continue`スケジュールタスク復活、`/plugin`・`/doctor`改善、MCP接続切断ハング修正。**Claude.ai/API/Code大規模障害**（4月15日、約3時間、15,000件超報告）。**パフォーマンス低下問題・ユーザー反発**（Fortune、VentureBeat等が報道、AMD・Microsoft研究者が批判）（[調査レポート](reports/2026-04-16_v2.1.109-110-tui-fullscreen-and-outage.md)）
 - 2026-04-15: v2.1.107-108反映。`ENABLE_PROMPT_CACHING_1H`環境変数、recap機能、`/undo`エイリアス、Skillツール経由の組み込みコマンド発見、メモリフットプリント削減、14件のバグ修正。**Routines（ルーティン）研究プレビュー開始**（スケジュール/API/GitHubイベント駆動のクラウド自動化）。**デスクトップアプリ全面再設計**（統合ターミナル、サイドチャット、再配置可能ペイン、ファイルプレビュー）。Claude Sonnet 4 / Opus 4の廃止予告（2026年6月15日）（[調査レポート](reports/2026-04-15_v2.1.107-108-routines-and-desktop-redesign.md)）
 - 2026-04-14: Claude for Office深掘り調査。Office Add-insセクションを大幅拡充（各アプリ別機能詳細、プラン別対応表、クロスアプリ共有コンテキスト、Skills、制限事項、プラットフォーム対応状況）（[深掘り調査](investigations/2026-04-14_claude-for-office.md)）
 - 2026-04-14: v2.1.105反映。PreCompactフックブロッキング対応、プラグインバックグラウンドモニター、EnterWorktree既存worktreeサポート、`/proactive`→`/loop`エイリアス、APIストリーム5分タイムアウト、スキル説明文キャップ拡大（250→1536文字）、WebFetchスタイル/スクリプト除去、20件超のバグ修正。Microsoft Office Word Add-in GA（Office三大アプリ完全統合）。英国AI安全性研究所Mythos評価（CTF 73%、TLO完走初AI）。Claude Opus 4.7リーク（❓噂）。Full-Stack AI Studio（❓噂）（[調査レポート](reports/2026-04-14_v2.1.105-word-addin-and-opus-4.7-leak.md)）

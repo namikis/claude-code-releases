@@ -1,6 +1,7 @@
 - [現行機能一覧](CURRENT_FEATURES.md)
 - [実行履歴](HISTORY.md)
 - **調査レポート**
+  - [2026-04-16 v2.1.109-110・TUIフルスクリーン・大規模障害](reports/2026-04-16_v2.1.109-110-tui-fullscreen-and-outage.md)
   - [2026-04-15 v2.1.107-108・Routines研究プレビュー・デスクトップ再設計](reports/2026-04-15_v2.1.107-108-routines-and-desktop-redesign.md)
   - [2026-04-14 v2.1.105・Word Add-in GA・Opus 4.7リーク](reports/2026-04-14_v2.1.105-word-addin-and-opus-4.7-leak.md)
   - [2026-04-13 Mythos規制当局対応・IPO噂](reports/2026-04-13_mythos-regulatory-response-and-ipo-rumor.md)
