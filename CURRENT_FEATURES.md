@@ -1,6 +1,6 @@
 # Claude Code 現行機能一覧
 
-**最終更新:** 2026-04-16（v2.1.109-110反映・TUIフルスクリーンコマンド・プッシュ通知ツール・4月15日大規模障害・パフォーマンス低下問題報道）
+**最終更新:** 2026-04-18（v2.1.111-112反映・Claude Opus 4.7 GA・`xhigh`努力レベル・`/ultrareview`・`/less-permission-prompts`・Claude Design発表・ホワイトハウス会談）
 
 Claude Codeは、コードベースの読み取り・ファイル編集・コマンド実行・開発ツール統合を行うAIコーディングアシスタント。ターミナル、IDE、デスクトップアプリ、ブラウザで利用可能。
 
@@ -47,9 +47,11 @@ Claude Codeは、コードベースの読み取り・ファイル編集・コマ
 - v2.1.87でメッセージが配信されない問題を修正
 
 ### Auto Mode（自動承認モード） 🔬
-- **リリース状態**: 🔬 研究プレビュー（Team、管理者承認要）
+- **リリース状態**: 🔬 研究プレビュー（Max/Team、管理者承認要）
 - セーフガードがアクションを事前レビューし、安全と判断されたものを自動実行
-- Sonnet 4.6 または Opus 4.6 が必要
+- Sonnet 4.6 または Opus 4.6/4.7 が必要
+- **Maxサブスクライバー対応（v2.1.111〜）**: Opus 4.7使用時のみ利用可能
+- **`--enable-auto-mode`フラグ不要化（v2.1.111〜）**
 - 拒否されたコマンドが通知表示され、`/permissions` → Recentタブで`r`キーによりリトライ可能（v2.1.89）
 - 「pushしないで」等の明示的ユーザー境界を尊重（v2.1.90で修正）
 
@@ -228,6 +230,21 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - thinking hints を長時間操作中により早く表示（v2.1.107）
 - Extended Thinkingインジケータにローテーションプログレスヒント追加（v2.1.109）
 - `/tui`コマンドと`tui`設定: `/tui fullscreen`でセッション中にフリッカーフリーレンダリングに切り替え可能（v2.1.110）
+- `xhigh`努力レベル: Opus 4.7向け新しい努力レベル（`high`と`max`の間）。`/effort`、`--effort`、モデルピッカーから選択可能。他モデルでは`high`にフォールバック（v2.1.111）
+- `/effort`インタラクティブスライダー: 引数なしで呼び出すと矢印キー操作のスライダーを表示、Enterで確定（v2.1.111）
+- "Auto (match terminal)"テーマ: ターミナルのダーク/ライトモードに追従（v2.1.111）
+- Claude Codeデフォルト努力レベルが`xhigh`に変更（全プラン、Opus 4.7使用時）（v2.1.111）
+- Windows PowerShellツール段階展開: `CLAUDE_CODE_USE_POWERSHELL_TOOL`でopt-in/opt-out。Linux/macOSでも`CLAUDE_CODE_USE_POWERSHELL_TOOL=1`で有効化可能（要`pwsh`）（v2.1.111）
+- globパターン付き読み取り専用Bashコマンド（`ls *.ts`等）および`cd <project-dir> &&`で始まるコマンドが権限プロンプトをトリガーしないように（v2.1.111）
+- CLIサブコマンドタイポ候補提示: `claude udpate` → "Did you mean `claude update`?"（v2.1.111）
+- プランファイル名をプロンプトベースの命名に変更（例: `fix-auth-race-snug-otter.md`）（v2.1.111）
+- `/setup-vertex`・`/setup-bedrock`改善: 実際の`settings.json`パス表示、既存ピンからのモデル候補シード、「with 1M context」オプション追加（v2.1.111）
+- `/skills`メニュー: 推定トークンカウントによるソート（`t`キー）（v2.1.111）
+- `Ctrl+U`: 入力バッファ全体をクリア（以前は行頭まで）。`Ctrl+Y`で復元（v2.1.111）
+- `Ctrl+L`: プロンプト入力クリアに加え、全画面再描画を強制（v2.1.111）
+- トランスクリプトビューフッターに`[`（スクロールバックダンプ）・`v`（エディタで開く）ショートカット表示（v2.1.111）
+- ヘッドレス`--output-format stream-json`がinitイベントに`plugin_errors`を含める（v2.1.111）
+- `OTEL_LOG_RAW_API_BODIES`環境変数: OpenTelemetryログイベントとしてフルAPIリクエスト/レスポンスボディを出力（v2.1.111）
 - `Ctrl+O`がノーマル↔バーボストランスクリプトのトグルに変更、`/focus`が独立コマンドに分離（v2.1.110）
 - `autoScrollEnabled`設定: フルスクリーンモードで自動スクロール無効化（v2.1.110）
 - プッシュ通知ツール: Remote Control + 「Push when Claude decides」設定時にモバイルへプッシュ通知送信（v2.1.110）
@@ -317,6 +334,9 @@ claude -p --json-schema '{"type":"object",...}' "query"
 | `/rewind` | チェックポイントへ巻き戻し（`/undo` はエイリアス、v2.1.108） |
 | `/tui` | TUIモード切替。`/tui fullscreen` でフリッカーフリーレンダリング（v2.1.110） |
 | `/focus` | Focus View独立トグル（`Ctrl+O`から分離、v2.1.110） |
+| `/ultrareview` | クラウドで並列マルチエージェント分析による包括的コードレビュー。引数なしでカレントブランチ、`/ultrareview <PR#>`で指定PRをレビュー（v2.1.111） |
+| `/less-permission-prompts` | トランスクリプトをスキャンし、よく使う読み取り専用Bash・MCPツール呼び出しを`.claude/settings.json` allowlistとして提案するスキル（v2.1.111） |
+| `/theme` | テーマ切替。「Auto (match terminal)」でターミナルのダーク/ライトモードに追従（v2.1.111） |
 | `/stats` | 使用統計の可視化 |
 | `/cost` | モデル別・キャッシュヒット別コスト内訳表示（サブスクリプションユーザー向け、v2.1.92） |
 | `/fast` | Fast Mode切替 |
@@ -357,15 +377,18 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 | 項目 | 詳細 |
 |------|------|
-| **デフォルトモデル** | Claude Opus 4.6 |
-| **出力トークン上限** | デフォルト64k、上限128k（Opus/Sonnet 4.6）。Message Batches APIでは300k（`output-300k-2026-03-24`ベータヘッダー要） |
-| **コンテキスト** | 1Mトークン（Opus 4.6/Sonnet 4.6はGA、ベータヘッダー不要。メディア上限600画像/PDFページ）。Sonnet 4.5/4の1Mベータは2026年4月30日で終了予定 |
-| **Fast Mode** | 同じOpus 4.6モデルで高速出力。`/fast` でトグル |
-| **努力レベル** | `low` / `medium` / `high` / `max`（Opus 4.6のみ） |
-| **サードパーティ** | Amazon Bedrock、Google Vertex AI、Microsoft Foundry対応。Bedrock上でAnthropic Messages API（`/anthropic/v1/messages`）が研究プレビュー（us-east-1、招待制、4月7日〜） |
+| **デフォルトモデル** | Claude Opus 4.7（2026年4月16日GA〜） |
+| **出力トークン上限** | デフォルト64k、上限128k（Opus/Sonnet 4.6、Opus 4.7）。Message Batches APIでは300k（`output-300k-2026-03-24`ベータヘッダー要） |
+| **コンテキスト** | 1Mトークン（Opus 4.6/4.7/Sonnet 4.6はGA、ベータヘッダー不要。メディア上限600画像/PDFページ）。Sonnet 4.5/4の1Mベータは2026年4月30日で終了予定 |
+| **Fast Mode** | Opus 4.6で高速出力。`/fast` でトグル |
+| **努力レベル** | `low` / `medium` / `high` / `xhigh` / `max`（`xhigh`はOpus 4.7のみ、他モデルでは`high`フォールバック。v2.1.111〜） |
+| **Claude Codeデフォルト努力レベル** | `xhigh`（全プラン、Opus 4.7使用時）。コーディング・エージェント用途では`high`〜`xhigh`推奨 |
+| **ビジョン** | Opus 4.7は長辺2,576pxまでの高解像度画像をサポート |
+| **サードパーティ** | Amazon Bedrock、Google Vertex AI、Microsoft Foundry対応（Opus 4.7は全プラットフォームで同時GA）。Bedrock上でAnthropic Messages API（`/anthropic/v1/messages`）が研究プレビュー（us-east-1、招待制、4月7日〜） |
 | **Extended Thinking 表示制御** | `thinking.display: "omitted"` でthinkingコンテンツをストリーミングから省略可能（signature保持）。インタラクティブセッションではthinking summaryがデフォルト無効化（`showThinkingSummaries: true`で復元、v2.1.89） |
 | **Models API 機能照会** | `GET /v1/models` が `max_input_tokens`、`max_tokens`、`capabilities` を返すように（3月18日〜） |
 | **modelOverrides** | モデルピッカーのエントリをカスタムプロバイダーモデルID（Bedrock ARN等）にマッピング |
+| **Opus 4.7 → Opus 4.6 ブレーキングチェンジ** | APIブレーキングチェンジあり。更新されたトークナイザー。移行時は[マイグレーションガイド](https://platform.claude.com/docs/en/about-claude/models/migration-guide#migrating-to-claude-opus-4-7)参照 |
 
 ---
 
@@ -402,6 +425,29 @@ claude -p --json-schema '{"type":"object",...}' "query"
 ## Agent SDK
 - Claude Codeのツール・機能を活用したカスタムエージェントを構築
 - オーケストレーション・ツールアクセス・権限を完全制御
+
+## Claude Opus 4.7 ✅
+- **リリース状態**: ✅ GA（Claude API、Amazon Bedrock、Google Vertex AI、Microsoft Foundry）
+- **リリース日**: 2026年4月16日
+- **価格**: 入力 $5 / Mトークン、出力 $25 / Mトークン（Opus 4.6と同じ）
+- **ベンチマーク**: SWE-bench Verified 87.6%（Opus 4.6: 80.8%）、SWE-bench Pro 64.3%（GPT-5.4: 57.7%、Gemini 3.1 Pro: 54.2%を上回る）、CursorBench 70%、GPQA Diamond 94.2%
+- **主要アップグレード**:
+  - ソフトウェアエンジニアリング性能向上（人間監督を要していた複雑タスクで計測可能な改善）
+  - ビジョン: 長辺2,576pxまでの高解像度画像対応
+  - 指示追従・長期エージェントワーク信頼性向上
+  - 新しい`xhigh`努力レベル、タスク予算機能
+  - 更新されたトークナイザー（Opus 4.6からAPIブレーキングチェンジあり）
+- **Claude Code統合**: v2.1.111で対応、全プランでデフォルト`xhigh`努力レベル
+- **Auto mode**: Maxサブスクライバーで利用可能（Opus 4.7使用時）
+- **情報源**: [Anthropic公式](https://www.anthropic.com/news/claude-opus-4-7) / [マイグレーションガイド](https://platform.claude.com/docs/en/about-claude/models/migration-guide#migrating-to-claude-opus-4-7) / [ベンチマーク解説 - Vellum AI](https://www.vellum.ai/blog/claude-opus-4-7-benchmarks-explained)
+
+## Claude Design 🔬
+- **リリース状態**: 🔬 研究プレビュー / 📢 発表（具体的利用条件は未詳細公開、2026年4月18日時点）
+- **発表日**: 2026年4月17日（Anthropic Labs）
+- **概要**: Claudeとコラボレーションしてビジュアル成果物（デザイン、プロトタイプ、スライド、1-pagerなど）を作成する新製品。自然言語からウェブサイト・ランディングページ・プレゼンテーション・プロトタイプを生成
+- **市場インパクト**: 4月14日のThe Informationリーク時点でFigma・Adobe・Wix等のデザイン関連株が下落。Anthropicがチャットインターフェース・開発者ツールから広範なデザイン自動化空間への戦略的拡張を明確化
+- **関連既存プロダクト**: Claude Cowork内の「Design」プラグイン（Anthropic Verified）— デザインクリティーク、UXライティング、アクセシビリティ監査（WCAG 2.1 AA）、リサーチ統合、開発ハンドオフ
+- **情報源**: [Claude Help Center](https://support.claude.com/en/articles/12138966-release-notes) / [Design プラグイン](https://claude.com/plugins/design) / [Anthropic Labs紹介](https://www.anthropic.com/news/introducing-anthropic-labs) / [PYMNTS](https://www.pymnts.com/artificial-intelligence-2/2026/anthropics-new-design-tool-rivals-adobe-and-figma/)
 
 ## Claude Managed Agents 🧪
 - **リリース状態**: 🧪 パブリックベータ（全APIアカウントにデフォルト有効）
@@ -524,7 +570,10 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - 通常はテロ組織・敵性国家に適用される指定を米国企業に初適用
 - 連邦判事が2026年3月26日に一時差止め命令を発令（「法の逸脱・報復の可能性」を認定）
 - 国防総省が2026年4月2日に控訴。**係争中**（差止め命令は有効、ブラックリストの効力は停止中）
+- **2026年4月17日**: Dario Amodei CEOがホワイトハウス首席補佐官Susie Wilesと面会。紛争解消に向けた交渉が本格化
+- **2026年4月17日**: ホワイトハウスが国防総省の反対を押し切り、米連邦機関（CISA、財務省、インテリジェンスコミュニティ）にMythosアクセス認可（Bloomberg/Axios報道）
 - **Claude Code / Claude製品への直接的な影響は現時点ではなし**。控訴審の結果次第で米政府機関・防衛関連企業の利用に影響の可能性
+- **情報源**: [Axios - White House peace talks](https://www.axios.com/2026/04/17/anthropic-trump-administration-mythos) / [Crypto Briefing](https://cryptobriefing.com/white-house-grants-agencies-access-to-anthropics-mythos-ai-despite-pentagon/)
 
 ---
 
@@ -550,12 +599,6 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - **情報源**: [TradingKey](https://www.tradingkey.com/analysis/stocks/us-stocks/261773210-ai-anthropic-claude-mythos-ipo-tradingkey)
 - **概要**: 2026年10月にIPO予定、目標評価額$380B（3,800億ドル）。Mythosリリース遅延がIPOプロセスに影響する可能性あり。安全性重視の姿勢が機関投資家にアピールする一方、API収益予測下方修正・規制強化リスクも指摘
 - **最終確認日**: 2026-04-13
-
-### Claude Opus 4.7 ❓
-- **確度**: ❓ 噂・未確認（「World of AI」報道→Geeky Gadgets転載。公式発表なし）
-- **情報源**: [Geeky Gadgets](https://www.geeky-gadgets.com/claude-opus-4-7-leak-anthropic-updates/)
-- **概要**: AnthropicがClaude Opus 4.7をリリース準備中との報道。内部API参照が発見されたとの情報。Opus 4.6のパフォーマンスが「意図的にスケールバック」されたとの憶測あり。具体的な能力・発表時期は不明
-- **最終確認日**: 2026-04-14
 
 ### Anthropic Full-Stack AI Studio ❓
 - **確度**: ❓ 噂・未確認（同上記事内での言及。公式発表なし）
@@ -600,6 +643,7 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 ## 更新履歴
 
+- 2026-04-18: v2.1.111-112反映。**Claude Opus 4.7 GAリリース**（SWE-bench Verified 87.6%、2,576pxビジョン、同価格）、Claude Codeデフォルト努力レベルを`xhigh`に変更、`/ultrareview`コマンド（並列マルチエージェントコードレビュー）、`/less-permission-prompts`スキル、インタラクティブ`/effort`スライダー、Auto (match terminal)テーマ、Auto modeがMaxサブスクライバー対応、Windows PowerShellツール段階展開、globパターンBash自動許可、`Ctrl+U`/`Ctrl+L`強化、多数のバグ修正。**Claude Design発表**（4月17日、Anthropic Labs — デザイン・プロトタイプ・スライド生成）。**ホワイトハウス・Anthropic会談**（4月17日、Dario Amodei × Susie Wiles — Pentagon紛争解消交渉）。ホワイトハウスが米連邦機関にMythosアクセス認可（[調査レポート](reports/2026-04-18_v2.1.111-112-opus-4.7-and-claude-design.md)）
 - 2026-04-16: v2.1.109-110反映。`/tui`コマンド（フルスクリーンフリッカーフリーレンダリング切り替え）、プッシュ通知ツール、`autoScrollEnabled`設定、`Ctrl+O`/`/focus`分離、Extended Thinkingローテーションヒント、`--resume`/`--continue`スケジュールタスク復活、`/plugin`・`/doctor`改善、MCP接続切断ハング修正。**Claude.ai/API/Code大規模障害**（4月15日、約3時間、15,000件超報告）。**パフォーマンス低下問題・ユーザー反発**（Fortune、VentureBeat等が報道、AMD・Microsoft研究者が批判）（[調査レポート](reports/2026-04-16_v2.1.109-110-tui-fullscreen-and-outage.md)）
 - 2026-04-15: v2.1.107-108反映。`ENABLE_PROMPT_CACHING_1H`環境変数、recap機能、`/undo`エイリアス、Skillツール経由の組み込みコマンド発見、メモリフットプリント削減、14件のバグ修正。**Routines（ルーティン）研究プレビュー開始**（スケジュール/API/GitHubイベント駆動のクラウド自動化）。**デスクトップアプリ全面再設計**（統合ターミナル、サイドチャット、再配置可能ペイン、ファイルプレビュー）。Claude Sonnet 4 / Opus 4の廃止予告（2026年6月15日）（[調査レポート](reports/2026-04-15_v2.1.107-108-routines-and-desktop-redesign.md)）
 - 2026-04-14: Claude for Office深掘り調査。Office Add-insセクションを大幅拡充（各アプリ別機能詳細、プラン別対応表、クロスアプリ共有コンテキスト、Skills、制限事項、プラットフォーム対応状況）（[深掘り調査](investigations/2026-04-14_claude-for-office.md)）

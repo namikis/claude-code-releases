@@ -72,23 +72,40 @@ else
   HISTORY_LABEL="リリース調査"
 fi
 
-# --- Step 2: 調査エージェントを実行 ---
+# --- Step 2: 調査エージェントを実行（タイムアウト系失敗は最大3回まで試行） ---
 log "Step 2: 調査エージェントを実行中（${HISTORY_LABEL}）..."
 cd "$PROJECT_DIR"
 
-if ! "$CLAUDE_BIN" \
-  --agent claude-code-feature-research \
-  --allowedTools "WebSearch,WebFetch,Read,Write,Bash,Glob,Grep,Edit" \
-  --print \
-  --output-format text \
-  "$AGENT_PROMPT" \
-  >> "$LOGFILE" 2>&1; then
-  log "ERROR: 調査エージェントが異常終了しました"
-  history_append "エラー" "Claude CLI異常終了"
+MAX_ATTEMPTS=3
+attempt=1
+agent_ok=0
+while (( attempt <= MAX_ATTEMPTS )); do
+  if "$CLAUDE_BIN" \
+    --agent claude-code-feature-research \
+    --allowedTools "WebSearch,WebFetch,Read,Write,Bash,Glob,Grep,Edit" \
+    --print \
+    --output-format text \
+    "$AGENT_PROMPT" \
+    >> "$LOGFILE" 2>&1; then
+    agent_ok=1
+    break
+  fi
+  log "WARN: 調査エージェントが異常終了しました (試行 ${attempt}/${MAX_ATTEMPTS})"
+  if (( attempt < MAX_ATTEMPTS )); then
+    backoff=$(( 30 * attempt ))
+    log "  ${backoff}秒待機してリトライします..."
+    sleep "$backoff"
+  fi
+  ((attempt++))
+done
+
+if (( agent_ok == 0 )); then
+  log "ERROR: 調査エージェントが${MAX_ATTEMPTS}回すべて失敗しました"
+  history_append "エラー" "Claude CLI異常終了 (${MAX_ATTEMPTS}回失敗)"
   commit_history_and_exit 1 "Claude CLI異常終了"
 fi
 
-log "調査エージェント完了"
+log "調査エージェント完了 (試行 ${attempt}/${MAX_ATTEMPTS})"
 
 # --- Step 3: 変更の検出とコミット ---
 log "Step 3: 変更を検出中..."
