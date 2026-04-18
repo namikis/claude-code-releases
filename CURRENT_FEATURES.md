@@ -1,6 +1,6 @@
 # Claude Code 現行機能一覧
 
-**最終更新:** 2026-04-18（v2.1.111-112反映・Claude Opus 4.7 GA・`xhigh`努力レベル・`/ultrareview`・`/less-permission-prompts`・Claude Design発表・ホワイトハウス会談）
+**最終更新:** 2026-04-18（v2.1.113反映・**ネイティブClaude Codeバイナリ移行**・`sandbox.network.deniedDomains`・macOS `/private/*` 危険削除ターゲット化・Bash deny ルール exec ラッパー対応・2026-04-23 API デフォルトモデル Opus 4.7 移行予告・Snowflake Cortex AI / GitHub Copilot で Opus 4.7 同日展開）
 
 Claude Codeは、コードベースの読み取り・ファイル編集・コマンド実行・開発ツール統合を行うAIコーディングアシスタント。ターミナル、IDE、デスクトップアプリ、ブラウザで利用可能。
 
@@ -199,6 +199,17 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - Slack MCP send-messageでコンパクトな `Slacked #channel` ヘッダーとクリック可能チャネルリンクを表示（v2.1.94）
 - `keep-coding-instructions` フロントマターフィールドをプラグイン出力スタイルでサポート（v2.1.94）
 - `UserPromptSubmit` フックで `hookSpecificOutput.sessionTitle` によるセッションタイトル設定が可能に（v2.1.94）
+- **ネイティブClaude Codeバイナリ**: CLIがバンドルJavaScriptの代わりにプラットフォーム別optional dependencyとしてのネイティブバイナリを spawn。Bun/JavaScriptCoreベース、起動時間とNode.js依存の排除が狙い（v2.1.113）
+- `sandbox.network.deniedDomains` 設定: 広い `allowedDomains` ワイルドカードより優先される個別ドメインブロックリスト（v2.1.113）
+- Fullscreen mode で Shift+↑/↓ が可視領域外への選択拡張時にスクロール（v2.1.113）
+- マルチライン入力で `Ctrl+A` / `Ctrl+E` が論理行の先頭/末尾へ移動（readline 互換、v2.1.113）
+- Windows: `Ctrl+Backspace` で直前の単語を削除（v2.1.113）
+- OSC 8 対応ターミナルで折り返された長いURLがクリック可能に（レスポンス・bash出力の両方、v2.1.113）
+- `/loop`: Esc で保留中の wakeup をキャンセル、wakeup 表示を "Claude resuming /loop wakeup" に統一（v2.1.113）
+- `/ultrareview`: チェック並列化で起動高速化、起動ダイアログに diffstat、アニメーション（v2.1.113）
+- `/extra-usage` が Remote Control（モバイル/Web）クライアントから利用可能に（v2.1.113）
+- Remote Control クライアントで `@`-file オートコンプリート候補をクエリ可能（v2.1.113）
+- mid-stream でストールしたサブエージェントが10分後に明確なエラーで失敗（無音ハング回避、v2.1.113）
 - プラグインスキル（`"skills": ["./"]`）がディレクトリ名ではなくフロントマター `name` を呼び出し名に使用（v2.1.94）
 - `--resume` がリポジトリのworktree間で直接動作するように改善（v2.1.94）
 - CJK/マルチバイトテキストがstream-jsonでUTF-8分割時にU+FFFDに破損する問題を修正（v2.1.94）
@@ -377,14 +388,14 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 | 項目 | 詳細 |
 |------|------|
-| **デフォルトモデル** | Claude Opus 4.7（2026年4月16日GA〜） |
+| **デフォルトモデル** | Claude Opus 4.7（2026年4月16日GA〜）。**2026-04-23 より Enterprise pay-as-you-go および Anthropic API（第一者）のデフォルトモデルも Opus 4.6 → Opus 4.7 に切り替え**。API エイリアス `opus` が Opus 4.7 を解決、`sonnet` は Sonnet 4.6 のまま |
 | **出力トークン上限** | デフォルト64k、上限128k（Opus/Sonnet 4.6、Opus 4.7）。Message Batches APIでは300k（`output-300k-2026-03-24`ベータヘッダー要） |
 | **コンテキスト** | 1Mトークン（Opus 4.6/4.7/Sonnet 4.6はGA、ベータヘッダー不要。メディア上限600画像/PDFページ）。Sonnet 4.5/4の1Mベータは2026年4月30日で終了予定 |
 | **Fast Mode** | Opus 4.6で高速出力。`/fast` でトグル |
 | **努力レベル** | `low` / `medium` / `high` / `xhigh` / `max`（`xhigh`はOpus 4.7のみ、他モデルでは`high`フォールバック。v2.1.111〜） |
 | **Claude Codeデフォルト努力レベル** | `xhigh`（全プラン、Opus 4.7使用時）。コーディング・エージェント用途では`high`〜`xhigh`推奨 |
 | **ビジョン** | Opus 4.7は長辺2,576pxまでの高解像度画像をサポート |
-| **サードパーティ** | Amazon Bedrock、Google Vertex AI、Microsoft Foundry対応（Opus 4.7は全プラットフォームで同時GA）。Bedrock上でAnthropic Messages API（`/anthropic/v1/messages`）が研究プレビュー（us-east-1、招待制、4月7日〜） |
+| **サードパーティ** | Amazon Bedrock、Google Vertex AI、Microsoft Foundry対応（Opus 4.7は全プラットフォームで同時GA）。Bedrock上でAnthropic Messages API（`/anthropic/v1/messages`）が4月16日より全AWS顧客にセルフサーブ開放（27リージョン）。**Snowflake Cortex AI**（Public Preview、US/EU、Opus 4.7同日展開）、**GitHub Copilot**（GA、Opus 4.7同日展開）で利用可能 |
 | **Extended Thinking 表示制御** | `thinking.display: "omitted"` でthinkingコンテンツをストリーミングから省略可能（signature保持）。インタラクティブセッションではthinking summaryがデフォルト無効化（`showThinkingSummaries: true`で復元、v2.1.89） |
 | **Models API 機能照会** | `GET /v1/models` が `max_input_tokens`、`max_tokens`、`capabilities` を返すように（3月18日〜） |
 | **modelOverrides** | モデルピッカーのエントリをカスタムプロバイダーモデルID（Bedrock ARN等）にマッピング |
@@ -427,8 +438,9 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - オーケストレーション・ツールアクセス・権限を完全制御
 
 ## Claude Opus 4.7 ✅
-- **リリース状態**: ✅ GA（Claude API、Amazon Bedrock、Google Vertex AI、Microsoft Foundry）
-- **リリース日**: 2026年4月16日
+- **リリース状態**: ✅ GA（Claude API、Amazon Bedrock、Google Vertex AI、Microsoft Foundry、Snowflake Cortex AI（Public Preview）、GitHub Copilot）
+- **リリース日**: 2026年4月16日（6プラットフォーム同時展開）
+- **API デフォルトモデル切替**: 2026年4月23日より Enterprise pay-as-you-go および Anthropic API（第一者）のデフォルトモデルが Opus 4.6 → Opus 4.7 へ自動移行。API エイリアス `opus` が Opus 4.7 を解決するように
 - **価格**: 入力 $5 / Mトークン、出力 $25 / Mトークン（Opus 4.6と同じ）
 - **ベンチマーク**: SWE-bench Verified 87.6%（Opus 4.6: 80.8%）、SWE-bench Pro 64.3%（GPT-5.4: 57.7%、Gemini 3.1 Pro: 54.2%を上回る）、CursorBench 70%、GPQA Diamond 94.2%
 - **主要アップグレード**:
@@ -486,6 +498,14 @@ claude -p --json-schema '{"type":"object",...}' "query"
 ---
 
 ## セキュリティ修正
+
+### v2.1.113（2026年4月17日）
+- **`Bash` `dangerouslyDisableSandbox` サンドボックスバイパス**: パーミッションプロンプトなしにサンドボックス外で任意コマンド実行していた問題を修正
+- **Bashツールのコメント先頭複数行コマンド UIスプーフィング**: 1行目がコメントの複数行コマンドがトランスクリプトで一部しか表示されず、コマンド偽装が可能だった問題を修正（全文表示に）
+- **macOS `/private/{etc,var,tmp,home}` を危険削除ターゲット扱い**: `Bash(rm:*)` allow ルール下でも明示ブロック
+- **Bash deny ルールの exec ラッパー対応**: `env`、`sudo`、`watch`、`ionice`、`setsid` 等でラップされたコマンドもマッチ
+- **`Bash(find:*)` allow ルールで `find -exec` / `-delete` が自動承認されないように**: 破壊的find オプションの auto-approve 回避
+- **`sandbox.network.deniedDomains`** 設定追加: 広い `allowedDomains` より優先される個別ドメインブロック
 
 ### v2.1.101（2026年4月10日）
 - POSIX `which`コマンドインジェクション: LSPバイナリ検出のフォールバックにおけるコマンドインジェクション脆弱性を修正
@@ -630,11 +650,12 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 ---
 
-## 廃止予定
+## 廃止予定・重要な変更スケジュール
 
-| モデル/機能 | 廃止日 | 移行先 |
+| モデル/機能 | 発効日 | 移行先・備考 |
 |------------|--------|--------|
 | Claude Haiku 3 (`claude-3-haiku-20240307`) | 2026-04-19 | Claude Haiku 4.5 |
+| **API デフォルトモデル切替** | **2026-04-23** | **Enterprise pay-as-you-go・Anthropic API の `opus` エイリアスが Opus 4.6 → Opus 4.7 を指すように。モデルピンニング未設定の本番APIは事前検証必須**（[マイグレーションガイド](https://platform.claude.com/docs/en/about-claude/models/migration-guide#migrating-to-claude-opus-4-7)） |
 | Sonnet 4.5/4 の1Mコンテキストベータ (`context-1m-2025-08-07`) | 2026-04-30 | Sonnet 4.6 / Opus 4.6（1M GA） |
 | Claude Sonnet 4 (`claude-sonnet-4-20250514`) | 2026-06-15 | Claude Sonnet 4.6（4月14日廃止予告） |
 | Claude Opus 4 (`claude-opus-4-20250514`) | 2026-06-15 | Claude Opus 4.6（4月14日廃止予告） |
@@ -643,6 +664,7 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 ## 更新履歴
 
+- 2026-04-18（追加）: **v2.1.113反映**。**ネイティブClaude Codeバイナリ移行**（CLIがバンドルJSの代わりにプラットフォーム別optional depのネイティブバイナリを spawn、Bun/JSCベース）、**`sandbox.network.deniedDomains`** 設定、**セキュリティハードニング多数**（macOS `/private/{etc,var,tmp,home}` を危険削除ターゲット扱い、Bash deny ルールの `env`/`sudo`/`watch`/`ionice`/`setsid` exec ラッパー対応、`Bash(find:*)` allow ルールで `-exec`/`-delete` の自動承認廃止）、**`Bash` `dangerouslyDisableSandbox` サンドボックスバイパス修正**、Fullscreen Shift+↑/↓ スクロール、Ctrl+A/Ctrl+E readline、Windows Ctrl+Backspace、OSC 8 折り返しURL、`/loop` Esc キャンセル、`/ultrareview` 並列化・diffstat・アニメーション、`/extra-usage` / `@`補完 の Remote Control 対応、サブエージェント10分タイムアウト、多数のバグ修正。**2026-04-23予告: API デフォルトモデルが Opus 4.6 → Opus 4.7 へ切替**（Enterprise pay-as-you-go および Anthropic API、`opus` エイリアス解決先変更）。Opus 4.7 が **Snowflake Cortex AI**（Public Preview）と **GitHub Copilot**（GA）で同日展開判明（[調査レポート](reports/2026-04-18_v2.1.113-native-binary-and-default-model-shift.md)）
 - 2026-04-18: v2.1.111-112反映。**Claude Opus 4.7 GAリリース**（SWE-bench Verified 87.6%、2,576pxビジョン、同価格）、Claude Codeデフォルト努力レベルを`xhigh`に変更、`/ultrareview`コマンド（並列マルチエージェントコードレビュー）、`/less-permission-prompts`スキル、インタラクティブ`/effort`スライダー、Auto (match terminal)テーマ、Auto modeがMaxサブスクライバー対応、Windows PowerShellツール段階展開、globパターンBash自動許可、`Ctrl+U`/`Ctrl+L`強化、多数のバグ修正。**Claude Design発表**（4月17日、Anthropic Labs — デザイン・プロトタイプ・スライド生成）。**ホワイトハウス・Anthropic会談**（4月17日、Dario Amodei × Susie Wiles — Pentagon紛争解消交渉）。ホワイトハウスが米連邦機関にMythosアクセス認可（[調査レポート](reports/2026-04-18_v2.1.111-112-opus-4.7-and-claude-design.md)）
 - 2026-04-16: v2.1.109-110反映。`/tui`コマンド（フルスクリーンフリッカーフリーレンダリング切り替え）、プッシュ通知ツール、`autoScrollEnabled`設定、`Ctrl+O`/`/focus`分離、Extended Thinkingローテーションヒント、`--resume`/`--continue`スケジュールタスク復活、`/plugin`・`/doctor`改善、MCP接続切断ハング修正。**Claude.ai/API/Code大規模障害**（4月15日、約3時間、15,000件超報告）。**パフォーマンス低下問題・ユーザー反発**（Fortune、VentureBeat等が報道、AMD・Microsoft研究者が批判）（[調査レポート](reports/2026-04-16_v2.1.109-110-tui-fullscreen-and-outage.md)）
 - 2026-04-15: v2.1.107-108反映。`ENABLE_PROMPT_CACHING_1H`環境変数、recap機能、`/undo`エイリアス、Skillツール経由の組み込みコマンド発見、メモリフットプリント削減、14件のバグ修正。**Routines（ルーティン）研究プレビュー開始**（スケジュール/API/GitHubイベント駆動のクラウド自動化）。**デスクトップアプリ全面再設計**（統合ターミナル、サイドチャット、再配置可能ペイン、ファイルプレビュー）。Claude Sonnet 4 / Opus 4の廃止予告（2026年6月15日）（[調査レポート](reports/2026-04-15_v2.1.107-108-routines-and-desktop-redesign.md)）
