@@ -1,5 +1,7 @@
 - [現行機能一覧](CURRENT_FEATURES.md)
 - [実行履歴](HISTORY.md)
+- **週次レポート**
+  - [2026-04-18 週次: 04/11〜04/18](weekly-reports/2026-04-18_weekly.md)
 - **調査レポート**
   - [2026-04-18 v2.1.113・ネイティブバイナリ・4/23デフォルトモデル移行](reports/2026-04-18_v2.1.113-native-binary-and-default-model-shift.md)
   - [2026-04-18 v2.1.111-112・Opus 4.7 GA・Claude Design](reports/2026-04-18_v2.1.111-112-opus-4.7-and-claude-design.md)
