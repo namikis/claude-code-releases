@@ -1,6 +1,6 @@
 # Claude Code 現行機能一覧
 
-**最終更新:** 2026-04-18（v2.1.113反映・**ネイティブClaude Codeバイナリ移行**・`sandbox.network.deniedDomains`・macOS `/private/*` 危険削除ターゲット化・Bash deny ルール exec ラッパー対応・2026-04-23 API デフォルトモデル Opus 4.7 移行予告・Snowflake Cortex AI / GitHub Copilot で Opus 4.7 同日展開）
+**最終更新:** 2026-04-19（v2.1.114反映・**Agent Teams permission dialog クラッシュ修正**・**Claude Design 利用条件確定**（Pro/Max/Team/Enterprise、Enterpriseデフォルトオフ、独立週次クォータ）・**Claude Haiku 3 API リタイア発効**）
 
 Claude Codeは、コードベースの読み取り・ファイル編集・コマンド実行・開発ツール統合を行うAIコーディングアシスタント。ターミナル、IDE、デスクトップアプリ、ブラウザで利用可能。
 
@@ -428,10 +428,14 @@ claude -p --json-schema '{"type":"object",...}' "query"
 ## Slack連携
 - `@Claude` メンションでバグレポート→PR作成のルーティング
 
-## Agent Teams
+## Agent Teams 🔬
+- **リリース状態**: 🔬 実験的機能（`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` フラグで有効化、デフォルト無効）
 - 複数の独立セッションが並行動作・相互通信
-- リードエージェントがタスク調整、サブタスク割当、結果マージ
-- tmux / in-process モード
+- **lead / teammate モデル**: リードエージェントがタスク調整、サブタスク割当、結果マージ。teammate はリードのパーミッション設定を継承（`--dangerously-skip-permissions` もリードに追従）。spawn後は個別にteammate modeを変更可能
+- **パーミッションバブルアップ**: teammate のツール許可要求はリードの UI にバブルアップして承認される。頻出操作は `permissions.allow` に事前登録しておくと摩擦が減る
+- **実行モード**: tmux / in-process
+- **既知の修正**: v2.1.114（2026-04-18）で teammate がツール許可をリクエストした際の permission dialog クラッシュ修正
+- **情報源**: [公式ドキュメント](https://code.claude.com/docs/en/agent-teams)
 
 ## Agent SDK
 - Claude Codeのツール・機能を活用したカスタムエージェントを構築
@@ -454,12 +458,19 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - **情報源**: [Anthropic公式](https://www.anthropic.com/news/claude-opus-4-7) / [マイグレーションガイド](https://platform.claude.com/docs/en/about-claude/models/migration-guide#migrating-to-claude-opus-4-7) / [ベンチマーク解説 - Vellum AI](https://www.vellum.ai/blog/claude-opus-4-7-benchmarks-explained)
 
 ## Claude Design 🔬
-- **リリース状態**: 🔬 研究プレビュー / 📢 発表（具体的利用条件は未詳細公開、2026年4月18日時点）
+- **リリース状態**: 🔬 研究プレビュー（2026年4月17日〜、段階ロールアウト）
 - **発表日**: 2026年4月17日（Anthropic Labs）
-- **概要**: Claudeとコラボレーションしてビジュアル成果物（デザイン、プロトタイプ、スライド、1-pagerなど）を作成する新製品。自然言語からウェブサイト・ランディングページ・プレゼンテーション・プロトタイプを生成
+- **対象プラン**: **Claude Pro / Max / Team / Enterprise**（無料プラン対象外）
+- **動作モデル**: Claude Opus 4.7（Anthropicの「最も高性能なビジョンモデル」として位置付け）
+- **サーフェス**: `claude.ai/design`
+- **利用枠**: 既存プラン枠を使用、**かつ通常の Claude chat / Claude Code 枠とは独立した週次 allowance**。超過後は extra usage を有効化して継続利用可能
+- **Enterprise での既定**: **デフォルト オフ**。管理者が Organization settings で明示有効化
+- **概要**: Claudeとコラボレーションしてビジュアル成果物（デザイン、プロトタイプ、スライド、1-pagerなど）を作成する新製品。自然言語からウェブサイト・ランディングページ・プレゼンテーション・ソーシャル/マーケティングアセットを生成
+- **対象ユーザー**: デザインツール非使用のファウンダー・プロダクトマネージャー・マーケター
+- **位置付け**: Canva / Figma の「代替ではなく補完」（公式説明）
 - **市場インパクト**: 4月14日のThe Informationリーク時点でFigma・Adobe・Wix等のデザイン関連株が下落。Anthropicがチャットインターフェース・開発者ツールから広範なデザイン自動化空間への戦略的拡張を明確化
 - **関連既存プロダクト**: Claude Cowork内の「Design」プラグイン（Anthropic Verified）— デザインクリティーク、UXライティング、アクセシビリティ監査（WCAG 2.1 AA）、リサーチ統合、開発ハンドオフ
-- **情報源**: [Claude Help Center](https://support.claude.com/en/articles/12138966-release-notes) / [Design プラグイン](https://claude.com/plugins/design) / [Anthropic Labs紹介](https://www.anthropic.com/news/introducing-anthropic-labs) / [PYMNTS](https://www.pymnts.com/artificial-intelligence-2/2026/anthropics-new-design-tool-rivals-adobe-and-figma/)
+- **情報源**: [Get started with Claude Design (Help Center)](https://support.claude.com/en/articles/14604416-get-started-with-claude-design) / [Introducing Claude Design by Anthropic Labs](https://www.anthropic.com/news/claude-design-anthropic-labs) / [TechCrunch](https://techcrunch.com/2026/04/17/anthropic-launches-claude-design-a-new-product-for-creating-quick-visuals/) / [VentureBeat](https://venturebeat.com/technology/anthropic-just-launched-claude-design-an-ai-tool-that-turns-prompts-into-prototypes-and-challenges-figma) / [Design プラグイン](https://claude.com/plugins/design)
 
 ## Claude Managed Agents 🧪
 - **リリース状態**: 🧪 パブリックベータ（全APIアカウントにデフォルト有効）
@@ -654,7 +665,7 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 | モデル/機能 | 発効日 | 移行先・備考 |
 |------------|--------|--------|
-| Claude Haiku 3 (`claude-3-haiku-20240307`) | 2026-04-19 | Claude Haiku 4.5 |
+| Claude Haiku 3 (`claude-3-haiku-20240307`) | **2026-04-19 発効済み** | Claude Haiku 4.5（API 呼び出しはエラー応答） |
 | **API デフォルトモデル切替** | **2026-04-23** | **Enterprise pay-as-you-go・Anthropic API の `opus` エイリアスが Opus 4.6 → Opus 4.7 を指すように。モデルピンニング未設定の本番APIは事前検証必須**（[マイグレーションガイド](https://platform.claude.com/docs/en/about-claude/models/migration-guide#migrating-to-claude-opus-4-7)） |
 | Sonnet 4.5/4 の1Mコンテキストベータ (`context-1m-2025-08-07`) | 2026-04-30 | Sonnet 4.6 / Opus 4.6（1M GA） |
 | Claude Sonnet 4 (`claude-sonnet-4-20250514`) | 2026-06-15 | Claude Sonnet 4.6（4月14日廃止予告） |
@@ -664,6 +675,7 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 ## 更新履歴
 
+- 2026-04-19: **v2.1.114反映**（Agent Teams のチームメイトがツール許可リクエストをした際の permission dialog クラッシュ修正）。**Claude Design の利用条件が確定**: Pro/Max/Team/Enterprise 対象、**Enterprise はデフォルトオフ（管理者が Organization settings で有効化）**、既存プラン枠を使用しつつ **Claude chat/Claude Code とは独立した週次クォータ**、超過後は extra usage で継続可能（公式ヘルプ記事）。**Agent Teams セクション拡充**: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` 実験フラグ、lead/teammate パーミッション継承、バブルアップ承認モデル、v2.1.114 での修正を記載。**Claude Haiku 3（`claude-3-haiku-20240307`）API リタイア本日発効**（4月19日）、以降エラー応答、Haiku 4.5 への移行必須（[調査レポート](reports/2026-04-19_v2.1.114-and-claude-design-plans.md)）
 - 2026-04-18（追加）: **v2.1.113反映**。**ネイティブClaude Codeバイナリ移行**（CLIがバンドルJSの代わりにプラットフォーム別optional depのネイティブバイナリを spawn、Bun/JSCベース）、**`sandbox.network.deniedDomains`** 設定、**セキュリティハードニング多数**（macOS `/private/{etc,var,tmp,home}` を危険削除ターゲット扱い、Bash deny ルールの `env`/`sudo`/`watch`/`ionice`/`setsid` exec ラッパー対応、`Bash(find:*)` allow ルールで `-exec`/`-delete` の自動承認廃止）、**`Bash` `dangerouslyDisableSandbox` サンドボックスバイパス修正**、Fullscreen Shift+↑/↓ スクロール、Ctrl+A/Ctrl+E readline、Windows Ctrl+Backspace、OSC 8 折り返しURL、`/loop` Esc キャンセル、`/ultrareview` 並列化・diffstat・アニメーション、`/extra-usage` / `@`補完 の Remote Control 対応、サブエージェント10分タイムアウト、多数のバグ修正。**2026-04-23予告: API デフォルトモデルが Opus 4.6 → Opus 4.7 へ切替**（Enterprise pay-as-you-go および Anthropic API、`opus` エイリアス解決先変更）。Opus 4.7 が **Snowflake Cortex AI**（Public Preview）と **GitHub Copilot**（GA）で同日展開判明（[調査レポート](reports/2026-04-18_v2.1.113-native-binary-and-default-model-shift.md)）
 - 2026-04-18: v2.1.111-112反映。**Claude Opus 4.7 GAリリース**（SWE-bench Verified 87.6%、2,576pxビジョン、同価格）、Claude Codeデフォルト努力レベルを`xhigh`に変更、`/ultrareview`コマンド（並列マルチエージェントコードレビュー）、`/less-permission-prompts`スキル、インタラクティブ`/effort`スライダー、Auto (match terminal)テーマ、Auto modeがMaxサブスクライバー対応、Windows PowerShellツール段階展開、globパターンBash自動許可、`Ctrl+U`/`Ctrl+L`強化、多数のバグ修正。**Claude Design発表**（4月17日、Anthropic Labs — デザイン・プロトタイプ・スライド生成）。**ホワイトハウス・Anthropic会談**（4月17日、Dario Amodei × Susie Wiles — Pentagon紛争解消交渉）。ホワイトハウスが米連邦機関にMythosアクセス認可（[調査レポート](reports/2026-04-18_v2.1.111-112-opus-4.7-and-claude-design.md)）
 - 2026-04-16: v2.1.109-110反映。`/tui`コマンド（フルスクリーンフリッカーフリーレンダリング切り替え）、プッシュ通知ツール、`autoScrollEnabled`設定、`Ctrl+O`/`/focus`分離、Extended Thinkingローテーションヒント、`--resume`/`--continue`スケジュールタスク復活、`/plugin`・`/doctor`改善、MCP接続切断ハング修正。**Claude.ai/API/Code大規模障害**（4月15日、約3時間、15,000件超報告）。**パフォーマンス低下問題・ユーザー反発**（Fortune、VentureBeat等が報道、AMD・Microsoft研究者が批判）（[調査レポート](reports/2026-04-16_v2.1.109-110-tui-fullscreen-and-outage.md)）
