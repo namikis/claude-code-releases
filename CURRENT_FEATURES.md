@@ -1,6 +1,6 @@
 # Claude Code 現行機能一覧
 
-**最終更新:** 2026-04-19（v2.1.114反映・**Agent Teams permission dialog クラッシュ修正**・**Claude Design 利用条件確定**（Pro/Max/Team/Enterprise、Enterpriseデフォルトオフ、独立週次クォータ）・**Claude Haiku 3 API リタイア発効**）
+**最終更新:** 2026-04-20（ニュースモード更新・**Axiosスクープ: NSA が Mythos を実利用中**・**連邦機関によるMythos評価の具体機関判明**（商務省AISI、DOE、財務省金融システム保護、CISA）・**英国MI5のUK AISI 経由アクセス**）
 
 Claude Codeは、コードベースの読み取り・ファイル編集・コマンド実行・開発ツール統合を行うAIコーディングアシスタント。ターミナル、IDE、デスクトップアプリ、ブラウザで利用可能。
 
@@ -601,10 +601,13 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - 通常はテロ組織・敵性国家に適用される指定を米国企業に初適用
 - 連邦判事が2026年3月26日に一時差止め命令を発令（「法の逸脱・報復の可能性」を認定）
 - 国防総省が2026年4月2日に控訴。**係争中**（差止め命令は有効、ブラックリストの効力は停止中）
-- **2026年4月17日**: Dario Amodei CEOがホワイトハウス首席補佐官Susie Wilesと面会。紛争解消に向けた交渉が本格化
+- **2026年4月17日**: Dario Amodei CEOがホワイトハウス首席補佐官Susie Wiles、財務長官Scott Bessentと面会。紛争解消に向けた交渉が本格化
 - **2026年4月17日**: ホワイトハウスが国防総省の反対を押し切り、米連邦機関（CISA、財務省、インテリジェンスコミュニティ）にMythosアクセス認可（Bloomberg/Axios報道）
-- **Claude Code / Claude製品への直接的な影響は現時点ではなし**。控訴審の結果次第で米政府機関・防衛関連企業の利用に影響の可能性
-- **情報源**: [Axios - White House peace talks](https://www.axios.com/2026/04/17/anthropic-trump-administration-mythos) / [Crypto Briefing](https://cryptobriefing.com/white-house-grants-agencies-access-to-anthropics-mythos-ai-despite-pentagon/)
+- **2026年4月19日（Axiosスクープ）**: **NSA（国家安全保障局）がMythosを実利用中**と判明。主にNSA自身の環境に対する脆弱性スキャン用途。**Pentagon配下の情報機関がブラックリスト対象企業と取引する構造的矛盾**が明確化
+- **2026年4月18日（RedState報道）**: 商務省 **AI標準化イノベーションセンター**、**エネルギー省**、**財務省金融システム保護部門**、**CISA** も Mythos を評価・利用中。行政府内で事実上の "de facto 解禁" 進行
+- **2026年4月19日（Trending Topics）**: **英国MI5（情報局保安部）が UK AI Safety Institute 経由でMythosアクセスを取得**
+- **Claude Code / Claude製品への直接的な影響は現時点ではなし**。控訴審の結果次第で米政府機関・防衛関連企業の利用に影響の可能性。ただし短期的には**連邦機関のAnthropicツール利用は拡大方向**
+- **情報源**: [Axios - NSA using Mythos despite blacklist (2026-04-19)](https://www.axios.com/2026/04/19/nsa-anthropic-mythos-pentagon) / [Axios - White House peace talks (2026-04-17)](https://www.axios.com/2026/04/17/anthropic-trump-administration-mythos) / [RedState - Federal Agencies Are Using It Anyway (2026-04-18)](https://redstate.com/ben-smith/2026/04/18/pentagon-blacklisted-anthropic-federal-agencies-are-using-it-anyway-n2201421) / [Trending Topics - NSA Already Uses Mythos (2026-04-19)](https://www.trendingtopics.eu/nsa-already-uses-anthropics-most-powerful-ai-model-myhtos-despite-pentagon-ban/)
 
 ---
 
@@ -675,6 +678,7 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 ## 更新履歴
 
+- 2026-04-20: **ニュースモード調査**（CLIリリースなし、Layer 2 公式発表もなし）。**2026-04-19 Axiosスクープ**「NSA using Anthropic's Mythos despite Defense Department blacklist」を反映 — Pentagonの傘下情報機関であるNSAがブラックリスト対象のAnthropic Mythosを**実利用中**（インフラ脆弱性スキャン）。Pentagon対Anthropic法的係争が続くなか、行政府内で事実上の "de facto 解禁" 進行。**RedState（4/18）が具体機関を特定**: 商務省AI標準化イノベーションセンター、エネルギー省、財務省金融システム保護部門、CISAがMythos評価中。**Trending Topics（4/19）**: 英国MI5がUK AISI経由でMythosアクセス取得。DoDブラックリストセクションに追記（[調査レポート](reports/2026-04-20_nsa-mythos-scoop-and-federal-usage.md)）
 - 2026-04-19: **v2.1.114反映**（Agent Teams のチームメイトがツール許可リクエストをした際の permission dialog クラッシュ修正）。**Claude Design の利用条件が確定**: Pro/Max/Team/Enterprise 対象、**Enterprise はデフォルトオフ（管理者が Organization settings で有効化）**、既存プラン枠を使用しつつ **Claude chat/Claude Code とは独立した週次クォータ**、超過後は extra usage で継続可能（公式ヘルプ記事）。**Agent Teams セクション拡充**: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` 実験フラグ、lead/teammate パーミッション継承、バブルアップ承認モデル、v2.1.114 での修正を記載。**Claude Haiku 3（`claude-3-haiku-20240307`）API リタイア本日発効**（4月19日）、以降エラー応答、Haiku 4.5 への移行必須（[調査レポート](reports/2026-04-19_v2.1.114-and-claude-design-plans.md)）
 - 2026-04-18（追加）: **v2.1.113反映**。**ネイティブClaude Codeバイナリ移行**（CLIがバンドルJSの代わりにプラットフォーム別optional depのネイティブバイナリを spawn、Bun/JSCベース）、**`sandbox.network.deniedDomains`** 設定、**セキュリティハードニング多数**（macOS `/private/{etc,var,tmp,home}` を危険削除ターゲット扱い、Bash deny ルールの `env`/`sudo`/`watch`/`ionice`/`setsid` exec ラッパー対応、`Bash(find:*)` allow ルールで `-exec`/`-delete` の自動承認廃止）、**`Bash` `dangerouslyDisableSandbox` サンドボックスバイパス修正**、Fullscreen Shift+↑/↓ スクロール、Ctrl+A/Ctrl+E readline、Windows Ctrl+Backspace、OSC 8 折り返しURL、`/loop` Esc キャンセル、`/ultrareview` 並列化・diffstat・アニメーション、`/extra-usage` / `@`補完 の Remote Control 対応、サブエージェント10分タイムアウト、多数のバグ修正。**2026-04-23予告: API デフォルトモデルが Opus 4.6 → Opus 4.7 へ切替**（Enterprise pay-as-you-go および Anthropic API、`opus` エイリアス解決先変更）。Opus 4.7 が **Snowflake Cortex AI**（Public Preview）と **GitHub Copilot**（GA）で同日展開判明（[調査レポート](reports/2026-04-18_v2.1.113-native-binary-and-default-model-shift.md)）
 - 2026-04-18: v2.1.111-112反映。**Claude Opus 4.7 GAリリース**（SWE-bench Verified 87.6%、2,576pxビジョン、同価格）、Claude Codeデフォルト努力レベルを`xhigh`に変更、`/ultrareview`コマンド（並列マルチエージェントコードレビュー）、`/less-permission-prompts`スキル、インタラクティブ`/effort`スライダー、Auto (match terminal)テーマ、Auto modeがMaxサブスクライバー対応、Windows PowerShellツール段階展開、globパターンBash自動許可、`Ctrl+U`/`Ctrl+L`強化、多数のバグ修正。**Claude Design発表**（4月17日、Anthropic Labs — デザイン・プロトタイプ・スライド生成）。**ホワイトハウス・Anthropic会談**（4月17日、Dario Amodei × Susie Wiles — Pentagon紛争解消交渉）。ホワイトハウスが米連邦機関にMythosアクセス認可（[調査レポート](reports/2026-04-18_v2.1.111-112-opus-4.7-and-claude-design.md)）

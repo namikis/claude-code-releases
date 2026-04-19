@@ -3,6 +3,7 @@
 - **週次レポート**
   - [2026-04-18 週次: 04/11〜04/18](weekly-reports/2026-04-18_weekly.md)
 - **調査レポート**
+  - [2026-04-20 NSAのMythos利用スクープ & 連邦機関運用実態](reports/2026-04-20_nsa-mythos-scoop-and-federal-usage.md)
   - [2026-04-19 v2.1.114・Claude Design利用条件・Haiku 3退役](reports/2026-04-19_v2.1.114-and-claude-design-plans.md)
   - [2026-04-18 v2.1.113・ネイティブバイナリ・4/23デフォルトモデル移行](reports/2026-04-18_v2.1.113-native-binary-and-default-model-shift.md)
   - [2026-04-18 v2.1.111-112・Opus 4.7 GA・Claude Design](reports/2026-04-18_v2.1.111-112-opus-4.7-and-claude-design.md)
