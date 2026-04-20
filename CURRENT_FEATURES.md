@@ -1,6 +1,6 @@
 # Claude Code 現行機能一覧
 
-**最終更新:** 2026-04-20（ニュースモード更新・**Axiosスクープ: NSA が Mythos を実利用中**・**連邦機関によるMythos評価の具体機関判明**（商務省AISI、DOE、財務省金融システム保護、CISA）・**英国MI5のUK AISI 経由アクセス**）
+**最終更新:** 2026-04-21（**v2.1.116反映** — `/resume` 67%高速化・MCP遅延ロード・フルスクリーンスクロール改善・sandbox危険パス保護強化・Kitty keyboard protocol 多数修正。**Opus 4.7 on Amazon Bedrock GA**（4リージョン、10k RPM、1Mコンテキスト、高解像度画像）— ただし Claude Code on Bedrock の `opus` エイリアスは依然 Opus 4.6 解決、4.7 利用には明示指定必要）
 
 Claude Codeは、コードベースの読み取り・ファイル編集・コマンド実行・開発ツール統合を行うAIコーディングアシスタント。ターミナル、IDE、デスクトップアプリ、ブラウザで利用可能。
 
@@ -210,6 +210,18 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - `/extra-usage` が Remote Control（モバイル/Web）クライアントから利用可能に（v2.1.113）
 - Remote Control クライアントで `@`-file オートコンプリート候補をクエリ可能（v2.1.113）
 - mid-stream でストールしたサブエージェントが10分後に明確なエラーで失敗（無音ハング回避、v2.1.113）
+- `/resume` の大規模セッション処理が最大67%高速化（40MB+ セッション）。dead-fork エントリが多いセッションも効率的に処理（v2.1.116）
+- MCP 起動の高速化: 複数 stdio サーバー環境で `resources/templates/list` を初回 `@`-mention まで遅延実行（v2.1.116）
+- フルスクリーンスクロール改善: VS Code / Cursor / Windsurf ターミナルでスムーズ化、`/terminal-setup` がエディタのスクロール感度を自動設定（v2.1.116）
+- Thinking spinner のインライン進捗表示: 「still thinking」「thinking more」「almost done thinking」がスピナー内に統合（v2.1.116）
+- `/config` 検索が値もマッチ（例: 「vim」で Editor mode 設定が見つかる）（v2.1.116）
+- `/doctor` が応答中でも開けるように（現ターン完了を待たない、v2.1.116）
+- `/reload-plugins` および バックグラウンド自動更新が、追加済みマーケットプレイスから**プラグインの欠落依存を自動インストール**（v2.1.116）
+- Bash ツール: `gh` コマンドが GitHub API レート制限に達した際にヒント表示、エージェントがバックオフ可能に（v2.1.116）
+- Usage tab（Settings）: 5時間・週次使用量を即座に表示、使用状況エンドポイントのレート制限時も失敗しない（v2.1.116）
+- Agent frontmatter `hooks:` が `--agent` でメインスレッドエージェント実行時にも発火（v2.1.116）
+- スラッシュコマンドメニュー: フィルタ結果0件時に「No commands match」を表示（メニュー消失回避、v2.1.116）
+- セキュリティ: sandbox auto-allow が `rm`/`rmdir` の `/`・`$HOME`・クリティカルディレクトリ対象時に dangerous-path safety check をバイパスしないように（v2.1.116）
 - プラグインスキル（`"skills": ["./"]`）がディレクトリ名ではなくフロントマター `name` を呼び出し名に使用（v2.1.94）
 - `--resume` がリポジトリのworktree間で直接動作するように改善（v2.1.94）
 - CJK/マルチバイトテキストがstream-jsonでUTF-8分割時にU+FFFDに破損する問題を修正（v2.1.94）
@@ -395,7 +407,7 @@ claude -p --json-schema '{"type":"object",...}' "query"
 | **努力レベル** | `low` / `medium` / `high` / `xhigh` / `max`（`xhigh`はOpus 4.7のみ、他モデルでは`high`フォールバック。v2.1.111〜） |
 | **Claude Codeデフォルト努力レベル** | `xhigh`（全プラン、Opus 4.7使用時）。コーディング・エージェント用途では`high`〜`xhigh`推奨 |
 | **ビジョン** | Opus 4.7は長辺2,576pxまでの高解像度画像をサポート |
-| **サードパーティ** | Amazon Bedrock、Google Vertex AI、Microsoft Foundry対応（Opus 4.7は全プラットフォームで同時GA）。Bedrock上でAnthropic Messages API（`/anthropic/v1/messages`）が4月16日より全AWS顧客にセルフサーブ開放（27リージョン）。**Snowflake Cortex AI**（Public Preview、US/EU、Opus 4.7同日展開）、**GitHub Copilot**（GA、Opus 4.7同日展開）で利用可能 |
+| **サードパーティ** | Amazon Bedrock、Google Vertex AI、Microsoft Foundry対応（Opus 4.7は全プラットフォームで同時GA）。Bedrock上でAnthropic Messages API（`/anthropic/v1/messages`）が4月16日より全AWS顧客にセルフサーブ開放（27リージョン）。**Snowflake Cortex AI**（Public Preview、US/EU、Opus 4.7同日展開）、**GitHub Copilot**（GA、Opus 4.7同日展開）で利用可能。**Amazon Bedrock で Opus 4.7 GA（2026-04-20）**: US East (N. Virginia) / Asia Pacific (Tokyo) / Europe (Ireland/Stockholm) の4リージョン、10,000 RPM/アカウント/リージョン、1Mコンテキスト、高解像度画像、adaptive thinking、next-gen inference engine。ただし**Claude Code on Bedrock のエイリアス解決は依然 `opus` → Opus 4.6、`sonnet` → Sonnet 4.5**。Opus 4.7 利用には full model name または `ANTHROPIC_DEFAULT_OPUS_MODEL` 環境変数の明示指定が必要。既知の不具合 [#49238](https://github.com/anthropics/claude-code/issues/49238)（Bedrock 経由での呼び出し失敗）が継続調査中 |
 | **Extended Thinking 表示制御** | `thinking.display: "omitted"` でthinkingコンテンツをストリーミングから省略可能（signature保持）。インタラクティブセッションではthinking summaryがデフォルト無効化（`showThinkingSummaries: true`で復元、v2.1.89） |
 | **Models API 機能照会** | `GET /v1/models` が `max_input_tokens`、`max_tokens`、`capabilities` を返すように（3月18日〜） |
 | **modelOverrides** | モデルピッカーのエントリをカスタムプロバイダーモデルID（Bedrock ARN等）にマッピング |
@@ -509,6 +521,9 @@ claude -p --json-schema '{"type":"object",...}' "query"
 ---
 
 ## セキュリティ修正
+
+### v2.1.116（2026年4月20日）
+- **sandbox auto-allow が dangerous-path safety check をバイパスする問題を修正**: `rm`/`rmdir` が `/`、`$HOME`、その他クリティカルなシステムディレクトリを対象とする場合、サンドボックス auto-allow でも危険パス保護を強制適用
 
 ### v2.1.113（2026年4月17日）
 - **`Bash` `dangerouslyDisableSandbox` サンドボックスバイパス**: パーミッションプロンプトなしにサンドボックス外で任意コマンド実行していた問題を修正
@@ -678,6 +693,7 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 ## 更新履歴
 
+- 2026-04-21: **v2.1.116反映**（`/resume` 67%高速化、MCP `resources/templates/list` 遅延ロード、フルスクリーンスクロール改善、Thinking spinner インライン進捗、`/config` 値検索、`/doctor` 非ブロッキング、`/reload-plugins` プラグイン欠落依存自動インストール、Bash `gh` レート制限ヒント、Usage tab 即時表示、Agent frontmatter `hooks:` の `--agent` 対応、sandbox auto-allow の `rm`/`rmdir` 危険パス保護強化、Kitty keyboard protocol 多数修正、Ctrl+Z hang、VS Code scrolling、cache control TTL API 400、scrollback 複製、`/branch` 50MB 制限、`/resume` 空会話、`/plugin` 重複表示、worktree 後の `/update`/`/tui` 非動作）。**Claude Opus 4.7 on Amazon Bedrock GA**（2026-04-20、4リージョン（US East N.Virginia / Asia Pacific Tokyo / Europe Ireland/Stockholm）、10,000 RPM/アカウント/リージョン、1Mコンテキスト、高解像度画像、adaptive thinking、next-gen inference engine）— ただし Claude Code on Bedrock の `opus` エイリアスは依然 Opus 4.6 解決（4.7 利用には `ANTHROPIC_DEFAULT_OPUS_MODEL` or full model name 必須）、既知の不具合 #49238 継続中。**Project Glasswing/Mythos 周辺報道継続**: CSA が CISO 向け「flood of vulnerabilities」ガイド更新（4/16）、Foreign Policy「Cyber Calculus」論説、Barracuda Networks の防御策、CounterPunch 批判論説（[調査レポート](reports/2026-04-21_v2.1.116-and-opus-4.7-bedrock.md)）
 - 2026-04-20: **ニュースモード調査**（CLIリリースなし、Layer 2 公式発表もなし）。**2026-04-19 Axiosスクープ**「NSA using Anthropic's Mythos despite Defense Department blacklist」を反映 — Pentagonの傘下情報機関であるNSAがブラックリスト対象のAnthropic Mythosを**実利用中**（インフラ脆弱性スキャン）。Pentagon対Anthropic法的係争が続くなか、行政府内で事実上の "de facto 解禁" 進行。**RedState（4/18）が具体機関を特定**: 商務省AI標準化イノベーションセンター、エネルギー省、財務省金融システム保護部門、CISAがMythos評価中。**Trending Topics（4/19）**: 英国MI5がUK AISI経由でMythosアクセス取得。DoDブラックリストセクションに追記（[調査レポート](reports/2026-04-20_nsa-mythos-scoop-and-federal-usage.md)）
 - 2026-04-19: **v2.1.114反映**（Agent Teams のチームメイトがツール許可リクエストをした際の permission dialog クラッシュ修正）。**Claude Design の利用条件が確定**: Pro/Max/Team/Enterprise 対象、**Enterprise はデフォルトオフ（管理者が Organization settings で有効化）**、既存プラン枠を使用しつつ **Claude chat/Claude Code とは独立した週次クォータ**、超過後は extra usage で継続可能（公式ヘルプ記事）。**Agent Teams セクション拡充**: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` 実験フラグ、lead/teammate パーミッション継承、バブルアップ承認モデル、v2.1.114 での修正を記載。**Claude Haiku 3（`claude-3-haiku-20240307`）API リタイア本日発効**（4月19日）、以降エラー応答、Haiku 4.5 への移行必須（[調査レポート](reports/2026-04-19_v2.1.114-and-claude-design-plans.md)）
 - 2026-04-18（追加）: **v2.1.113反映**。**ネイティブClaude Codeバイナリ移行**（CLIがバンドルJSの代わりにプラットフォーム別optional depのネイティブバイナリを spawn、Bun/JSCベース）、**`sandbox.network.deniedDomains`** 設定、**セキュリティハードニング多数**（macOS `/private/{etc,var,tmp,home}` を危険削除ターゲット扱い、Bash deny ルールの `env`/`sudo`/`watch`/`ionice`/`setsid` exec ラッパー対応、`Bash(find:*)` allow ルールで `-exec`/`-delete` の自動承認廃止）、**`Bash` `dangerouslyDisableSandbox` サンドボックスバイパス修正**、Fullscreen Shift+↑/↓ スクロール、Ctrl+A/Ctrl+E readline、Windows Ctrl+Backspace、OSC 8 折り返しURL、`/loop` Esc キャンセル、`/ultrareview` 並列化・diffstat・アニメーション、`/extra-usage` / `@`補完 の Remote Control 対応、サブエージェント10分タイムアウト、多数のバグ修正。**2026-04-23予告: API デフォルトモデルが Opus 4.6 → Opus 4.7 へ切替**（Enterprise pay-as-you-go および Anthropic API、`opus` エイリアス解決先変更）。Opus 4.7 が **Snowflake Cortex AI**（Public Preview）と **GitHub Copilot**（GA）で同日展開判明（[調査レポート](reports/2026-04-18_v2.1.113-native-binary-and-default-model-shift.md)）
