@@ -3,6 +3,7 @@
 - **週次レポート**
   - [2026-04-18 週次: 04/11〜04/18](weekly-reports/2026-04-18_weekly.md)
 - **調査レポート**
+  - [2026-04-22 CISA Mythosアクセス欠落 & Trump「DoD合意possible」](reports/2026-04-22_cisa-access-and-trump-deal-possible.md)
   - [2026-04-21 v2.1.116・Opus 4.7 on Amazon Bedrock GA](reports/2026-04-21_v2.1.116-and-opus-4.7-bedrock.md)
   - [2026-04-20 NSAのMythos利用スクープ & 連邦機関運用実態](reports/2026-04-20_nsa-mythos-scoop-and-federal-usage.md)
   - [2026-04-19 v2.1.114・Claude Design利用条件・Haiku 3退役](reports/2026-04-19_v2.1.114-and-claude-design-plans.md)
