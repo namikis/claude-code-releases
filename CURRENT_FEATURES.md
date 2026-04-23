@@ -1,6 +1,6 @@
 # Claude Code 現行機能一覧
 
-**最終更新:** 2026-04-22（**ニュースモード** — 新CLIリリースなし、v2.1.116継続。**DoDブラックリスト情勢に進展**: Axiosスクープで **CISAがMythosアクセス未保有** と判明（4/17 Bloomberg の OMB 認可プロトコル整備報道を実態面で訂正）、**Trump が CNBC で国防総省合意 "possible"** と態度軟化発言（2月の連邦機関利用停止指令から転換））
+**最終更新:** 2026-04-24（**v2.1.117（4/22）と v2.1.118（4/23）を連続リリース**。v2.1.118: **vim visual/visual-line モード**、**`/cost`+`/stats`→`/usage` 統合**、**カスタムテーマ作成・プラグイン配布**、**Hook から MCP tools 直接呼び出し（`type: "mcp_tool"`）**、**`DISABLE_UPDATES` 環境変数**、WSL 側 Windows managed settings 継承、Auto mode `"$defaults"` プレースホルダ、`claude plugin tag`。v2.1.117: **ネイティブビルドで `bfs`/`ugrep` 埋め込み**（Glob/Grep 置換）、複数 MCP 並列接続、**Pro/Max の Opus 4.6/Sonnet 4.6 デフォルト effort を `medium`→`high`**、**Opus 4.7 の `/context` 計算を 200K→1M に修正**、Advisor Tool experimental ラベル、OpenTelemetry に `effort` 属性。**4/23 Freshfields × Anthropic 複数年提携**: 33 拠点 5,700 人に Claude 全社導入、Cowork 展開予定、RELX 株価下落。**4/21〜22 Claude Code on Pro 試験削除事件**: 2% A/B テストが Web 全面更新ミスで拡大、48 時間以内に revert）
 
 Claude Codeは、コードベースの読み取り・ファイル編集・コマンド実行・開発ツール統合を行うAIコーディングアシスタント。ターミナル、IDE、デスクトップアプリ、ブラウザで利用可能。
 
@@ -115,6 +115,7 @@ Claude Codeは、コードベースの読み取り・ファイル編集・コマ
 | `InstructionsLoaded` | 指示読み込み時 |
 | `PermissionDenied` | Auto Mode分類器の拒否後に発火。`{retry: true}`でリトライ指示可能 |
 | `UserPromptSubmit` | ユーザープロンプト送信時。`hookSpecificOutput.sessionTitle` でセッションタイトル設定可能（v2.1.94） |
+| **MCP Tool Hook**（`type: "mcp_tool"`） | Hook 定義で `type: "mcp_tool"` を指定すると MCP サーバーのツールを直接実行可能。シェル/HTTP/LLM プロンプトに加わる 4 つめの hook タイプ（v2.1.118） |
 
 - `settings.json` またはサブエージェント/スキルのフロントマターで定義
 - `if` フィールドで条件付き実行が可能（パーミッションルール構文、例: `Bash(git *)`）
@@ -210,6 +211,33 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - `/extra-usage` が Remote Control（モバイル/Web）クライアントから利用可能に（v2.1.113）
 - Remote Control クライアントで `@`-file オートコンプリート候補をクエリ可能（v2.1.113）
 - mid-stream でストールしたサブエージェントが10分後に明確なエラーで失敗（無音ハング回避、v2.1.113）
+- **Vim visual モード / visual-line モード**: `v` でキャラクタ選択、`V` で行選択。operators（`d`/`y`/`c` 等）と視覚フィードバック対応（v2.1.118）
+- **`/cost`・`/stats` を `/usage` に統合**: 単一 `/usage` コマンドのタブ UI に集約。`/cost`・`/stats` はタイピングショートカットとして残存し対応タブをオープン（v2.1.118）
+- **カスタムテーマ**: `/theme` から名前付きカスタムテーマ作成・切替、`~/.claude/themes/` の JSON を直接編集。**プラグインが `themes/` ディレクトリ配下でテーマ配布可能**（v2.1.118）
+- **`/color` が claude.ai/code にアクセントカラー同期**: Remote Control 接続時、セッションアクセント色が claude.ai/code に同期（v2.1.118）
+- **`DISABLE_UPDATES` 環境変数**: 手動 `claude update` 含む全アップデートパスを完全遮断。`DISABLE_AUTOUPDATER`（自動更新のみ）より厳格（v2.1.118）
+- **WSL 側の Windows managed settings 継承**: `wslInheritsWindowsSettings` ポリシーキーで、WSL が Windows 側 managed settings を継承（企業 IT 運用向け、v2.1.118）
+- **Auto mode `"$defaults"` プレースホルダ**: `autoMode.allow`/`soft_deny`/`environment` に `"$defaults"` を含めるとビルトインルールを置き換えず併存（v2.1.118）
+- **`claude plugin tag`**: プラグイン用 release git tag 作成、バージョン検証付き（v2.1.118）
+- **`--continue`/`--resume` が `/add-dir` セッションを発見**: カレントディレクトリを `/add-dir` で追加したセッションも再開候補に（v2.1.118）
+- **`/fork` の効率化**: 親会話全体をディスクに書き込むのではなく、ポインタを書いて読み込み時に hydrate（v2.1.118）
+- `/model` ピッカーが `ANTHROPIC_DEFAULT_*_MODEL_NAME`/`_DESCRIPTION` override を honor（カスタム `ANTHROPIC_BASE_URL` gateway 時、v2.1.118）
+- **ネイティブビルドで `bfs` / `ugrep` 埋め込み**: macOS/Linux のネイティブバイナリに fast find (`bfs`)・fast grep (`ugrep`) を内蔵し、`Glob`/`Grep` 専用ツールを Bash 経由の高速実行に置換。専用ツール round-trip を省略（v2.1.117、Windows/npm 版は従来通り）
+- **複数 MCP サーバー並列接続**: ローカル MCP サーバーと claude.ai MCP サーバーの並列接続がデフォルトに。起動高速化（v2.1.117）
+- **Windows: `where.exe` 検索をプロセスあたりキャッシュ** でサブプロセス起動高速化（v2.1.117）
+- **Forked subagents を外部ビルドで有効化**: `CLAUDE_CODE_FORK_SUBAGENT=1` で non-native ビルドでも fork 型サブエージェントが利用可能（v2.1.117）
+- **Agent frontmatter `mcpServers`** が `--agent` でメインスレッド実行時も読み込まれるように（v2.1.117）
+- **`/model` 選択永続化改善**: プロジェクトピンを跨いで再起動後も選択維持、起動ヘッダーに active モデルの出自表示（v2.1.117）
+- **`/resume` で stale 大規模セッションの summarize**: 再読み込み前に要約するか問い合わせ（v2.1.117）
+- **Advisor Tool**: experimental ラベル、learn-more リンク、startup notification 追加。"Advisor tool result content could not be processed" エラーでセッションが毎プロンプト失敗する問題を修正（v2.1.117）
+- **`cleanupPeriodDays` 対象拡大**: `~/.claude/tasks/`、`shell-snapshots/`、`backups/` も retention sweep 対象に（v2.1.117）
+- **OpenTelemetry 拡張**: `user_prompt` に `command_name`/`command_source`、`cost.usage`/`token.usage`/`api_request`/`api_error` に `effort` 属性追加。カスタム/MCP コマンド名は `OTEL_LOG_TOOL_DETAILS=1` 未設定時は redact（v2.1.117）
+- **Pro/Max デフォルト effort: Opus 4.6/Sonnet 4.6 で `medium` → `high`**（v2.1.117、v2.1.94 で API key/Bedrock/Vertex/Foundry/Team/Enterprise には適用済み、今回 Pro/Max subscription ユーザーに拡張）
+- **Opus 4.7 `/context` 計算修正**: 200K 固定計算になっていた問題を 1M ネイティブに合わせて修正。インフレされた % 表示・早期 autocompact を解消（v2.1.117）
+- **Plain-CLI OAuth 反応的リフレッシュ**: access token mid-session 期限切れで "Please run /login" 連発する問題を、401 時の reactive refresh で解決（v2.1.117）
+- **MCP OAuth 修正群**（v2.1.118）: `headersHelper` 設定時の Authenticate/Re-authenticate 操作復活、`expires_in` なしトークンでの毎時再認証解消、step-up authorization の `insufficient_scope` 403 で silent refresh ではなく re-consent プロンプト、cross-process lock 競合修正、**macOS キーチェーンレース条件**（並行 refresh でリフレッシュ済みトークンが上書き）修正
+- **Plugin 依存 auto-resolve**: `plugin install` で既インストールプラグインの missing 依存を install、エラーが "not installed" + install hint を表示、`claude plugin marketplace add` が missing 依存を auto-resolve（v2.1.117）
+- **`blockedMarketplaces`/`strictKnownMarketplaces` enforcement**: plugin install/update/refresh/autoupdate 全てでポリシー適用（v2.1.117）
 - `/resume` の大規模セッション処理が最大67%高速化（40MB+ セッション）。dead-fork エントリが多いセッションも効率的に処理（v2.1.116）
 - MCP 起動の高速化: 複数 stdio サーバー環境で `resources/templates/list` を初回 `@`-mention まで遅延実行（v2.1.116）
 - フルスクリーンスクロール改善: VS Code / Cursor / Windsurf ターミナルでスムーズ化、`/terminal-setup` がエディタのスクロール感度を自動設定（v2.1.116）
@@ -359,9 +387,10 @@ claude -p --json-schema '{"type":"object",...}' "query"
 | `/focus` | Focus View独立トグル（`Ctrl+O`から分離、v2.1.110） |
 | `/ultrareview` | クラウドで並列マルチエージェント分析による包括的コードレビュー。引数なしでカレントブランチ、`/ultrareview <PR#>`で指定PRをレビュー（v2.1.111） |
 | `/less-permission-prompts` | トランスクリプトをスキャンし、よく使う読み取り専用Bash・MCPツール呼び出しを`.claude/settings.json` allowlistとして提案するスキル（v2.1.111） |
-| `/theme` | テーマ切替。「Auto (match terminal)」でターミナルのダーク/ライトモードに追従（v2.1.111） |
-| `/stats` | 使用統計の可視化 |
-| `/cost` | モデル別・キャッシュヒット別コスト内訳表示（サブスクリプションユーザー向け、v2.1.92） |
+| `/theme` | テーマ切替。「Auto (match terminal)」でターミナルのダーク/ライトモードに追従（v2.1.111）。**v2.1.118 でカスタムテーマ作成・切替対応**、`~/.claude/themes/` JSON 直接編集、プラグインが `themes/` で配布可能 |
+| `/usage` | **使用統計・コスト統合ビュー（タブ UI）**（`/cost`・`/stats` を統合、v2.1.118） |
+| `/stats` | `/usage` の統計タブを開くショートカット（v2.1.118 以降） |
+| `/cost` | `/usage` のコスト内訳タブを開くショートカット（サブスクリプションユーザー向け、v2.1.92 / v2.1.118 で `/usage` に統合） |
 | `/fast` | Fast Mode切替 |
 | `/color` | プロンプトバーの色変更 |
 | `/rename` | セッション名変更 |
@@ -586,6 +615,21 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - IPO（$30B超ARR）を控え、透明性ブランドへの影響が懸念される
 - **情報源**: [Fortune](https://fortune.com/2026/04/14/anthropic-claude-performance-decline-user-complaints-backlash-lack-of-transparency-accusations-compute-crunch/) / [VentureBeat](https://venturebeat.com/technology/is-anthropic-nerfing-claude-users-increasingly-report-performance) / [The Register](https://www.theregister.com/2026/04/13/claude_outage_quality_complaints/)
 
+### Freshfields × Anthropic 複数年 AI 提携（2026-04-23）
+- **国際法律事務所 Freshfields** が Anthropic と複数年協業・共同開発・全社導入合意を公式発表
+- **規模**: **33 拠点・全プラクティスグループ・ビジネスサービスに Claude を firmwide デプロイ**、すでに **5,700 人の従業員** に提供開始済み、提供開始後 6 週間で Claude 利用量約 **500% 増**
+- **共同開発プログラム**: AI 法務ワークフロー・agentic ワークフローの共同設計、**次世代モデル・ツールへの early access** を Freshfields が取得
+- **Cowork 展開予定**: セキュリティ・コンプライアンス・トレーニングフレームワーク整合後に Cowork（Anthropic の agentic AI プラットフォーム）への拡大を計画
+- **市場インパクト**: RELX（LexisNexis 親会社）**株価が下落**。Harvey × OpenAI / Thomson Reuters CoCounsel / LexisNexis Protégé の既存法律 AI 競合からの移行を示唆
+- **情報源**: [Businesswire 公式プレス](https://www.businesswire.com/news/home/20260423837690/en/Freshfields-and-Anthropic-Team-Up-to-Co-Build-AI-Legal-Workflows-Deploying-Claude-Across-the-Firm-Globally) / [Law.com](https://www.law.com/legaltechnews/2026/04/23/freshfields-announces-anthropic-deal-deploys-claude-firmwide/) / [The Lawyer - Landmark AI Deal](https://www.thelawyer.com/freshfields-strikes-landmark-ai-deal-with-anthropic/) / [Investing.com - RELX 株価下落報道](https://www.investing.com/news/stock-market-news/relx-stock-falls-as-anthropic-partners-with-freshfields-on-legal-ai-93CH-4632084)
+
+### Claude Code on Pro 試験的削除事件（2026-04-21〜22 発生、48 時間以内に撤回）
+- **経緯**: 2026-04-21 に無告知で Anthropic の pricing ページから Pro プラン（$20/月）の Claude Code 項目が削除、Help Center 記事タイトルと landing も更新。2026-04-22 に head of growth が「新規 prosumer signup の約 2% に対する小規模 A/B テスト」「既存 Pro/Max subscribers は影響なし」とコメントし、**pricing・docs の表記変更を revert**
+- **原因**: Opus 4.7 以降、**Pro ユーザーのセッションが Opus 4.6 比で最大 3 倍長時間化**しバックグラウンドで自動ワークフローが何時間も回るケースが頻発、現行 Pro プラン上限が想定外の負荷に
+- **実装ミス**: 2% A/B テストのつもりが **Web 全面更新**してしまい「グローバル変更」に見えた。Simon Willison など開発者コミュニティから混乱と信頼性への疑念が指摘
+- **現状**: 恒久削除は未定。既存ユーザーは影響なし。Claude Code 単独プランや段階プラン（Claude Code Max 相当）の可能性が業界内で議論開始
+- **情報源**: [The Register - Anthropic tests reaction to yanking Claude Code from Pro (2026-04-22)](https://www.theregister.com/2026/04/22/anthropic_removes_claude_code_pro/) / [The New Stack](https://thenewstack.io/anthropic-claude-code-limits/) / [Simon Willison - Is Claude Code going to cost $100/month? Probably not (2026-04-22)](https://simonwillison.net/2026/Apr/22/claude-code-confusion/) / [Heise Online](https://www.heise.de/en/news/Anthropic-is-temporarily-removing-Claude-Code-from-the-Pro-tariff-11268189.html)
+
 ### CoreWeave-Anthropic 複数年GPUクラウド契約（2026年4月10日）
 - AnthropicがCoreWeaveのGPUクラウドインフラを複数年契約で利用。Claude AIモデルの本番推論ワークロードに活用
 - Nvidia GPU（具体的アーキテクチャ非公開）、段階的インフラ展開と拡張オプション付き
@@ -695,6 +739,7 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 ## 更新履歴
 
+- 2026-04-24: **v2.1.117（4/22）と v2.1.118（4/23）連続リリース**を反映。v2.1.118: **vim visual/visual-line モード**、**`/cost`+`/stats` → `/usage` 統合**、**カスタムテーマ作成・プラグイン配布**、**Hook から MCP tools 直接呼び出し（`type: "mcp_tool"` 新 hook イベントタイプ）**、**`DISABLE_UPDATES` 環境変数**、WSL 側 Windows managed settings 継承、Auto mode `"$defaults"` プレースホルダ、`claude plugin tag`、`/color` の claude.ai/code 同期。v2.1.117: **ネイティブビルドで `bfs`/`ugrep` 埋め込み**（Glob/Grep 置換）、複数 MCP 並列接続、**Pro/Max Opus 4.6/Sonnet 4.6 デフォルト effort `medium`→`high`**、**Opus 4.7 `/context` 計算 200K→1M 修正**、Advisor Tool experimental ラベル、OpenTelemetry に `effort`/`command_name`/`command_source` 属性、Plain-CLI OAuth reactive refresh、Forked subagents 外部ビルド有効化（`CLAUDE_CODE_FORK_SUBAGENT=1`）。**2026-04-23 Freshfields × Anthropic 複数年提携**: 33 拠点 5,700 人に Claude 全社導入、Cowork 展開予定、RELX 株価下落。**2026-04-21〜22 Claude Code on Pro 試験削除事件**: 2% A/B テストが Web 全面更新ミスで拡大、48 時間以内に revert、既存ユーザー影響なし。Hook イベントテーブル、スラッシュコマンドテーブル、主要機能リスト、ビジネスセクションに追記（[調査レポート](reports/2026-04-24_v2.1.117-118-vim-visual-and-freshfields.md)）
 - 2026-04-22: **ニュースモード調査**（新CLIリリースなし、v2.1.116継続、Layer 2 公式発表もなし）。**2026-04-21 Axiosスクープ**「CISA doesn't have access to Anthropic's Mythos」を反映 — 国家のトップサイバー防衛機関 CISA が Mythos アクセスを保有していないと判明、Anthropic は 40 社超の組織に限定配布中だが CISA は含まれず。4/17 Bloomberg の「OMB が CISA への Mythos 認可プロトコル整備」報道を実態面で訂正。**2026-04-21 CNBC インタビュー**: Trump が国防総省 Anthropic 合意を "possible" と発言、「shaping up」として 2 月の連邦機関利用停止指令から態度軟化。TheNextWeb が White House OMB（連邦 CIO Gregory Barbaccia）による連邦機関向け Mythos controlled version アクセスプロトコル整備を追加報道。DoDブラックリスト情勢セクションに追記（[調査レポート](reports/2026-04-22_cisa-access-and-trump-deal-possible.md)）
 - 2026-04-21: **v2.1.116反映**（`/resume` 67%高速化、MCP `resources/templates/list` 遅延ロード、フルスクリーンスクロール改善、Thinking spinner インライン進捗、`/config` 値検索、`/doctor` 非ブロッキング、`/reload-plugins` プラグイン欠落依存自動インストール、Bash `gh` レート制限ヒント、Usage tab 即時表示、Agent frontmatter `hooks:` の `--agent` 対応、sandbox auto-allow の `rm`/`rmdir` 危険パス保護強化、Kitty keyboard protocol 多数修正、Ctrl+Z hang、VS Code scrolling、cache control TTL API 400、scrollback 複製、`/branch` 50MB 制限、`/resume` 空会話、`/plugin` 重複表示、worktree 後の `/update`/`/tui` 非動作）。**Claude Opus 4.7 on Amazon Bedrock GA**（2026-04-20、4リージョン（US East N.Virginia / Asia Pacific Tokyo / Europe Ireland/Stockholm）、10,000 RPM/アカウント/リージョン、1Mコンテキスト、高解像度画像、adaptive thinking、next-gen inference engine）— ただし Claude Code on Bedrock の `opus` エイリアスは依然 Opus 4.6 解決（4.7 利用には `ANTHROPIC_DEFAULT_OPUS_MODEL` or full model name 必須）、既知の不具合 #49238 継続中。**Project Glasswing/Mythos 周辺報道継続**: CSA が CISO 向け「flood of vulnerabilities」ガイド更新（4/16）、Foreign Policy「Cyber Calculus」論説、Barracuda Networks の防御策、CounterPunch 批判論説（[調査レポート](reports/2026-04-21_v2.1.116-and-opus-4.7-bedrock.md)）
 - 2026-04-20: **ニュースモード調査**（CLIリリースなし、Layer 2 公式発表もなし）。**2026-04-19 Axiosスクープ**「NSA using Anthropic's Mythos despite Defense Department blacklist」を反映 — Pentagonの傘下情報機関であるNSAがブラックリスト対象のAnthropic Mythosを**実利用中**（インフラ脆弱性スキャン）。Pentagon対Anthropic法的係争が続くなか、行政府内で事実上の "de facto 解禁" 進行。**RedState（4/18）が具体機関を特定**: 商務省AI標準化イノベーションセンター、エネルギー省、財務省金融システム保護部門、CISAがMythos評価中。**Trending Topics（4/19）**: 英国MI5がUK AISI経由でMythosアクセス取得。DoDブラックリストセクションに追記（[調査レポート](reports/2026-04-20_nsa-mythos-scoop-and-federal-usage.md)）
