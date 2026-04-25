@@ -3,6 +3,9 @@
 - **週次レポート**
   - [2026-04-18 週次: 04/11〜04/18](weekly-reports/2026-04-18_weekly.md)
 - **調査レポート**
+  - [2026-04-26 v2.1.120事実上ロールバック・Opus 4.7連続障害](reports/2026-04-26_v2.1.120-rollback-and-opus-incidents.md)
+  - [2026-04-25 Rate Limits API・NEC提携・米中間選挙セーフガード・Project Deal](reports/2026-04-25_rate-limits-api-and-nec-partnership.md)
+  - [2026-04-24 v2.1.119・品質劣化postmortem・Managed Agents Memory公開β](reports/2026-04-24_v2.1.119-postmortem-and-managed-agents-memory.md)
   - [2026-04-24 v2.1.117-118・vim visual・MCP tool hook・Freshfields全社導入](reports/2026-04-24_v2.1.117-118-vim-visual-and-freshfields.md)
   - [2026-04-22 CISA Mythosアクセス欠落 & Trump「DoD合意possible」](reports/2026-04-22_cisa-access-and-trump-deal-possible.md)
   - [2026-04-21 v2.1.116・Opus 4.7 on Amazon Bedrock GA](reports/2026-04-21_v2.1.116-and-opus-4.7-bedrock.md)
