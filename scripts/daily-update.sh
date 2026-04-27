@@ -12,6 +12,9 @@ RUN_DATE=$(date '+%Y-%m-%d %H:%M')
 
 mkdir -p "$LOG_DIR"
 
+source "${PROJECT_DIR}/scripts/job-notify.sh"
+job_notify_init "日次ジョブ" "$LOGFILE" "${PROJECT_DIR}/.env"
+
 # Claude CLI がファイルディスクリプタ不足でクラッシュするのを防止
 ulimit -n 2147483646 2>/dev/null || ulimit -n 10240 2>/dev/null || true
 
@@ -66,6 +69,7 @@ if [[ $exit_code -eq 1 ]]; then
 elif [[ $exit_code -ge 2 ]]; then
   log "ERROR: リリースチェックに失敗しました (exit: ${exit_code})"
   history_append "エラー" "API接続失敗"
+  job_notify_set_result "異常終了" "API接続失敗"
   commit_history_and_exit 1 "API接続失敗"
 else
   AGENT_PROMPT="最新のClaude Codeリリースを調査し、レポートとCURRENT_FEATURES.mdを更新してください。_sidebar.mdにも新しいレポートへのリンクを追加してください。"
@@ -102,6 +106,7 @@ done
 if (( agent_ok == 0 )); then
   log "ERROR: 調査エージェントが${MAX_ATTEMPTS}回すべて失敗しました"
   history_append "エラー" "Claude CLI異常終了 (${MAX_ATTEMPTS}回失敗)"
+  job_notify_set_result "異常終了" "Claude CLI異常終了 (${MAX_ATTEMPTS}回失敗)"
   commit_history_and_exit 1 "Claude CLI異常終了"
 fi
 
@@ -115,6 +120,7 @@ git -C "$PROJECT_DIR" add -A
 if git -C "$PROJECT_DIR" diff --cached --quiet; then
   log "実質的な変更はありませんでした。ジョブを終了します。"
   history_append "スキップ" "${HISTORY_LABEL}完了・差分なし"
+  job_notify_set_result "スキップ" "${HISTORY_LABEL}完了・差分なし"
   commit_history_and_exit 0 "${HISTORY_LABEL}・差分なし"
 fi
 
@@ -134,6 +140,7 @@ Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>"
 
 if ! git -C "$PROJECT_DIR" commit -m "$COMMIT_MSG" >> "$LOGFILE" 2>&1; then
   log "ERROR: コミットに失敗しました"
+  job_notify_set_result "異常終了" "コミット失敗"
   exit 1
 fi
 log "コミット完了"
@@ -142,8 +149,10 @@ log "コミット完了"
 log "Step 4: リモートにプッシュ中..."
 if ! git -C "$PROJECT_DIR" push origin main >> "$LOGFILE" 2>&1; then
   log "ERROR: プッシュに失敗しました"
+  job_notify_set_result "異常終了" "プッシュ失敗"
   exit 1
 fi
 log "プッシュ完了 — GitHub Pages へのデプロイが開始されます"
 
+job_notify_set_result "成功" "$detail"
 log "=== 日次更新ジョブ完了 ==="

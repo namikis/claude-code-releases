@@ -12,6 +12,9 @@ RUN_DATE=$(date '+%Y-%m-%d %H:%M')
 
 mkdir -p "$LOG_DIR"
 
+source "${PROJECT_DIR}/scripts/job-notify.sh"
+job_notify_init "週次ジョブ" "$LOGFILE" "${PROJECT_DIR}/.env"
+
 # Claude CLI がファイルディスクリプタ不足でクラッシュするのを防止
 ulimit -n 2147483646 2>/dev/null || ulimit -n 10240 2>/dev/null || true
 
@@ -81,6 +84,7 @@ done
 if (( agent_ok == 0 )); then
   log "ERROR: 週次レポートエージェントが${MAX_ATTEMPTS}回すべて失敗しました"
   history_append "エラー" "【週次】Claude CLI異常終了 (${MAX_ATTEMPTS}回失敗)"
+  job_notify_set_result "異常終了" "【週次】Claude CLI異常終了 (${MAX_ATTEMPTS}回失敗)"
   commit_history_and_exit 1 "週次レポートCLI異常終了"
 fi
 
@@ -97,4 +101,5 @@ Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>" >> "$LOGFILE" 2>&1 || t
   git -C "$PROJECT_DIR" push origin main >> "$LOGFILE" 2>&1 || true
 fi
 
+job_notify_set_result "成功" "【週次】レポート生成完了"
 log "=== 週次レポート生成ジョブ完了 ==="

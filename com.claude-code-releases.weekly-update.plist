@@ -2,6 +2,13 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>EnvironmentVariables</key>
+	<dict>
+		<key>HOME</key>
+		<string>/Users/tairyu</string>
+		<key>PATH</key>
+		<string>/usr/local/bin:/usr/bin:/bin:/Users/tairyu/.local/bin</string>
+	</dict>
 	<key>Label</key>
 	<string>com.claude-code-releases.weekly-update</string>
 	<key>Program</key>
@@ -11,29 +18,22 @@
 		<string>/bin/bash</string>
 		<string>/Users/tairyu/program/claude-code-releases/scripts/weekly-update.sh</string>
 	</array>
+	<key>StandardErrorPath</key>
+	<string>/Users/tairyu/program/claude-code-releases/logs/weekly-launchd-stderr.log</string>
+	<key>StandardOutPath</key>
+	<string>/Users/tairyu/program/claude-code-releases/logs/weekly-launchd-stdout.log</string>
 	<key>StartCalendarInterval</key>
 	<array>
 		<dict>
-			<key>Minute</key>
-			<integer>30</integer>
 			<key>Hour</key>
 			<integer>14</integer>
+			<key>Minute</key>
+			<integer>30</integer>
 			<key>Weekday</key>
 			<integer>4</integer>
 		</dict>
 	</array>
-	<key>StandardOutPath</key>
-	<string>/Users/tairyu/program/claude-code-releases/logs/weekly-launchd-stdout.log</string>
-	<key>StandardErrorPath</key>
-	<string>/Users/tairyu/program/claude-code-releases/logs/weekly-launchd-stderr.log</string>
 	<key>WorkingDirectory</key>
 	<string>/Users/tairyu/program/claude-code-releases</string>
-	<key>EnvironmentVariables</key>
-	<dict>
-		<key>PATH</key>
-		<string>/usr/local/bin:/usr/bin:/bin:/Users/tairyu/.local/bin</string>
-		<key>HOME</key>
-		<string>/Users/tairyu</string>
-	</dict>
 </dict>
 </plist>

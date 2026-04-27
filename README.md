@@ -98,6 +98,24 @@ cat logs/launchd-stdout.log
 cat logs/launchd-stderr.log
 ```
 
+### 終了メール通知
+
+日次・週次ジョブは、リポジトリ直下の `.env` に `RESEND_API_KEY` と `NOTIFICATION_EMAIL` を設定すると終了時にメール通知できます。成功・スキップ・異常終了のいずれでも送信します。
+
+```bash
+# 初回作成
+cp .env.example .env
+
+# 通知先を設定
+cat <<'EOF' > .env
+RESEND_API_KEY=re_xxxxxxxxxxxx
+NOTIFICATION_EMAIL=you@example.com
+JOB_NOTIFY_FROM="claude-code-releases <onboarding@resend.dev>"
+EOF
+```
+
+送信方式は [dev_todo](/Users/tairyu/program/dev_todo/.github/scripts/notify.mjs) と同じ `Resend API` ベースです。`.env` は `.gitignore` 済みです。
+
 ---
 
 ## 手動調査の実行
