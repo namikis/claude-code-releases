@@ -3,6 +3,7 @@
 - **週次レポート**
   - [2026-04-18 週次: 04/11〜04/18](weekly-reports/2026-04-18_weekly.md)
 - **調査レポート**
+  - [2026-04-28 Cowork on Bedrock・arXiv「Dive into Claude Code」](reports/2026-04-28_cowork-on-bedrock-and-arxiv-paper.md)
   - [2026-04-26 v2.1.120事実上ロールバック・Opus 4.7連続障害](reports/2026-04-26_v2.1.120-rollback-and-opus-incidents.md)
   - [2026-04-25 Rate Limits API・NEC提携・米中間選挙セーフガード・Project Deal](reports/2026-04-25_rate-limits-api-and-nec-partnership.md)
   - [2026-04-24 v2.1.119・品質劣化postmortem・Managed Agents Memory公開β](reports/2026-04-24_v2.1.119-postmortem-and-managed-agents-memory.md)
