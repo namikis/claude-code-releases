@@ -1,6 +1,6 @@
 # Claude Code 現行機能一覧
 
-**最終更新:** 2026-04-26（**Layer 1 CLI: v2.1.119 が継続最新**。**v2.1.120 が 4/24 22:11 UTC に npm 公開されたが、`claude --resume`/`--continue` 起動時クラッシュ（`UKH/g9H is not a function`）、macOS の sandbox 必須化回帰、auto-update マニフェスト 404 等 8 件超の重大回帰のため、4/25 02:35 UTC までに自動 v2.1.119 ロールバック完了**（GitHub Releases・CHANGELOG.md には未掲載、ステータスページのみ公式記録）。**Layer 2 ステータス（4/25）**: Opus 4.7 elevated errors 3 件連続発生（最長 08:43–11:58 UTC 約 3 時間 15 分、claude.ai/Console/API/Claude Code/Cowork 全面影響）、claude.ai 障害 18:42–19:02 UTC（約 20 分）。**v2.1.119 由来の残存問題**: `--model claude-opus-4-7` 指定時に内部的に `[1m]` 1M コンテキストバリアントへ silently 切替（`CLAUDE_CODE_DISABLE_1M_CONTEXT=1` で回避可、v2.1.118 では正常）。Anthropic 公式ニュース・リリースノートは 4/25・4/26 付の新規エントリなし）
+**最終更新:** 2026-04-28（深掘り調査: Claude Design — Anthropic Labs 第一弾の研究プレビュー、`claude.ai/design`、Opus 4.7 駆動、コードベース/Figma からデザインシステム自動抽出、Claude Code Hand off で design-to-code ループを成立。**Layer 1 CLI: v2.1.119 が継続最新**。**v2.1.120 が 4/24 22:11 UTC に npm 公開されたが、`claude --resume`/`--continue` 起動時クラッシュ（`UKH/g9H is not a function`）、macOS の sandbox 必須化回帰、auto-update マニフェスト 404 等 8 件超の重大回帰のため、4/25 02:35 UTC までに自動 v2.1.119 ロールバック完了**（GitHub Releases・CHANGELOG.md には未掲載、ステータスページのみ公式記録）。**Layer 2 ステータス（4/25）**: Opus 4.7 elevated errors 3 件連続発生（最長 08:43–11:58 UTC 約 3 時間 15 分、claude.ai/Console/API/Claude Code/Cowork 全面影響）、claude.ai 障害 18:42–19:02 UTC（約 20 分）。**v2.1.119 由来の残存問題**: `--model claude-opus-4-7` 指定時に内部的に `[1m]` 1M コンテキストバリアントへ silently 切替（`CLAUDE_CODE_DISABLE_1M_CONTEXT=1` で回避可、v2.1.118 では正常）。Anthropic 公式ニュース・リリースノートは 4/25・4/26 付の新規エントリなし）
 
 Claude Codeは、コードベースの読み取り・ファイル編集・コマンド実行・開発ツール統合を行うAIコーディングアシスタント。ターミナル、IDE、デスクトップアプリ、ブラウザで利用可能。
 
@@ -500,18 +500,25 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 ## Claude Design 🔬
 - **リリース状態**: 🔬 研究プレビュー（2026年4月17日〜、段階ロールアウト）
-- **発表日**: 2026年4月17日（Anthropic Labs）
+- **発表日**: 2026年4月17日（**Anthropic Labs** — 2026年1月新設の実験プロダクト・インキュベーション部門の第一弾プロダクト）
 - **対象プラン**: **Claude Pro / Max / Team / Enterprise**（無料プラン対象外）
 - **動作モデル**: Claude Opus 4.7（Anthropicの「最も高性能なビジョンモデル」として位置付け）
 - **サーフェス**: `claude.ai/design`
-- **利用枠**: 既存プラン枠を使用、**かつ通常の Claude chat / Claude Code 枠とは独立した週次 allowance**。超過後は extra usage を有効化して継続利用可能
+- **利用枠**: 既存プラン枠を使用、**かつ通常の Claude chat / Claude Code 枠とは独立した週次 allowance**。超過後は extra usage を有効化して継続利用可能。早期ユーザー報告では「2セッションでProの週次枠の58%を消費」する例もあり、頻繁に使うならMax推奨
 - **Enterprise での既定**: **デフォルト オフ**。管理者が Organization settings で明示有効化
-- **概要**: Claudeとコラボレーションしてビジュアル成果物（デザイン、プロトタイプ、スライド、1-pagerなど）を作成する新製品。自然言語からウェブサイト・ランディングページ・プレゼンテーション・ソーシャル/マーケティングアセットを生成
-- **対象ユーザー**: デザインツール非使用のファウンダー・プロダクトマネージャー・マーケター
-- **位置付け**: Canva / Figma の「代替ではなく補完」（公式説明）
-- **市場インパクト**: 4月14日のThe Informationリーク時点でFigma・Adobe・Wix等のデザイン関連株が下落。Anthropicがチャットインターフェース・開発者ツールから広範なデザイン自動化空間への戦略的拡張を明確化
-- **関連既存プロダクト**: Claude Cowork内の「Design」プラグイン（Anthropic Verified）— デザインクリティーク、UXライティング、アクセシビリティ監査（WCAG 2.1 AA）、リサーチ統合、開発ハンドオフ
-- **情報源**: [Get started with Claude Design (Help Center)](https://support.claude.com/en/articles/14604416-get-started-with-claude-design) / [Introducing Claude Design by Anthropic Labs](https://www.anthropic.com/news/claude-design-anthropic-labs) / [TechCrunch](https://techcrunch.com/2026/04/17/anthropic-launches-claude-design-a-new-product-for-creating-quick-visuals/) / [VentureBeat](https://venturebeat.com/technology/anthropic-just-launched-claude-design-an-ai-tool-that-turns-prompts-into-prototypes-and-challenges-figma) / [Design プラグイン](https://claude.com/plugins/design)
+- **概要**: 自然言語プロンプトから **HTML/CSS でライブレンダリングされたプロトタイプ・スライド・ランディングページ・ダッシュボード・1-pager・ソーシャルアセット**等を生成し、会話・インラインコメント・直接編集・調整スライダーで反復改善する会話型ビジュアル制作ツール
+- **入力形式**: テキストプロンプト / 画像 / DOCX・PPTX・XLSX / GitHubリポジトリ接続 / ローカルディレクトリ接続（`Import`ボタン） / Figmaファイル
+- **デザインシステム自動抽出**: 接続コードベースからコンポーネント構造・スタイリング/テーマ（カラー、スペーシング、タイポグラフィ）・ファイル構成を解析し、新規生成物に**チームのデザインシステムを自動適用**（v0/Lovableに対する独自性）
+- **編集機能**: 会話による反復、要素ピン留めインラインコメント、テキスト直接編集、属性連続値スライダー
+- **エクスポート/共有**: ZIP / PDF / PPTX / **Canva**（パートナーシップによる正規連携）/ スタンドアロンHTML / **Claude Code Hand off**（Local / Web）／ 組織内共有リンク（閲覧専用・コメント・編集アクセス）
+- **Claude Code Hand off**（最大の差別化要素）: `Export`→`Hand off to Claude Code`で **デザインファイル + 全チャットログ（設計意図保持）+ READMEと貼り付け用プロンプト** を含むハンドオフバンドル生成。ローカルClaude CodeまたはClaude Code Webへ引き継ぎ。リンク済みリポがあれば「プロトタイプ」と「出荷可能コード」のギャップを大幅圧縮
+- **対象ユーザー**: デザインツール非使用のファウンダー・プロダクトマネージャー・マーケター・営業（デザイナー専用ツールではない）
+- **位置付け**: Canva / Figma の「代替ではなく補完」（公式説明）。Canvaは正式統合パートナー、Mike Krieger（Anthropic CPO）はローンチに先立ちFigma取締役を辞任
+- **競合との差別化**: v0（純React/Next.js出力）/Lovable（フルデプロイ）/Bolt（フルスタック）に対し、**プロンプト→プロトタイプ→Claude Code経由で任意スタックへハンドオフ**できる「中間」ポジション
+- **既知の制限**: シングルユーザー体験（リアルタイムコラボなし）、フレーム単位レビュー&承認なし、ベクターイラスト非対応、ネイティブReact/Tailwindコードエクスポート非対応（Hand off経由）、インラインコメント消失/コンパクトビュー保存エラー/大規模リポでのラグ等の既知バグ。大規模リポは特定ディレクトリ接続推奨（`node_modules`除外）
+- **市場インパクト**: 4月14日のThe Informationリーク時点でFigma・Adobe・Wix等のデザイン関連株が下落。ローンチ翌週Figma株7%下落報道。Anthropicがモデル提供者からアプリケーションプラットフォーマーへ移行する象徴
+- **関連既存プロダクト**: Claude Cowork内の「Design」プラグイン（Anthropic Verified、別製品）— デザインクリティーク、UXライティング、アクセシビリティ監査（WCAG 2.1 AA）、リサーチ統合、開発ハンドオフ。Claude Designは「ジェネレーター型」、Designプラグインは「レビュアー型」
+- **情報源**: [深掘り調査](investigations/2026-04-28_claude-design.md) / [Introducing Claude Design by Anthropic Labs](https://www.anthropic.com/news/claude-design-anthropic-labs) / [Get started with Claude Design (Help Center)](https://support.claude.com/en/articles/14604416-get-started-with-claude-design) / [Using Claude Design for prototypes and UX (公式チュートリアル)](https://claude.com/resources/tutorials/using-claude-design-for-prototypes-and-ux) / [TechCrunch](https://techcrunch.com/2026/04/17/anthropic-launches-claude-design-a-new-product-for-creating-quick-visuals/) / [VentureBeat](https://venturebeat.com/technology/anthropic-just-launched-claude-design-an-ai-tool-that-turns-prompts-into-prototypes-and-challenges-figma) / [The New Stack](https://thenewstack.io/anthropic-claude-design-launch/) / [Design プラグイン](https://claude.com/plugins/design)
 
 ## Claude Managed Agents 🧪
 - **リリース状態**: 🧪 パブリックベータ（全APIアカウントにデフォルト有効）
@@ -739,6 +746,7 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 ## 更新履歴
 
+- 2026-04-28: **Claude Design 深掘り調査**。Claude Design セクションを大幅拡充 — Anthropic Labs（2026年1月新設の実験プロダクト・インキュベーション部門）の第一弾、入力形式（テキスト/画像/DOCX/PPTX/XLSX/GitHub/ローカルディレクトリ/Figma）、デザインシステム自動抽出（コンポーネント/スタイリング/ファイル構成解析）、編集機能（インラインコメント/直接編集/調整スライダー）、エクスポート形式（ZIP/PDF/PPTX/Canva/HTML/Claude Code Hand off）、**Claude Code Hand off** の詳細（デザインファイル+全チャットログ+README+貼り付けプロンプトをバンドル化、Local/Web 選択可）、競合差別化（v0/Lovable/Bolt との中間ポジション）、既知の制限（リアルタイムコラボなし/ベクター非対応/ネイティブReactエクスポートなし/トークン消費が重い）、Canva 正式統合パートナー、Mike Krieger の Figma 取締役辞任、市場インパクト（Figma 株 7% 下落報道）等を追加（[深掘り調査](investigations/2026-04-28_claude-design.md)）
 - 2026-04-26: **ニュースモード調査**。**v2.1.120 事実上ロールバック判明**: 4/24 22:11 UTC に npm 公開された v2.1.120 が `claude --resume`/`--continue` 起動時クラッシュ（macOS で `g9H is not a function`、Linux Bun ネイティブで `UKH is not a function`、`onSessionRestored` フックが undefined を返すパターン）、`sandbox.enabled=false` でも `sandbox required but unavailable` を返す回帰（macOS）、auto-update が `manifest.json` 404 で失敗、ターミナルリサイズで UI 重複、`/mcp` メニュー WSL2 で凍結、CLAUDE.md 部分無視、`sandbox.excludedCommands` 不整合、macOS 26.4 worktree hang 等 **8 件超の重大回帰**。4/25 01:45–02:35 UTC のステータスインシデントとして記録、自動アップデートで影響ユーザーを v2.1.119 にダウングレード（`claude install 2.1.119` 手動コマンドも提供）。GitHub Releases・CHANGELOG.md には未掲載で正式リリースとしては扱われない。**Opus 4.7 連続障害**（4/25 に 3 件、最長 08:43–11:58 UTC 約 3h15m）、**claude.ai 障害**（4/25 18:42–19:02 UTC 約 20 分）。**v2.1.119 由来の `claude-opus-4-7` サイレント 1M モデル切替問題**も判明（v2.1.118 では正常、v2.1.119 から内部的に `[1m]` バリアントへルーティング、`CLAUDE_CODE_DISABLE_1M_CONTEXT=1` で回避）。前回 4/25 レポート（v2.1.120 リリースを認識せず）の訂正・補足を兼ねる（[調査レポート](reports/2026-04-26_v2.1.120-rollback-and-opus-incidents.md)）
 - 2026-04-25: **ニュースモード調査**（CLI: v2.1.119 が最新、新リリースなしと整理。後続調査で v2.1.120 が当時実は出ていたことが判明）。**Layer 2 公式（4/24）**: ① **Rate Limits API GA**（管理者向け新 Admin API、組織・ワークスペースのレート制限照会、`sk-ant-admin` キー必要）、② **Anthropic × NEC 戦略提携**（Anthropic 初の日本ベース Global Partner、約 30,000 人の NEC グループ社員に Claude 提供、Cowork 全社展開、金融/製造業/地方自治体/サイバーセキュリティの業界特化 AI 共同開発）、③ **2026 米中間選挙セーフガード更新**（Opus 4.7 適切回答率 100%、Sonnet 4.6 99.8%、TurboVote バナー連携）、④ **Project Deal 公開**（SF 本社で Claude 双方代理人マーケットプレイス実験、69 エージェントが 186 件の取引を仲介、総額 $4,000+）。**Layer 3（4/24）**: GitHub Copilot Individual プラン縮小（Pro 新規受付停止、Opus モデル削除）（[調査レポート](reports/2026-04-25_rate-limits-api-and-nec-partnership.md)）
 - 2026-04-24: **v2.1.117（4/22）と v2.1.118（4/23）連続リリース**を反映。v2.1.118: **vim visual/visual-line モード**、**`/cost`+`/stats` → `/usage` 統合**、**カスタムテーマ作成・プラグイン配布**、**Hook から MCP tools 直接呼び出し（`type: "mcp_tool"` 新 hook イベントタイプ）**、**`DISABLE_UPDATES` 環境変数**、WSL 側 Windows managed settings 継承、Auto mode `"$defaults"` プレースホルダ、`claude plugin tag`、`/color` の claude.ai/code 同期。v2.1.117: **ネイティブビルドで `bfs`/`ugrep` 埋め込み**（Glob/Grep 置換）、複数 MCP 並列接続、**Pro/Max Opus 4.6/Sonnet 4.6 デフォルト effort `medium`→`high`**、**Opus 4.7 `/context` 計算 200K→1M 修正**、Advisor Tool experimental ラベル、OpenTelemetry に `effort`/`command_name`/`command_source` 属性、Plain-CLI OAuth reactive refresh、Forked subagents 外部ビルド有効化（`CLAUDE_CODE_FORK_SUBAGENT=1`）。**2026-04-23 Freshfields × Anthropic 複数年提携**: 33 拠点 5,700 人に Claude 全社導入、Cowork 展開予定、RELX 株価下落。**2026-04-21〜22 Claude Code on Pro 試験削除事件**: 2% A/B テストが Web 全面更新ミスで拡大、48 時間以内に revert、既存ユーザー影響なし。Hook イベントテーブル、スラッシュコマンドテーブル、主要機能リスト、ビジネスセクションに追記（[調査レポート](reports/2026-04-24_v2.1.117-118-vim-visual-and-freshfields.md)）
