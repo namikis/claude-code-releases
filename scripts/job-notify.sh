@@ -30,14 +30,44 @@ job_notify_set_result() {
   JOB_NOTIFY_STATUS_DETAIL="${2:-}"
 }
 
+job_notify_resolve_node() {
+  local candidate
+  for candidate in \
+    "${NODE_BIN:-}" \
+    "$(command -v node 2>/dev/null || true)" \
+    /opt/homebrew/bin/node \
+    /usr/local/bin/node \
+    /Users/tairyu/.nvm/versions/node/v16.13.1/bin/node; do
+    if [[ -n "$candidate" && -x "$candidate" ]]; then
+      printf '%s' "$candidate"
+      return 0
+    fi
+  done
+  return 1
+}
+
+job_notify_log() {
+  if [[ -n "${JOB_NOTIFY_LOGFILE:-}" ]]; then
+    printf '[%s] [job-notify] %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$*" >> "$JOB_NOTIFY_LOGFILE"
+  fi
+}
+
 job_notify_on_exit() {
   local exit_code="${1:-1}"
   local api_key="${RESEND_API_KEY:-}"
   local to="${NOTIFICATION_EMAIL:-}"
   local from="${JOB_NOTIFY_FROM:-claude-code-releases <onboarding@resend.dev>}"
-  local host status_label detail now log_excerpt
+  local host status_label detail now log_excerpt node_bin script_dir
 
-  [[ -n "$api_key" && -n "$to" ]] || return 0
+  if [[ -z "$api_key" || -z "$to" ]]; then
+    job_notify_log "skip: RESEND_API_KEY or NOTIFICATION_EMAIL not set"
+    return 0
+  fi
+
+  if ! node_bin="$(job_notify_resolve_node)"; then
+    job_notify_log "ERROR: node not found in PATH or known locations; install node or set NODE_BIN in .env"
+    return 0
+  fi
 
   if [[ -n "${JOB_NOTIFY_STATUS_LABEL:-}" ]]; then
     status_label="$JOB_NOTIFY_STATUS_LABEL"
@@ -50,6 +80,7 @@ job_notify_on_exit() {
   detail="${JOB_NOTIFY_STATUS_DETAIL:-exit_code=${exit_code}}"
   host="$(hostname -s 2>/dev/null || hostname || echo unknown-host)"
   now="$(date '+%Y-%m-%d %H:%M:%S %Z')"
+  script_dir="${JOB_NOTIFY_SCRIPT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 
   if [[ -n "$JOB_NOTIFY_LOGFILE" && -f "$JOB_NOTIFY_LOGFILE" ]]; then
     log_excerpt="$(tail -n 40 "$JOB_NOTIFY_LOGFILE" 2>/dev/null || true)"
@@ -57,7 +88,8 @@ job_notify_on_exit() {
     log_excerpt="(log unavailable)"
   fi
 
-  printf '%s' "$log_excerpt" | node "${JOB_NOTIFY_SCRIPT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}/job-notify.mjs" \
+  local notify_err
+  notify_err="$(printf '%s' "$log_excerpt" | "$node_bin" "${script_dir}/job-notify.mjs" \
     "$JOB_NOTIFY_NAME" \
     "$status_label" \
     "$detail" \
@@ -66,5 +98,12 @@ job_notify_on_exit() {
     "$now" \
     "${JOB_NOTIFY_LOGFILE:-}" \
     "$from" \
-    >/dev/null 2>&1 || return 0
+    2>&1 >/dev/null)"
+
+  if [[ -n "$notify_err" ]]; then
+    job_notify_log "ERROR: notification failed: ${notify_err}"
+    return 0
+  fi
+
+  job_notify_log "notification sent (status=${status_label}, to=${to})"
 }
