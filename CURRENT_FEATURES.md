@@ -1,6 +1,6 @@
 # Claude Code 現行機能一覧
 
-**最終更新:** 2026-04-28（深掘り調査: Claude Design — Anthropic Labs 第一弾の研究プレビュー、`claude.ai/design`、Opus 4.7 駆動、コードベース/Figma からデザインシステム自動抽出、Claude Code Hand off で design-to-code ループを成立。**Layer 1 CLI: v2.1.119 が継続最新**。**v2.1.120 が 4/24 22:11 UTC に npm 公開されたが、`claude --resume`/`--continue` 起動時クラッシュ（`UKH/g9H is not a function`）、macOS の sandbox 必須化回帰、auto-update マニフェスト 404 等 8 件超の重大回帰のため、4/25 02:35 UTC までに自動 v2.1.119 ロールバック完了**（GitHub Releases・CHANGELOG.md には未掲載、ステータスページのみ公式記録）。**Layer 2 ステータス（4/25）**: Opus 4.7 elevated errors 3 件連続発生（最長 08:43–11:58 UTC 約 3 時間 15 分、claude.ai/Console/API/Claude Code/Cowork 全面影響）、claude.ai 障害 18:42–19:02 UTC（約 20 分）。**v2.1.119 由来の残存問題**: `--model claude-opus-4-7` 指定時に内部的に `[1m]` 1M コンテキストバリアントへ silently 切替（`CLAUDE_CODE_DISABLE_1M_CONTEXT=1` で回避可、v2.1.118 では正常）。Anthropic 公式ニュース・リリースノートは 4/25・4/26 付の新規エントリなし。**4/28 ニュースモード追加調査**: Claude Cowork on Amazon Bedrock — Claude Code Desktop を含む Cowork デスクトップアプリが AWS Bedrock 経由 GA で配信開始（4/21 AWS ML Blog 公開、4/27 AWS Weekly Roundup でハイライト、AWS 従量課金/IAM 認証/VPC 隔離/CloudTrail 監査/Bedrock はプロンプト・ファイル・レスポンス非保持）、4/27 Anthropic 公式が **Theo Hourmouzis を ANZ GM 任命・Sydney オフィス正式オープン** を発表、4/27 Layer 3 で arXiv プレプリント「Dive into Claude Code」（VILA-Lab）注目 — Claude Code コードベースの **1.6% のみが AI 決定ロジック / 98.4% は決定論的インフラ**、7 モードパーミッション + ML 分類器、5 層 compaction、4 拡張機構（MCP/Plugins/Skills/Hooks）、worktree 分離 subagent、append-oriented session を体系化）
+**最終更新:** 2026-04-29（**Layer 1 CLI**: v2.1.121（4/28 00:31 UTC）と **v2.1.122（4/28 22:05 UTC）が同日連続リリース**。前回 4/28 ニュースモードが Layer 1 をスキップしたため今回フルモードで反映。v2.1.121: **MCP `alwaysLoad` 設定**（tool-search 遅延ロードをスキップして全ツール常時利用可能）、**`claude plugin prune` コマンド**（orphaned auto-installed 依存削除、`plugin uninstall --prune` カスケード）、**`/skills` type-to-filter 検索**、**PostToolUse hooks の `updatedToolOutput` が全ツール対応**（従来 MCP のみ）、フルスクリーンスクロール固定改善、オーバーフローダイアログのスクロール対応、`--dangerously-skip-permissions` の `.claude/skills/` `.claude/agents/` `.claude/commands/` 保護、メモリリーク 3 件 fix（多数画像/`/usage`/長時間ツール）、`/terminal-setup` で iTerm2 clipboard アクセス、claude.ai connectors 重複排除、Vertex X.509 mTLS、SDK `mcp_authenticate` の `redirectUri` 対応、OpenTelemetry 拡張（`stop_reason`/`gen_ai.response.finish_reasons`/`user_system_prompt`）、外部ビルドで `CLAUDE_CODE_FORK_SUBAGENT=1` 動作、Microsoft 365 MCP OAuth 修正、tmux/GNOME/Konsole scrollback 重複修正など 39 項目超。v2.1.122: **`ANTHROPIC_BEDROCK_SERVICE_TIER` 環境変数**（`default`/`flex`/`priority`、`X-Amzn-Bedrock-Service-Tier` ヘッダー）、**`/resume` の PR URL 検索**（GitHub/GHE/GitLab/Bitbucket）、`/mcp` で claude.ai connectors 重複表示・削除ヒント、OpenTelemetry の数値属性正規化＋`claude_code.at_mention` イベント追加、`/branch` フォーク失敗修正、Vertex/Bedrock session-title 生成 `invalid_request_error` 修正、画像リサイズ 2,576px→2,000px max 修正、Voice mode の Caps Lock キー警告。**Layer 2 公式（4/28）**: ① **Claude for Creative Work** ✅ — **9 つの新コネクタ**（Adobe Creative Cloud / Blender / Ableton / Splice / Affinity by Canva / Autodesk Fusion / SketchUp / Resolume Arena & Wire）を全 Claude プランで即時 GA、② **Anthropic が Blender Development Fund Corporate Patron 加入**（年間最低 €240,000、Blender Python API メンテ・拡張支援、MCP コネクタ実装は他 LLM からも利用可能）。**Layer 2 障害（4/28）**: ③ **Claude.ai/API/Code Major Outage**（17:34–18:52 UTC、約 78 分、Downdetector 12,000 件超）— Claude Code ログイン経路にも影響、4 月 Major クラス障害は 4/15・4/20・4/25 に続く 4 件目。同日 Sonnet 4.5（17 分）・Haiku 4.5（51 分）も別個に Partial Outage、Code Review が断続失敗）
 
 Claude Codeは、コードベースの読み取り・ファイル編集・コマンド実行・開発ツール統合を行うAIコーディングアシスタント。ターミナル、IDE、デスクトップアプリ、ブラウザで利用可能。
 
@@ -211,6 +211,31 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - `/extra-usage` が Remote Control（モバイル/Web）クライアントから利用可能に（v2.1.113）
 - Remote Control クライアントで `@`-file オートコンプリート候補をクエリ可能（v2.1.113）
 - mid-stream でストールしたサブエージェントが10分後に明確なエラーで失敗（無音ハング回避、v2.1.113）
+- **MCP `alwaysLoad` server config オプション**: `true` で当該サーバーの全ツールを tool-search 遅延ロードからスキップして常時利用可能（v2.1.121）
+- **`claude plugin prune` コマンド**: orphaned auto-installed プラグイン依存を削除。`plugin uninstall --prune` で連鎖削除（v2.1.121）
+- **`/skills` type-to-filter 検索ボックス**: 長い skill リストでスクロールせずタイプして絞り込み（v2.1.121）
+- **PostToolUse hooks の `updatedToolOutput` が全ツール対応**: 従来 MCP ツールのみ可能だったツール出力 replace を全ツールに拡張（`hookSpecificOutput.updatedToolOutput`、v2.1.121）
+- **オーバーフローダイアログのスクロール**: 端末を超えるダイアログを矢印キー / PgUp/PgDn / Home/End / マウスホイールで操作（フルスクリーン・非フルスクリーン両モード、v2.1.121）
+- **`--dangerously-skip-permissions` の保護対象拡大**: `.claude/skills/`、`.claude/agents/`、`.claude/commands/` への書き込みは確認プロンプトを表示（v2.1.121）
+- **`/terminal-setup` で iTerm2 clipboard アクセス**: "Applications in terminal may access clipboard" を有効化、`/copy` が iTerm2（tmux 内含む）で動作（v2.1.121）
+- **MCP server 起動エラー自動リトライ**: 一時的エラーで disconnect のままだったサーバーを最大 3 回まで自動リトライ（v2.1.121）
+- **Vertex AI X.509 証明書ベース Workload Identity Federation（mTLS ADC）対応**（v2.1.121）
+- **OpenTelemetry LLM request span 拡張**: `stop_reason`、`gen_ai.response.finish_reasons`、`user_system_prompt`（`OTEL_LOG_USER_PROMPTS` ゲート付き）を追加（v2.1.121）
+- **SDK `mcp_authenticate` の `redirectUri` 対応**: カスタムスキーム完了 / claude.ai connectors の OAuth フロー対応（v2.1.121）
+- **\[VSCode\] 音声入力が `accessibility.voice.speechLanguage` を尊重**: Claude Code 言語未設定時のフォールバック（v2.1.121）
+- **\[VSCode\] `/context` がネイティブトークン使用量ダイアログを開く**（v2.1.121）
+- **メモリリーク 3 件 fix**: 多数画像処理時の RSS 数 GB 級増大、`/usage` の最大 ~2GB リーク（大規模トランスクリプト履歴）、長時間ツールが progress イベント未発行時のリーク（v2.1.121）
+- **Bash ツール起動ディレクトリ削除/移動の永続失敗を修正**: mid-session で消えた起動ディレクトリで Bash が永続的に使用不能になる問題を解消（v2.1.121）
+- **`--resume` の堅牢化**: 外部ビルドの起動クラッシュ修正、unclean shutdown による壊れた transcript line をスキップして大規模セッションでも復元可能（v2.1.121）
+- **`ANTHROPIC_BEDROCK_SERVICE_TIER` 環境変数**: Bedrock サービス層を `default`/`flex`/`priority` から選択。`X-Amzn-Bedrock-Service-Tier` ヘッダーとして送信。`priority` で低レイテンシ保証、`flex` でコスト最適化（v2.1.122）
+- **`/resume` の PR URL 検索**: GitHub / GitHub Enterprise / GitLab / Bitbucket の PR URL を貼り付けると、その PR を作成したセッションを発見（v2.1.122）
+- **`/mcp` で claude.ai connectors 重複表示**: 同一 URL の手動追加サーバーで隠されている claude.ai コネクタも表示し、重複削除のヒントを提供（v2.1.122）
+- **OpenTelemetry 数値属性正規化**: `api_request`/`api_error` の数値属性が string ではなく number として送出（v2.1.122）
+- **`claude_code.at_mention` OpenTelemetry イベント**: `@`-mention 解決を観測可能に（v2.1.122）
+- **画像リサイズ 2,576px→2,000px max 修正**: newer モデル（Opus 4.7 等）で誤って 2,576px に拡大されていた画像を正しく 2,000px max に修正（v2.1.122）
+- **`/branch` フォーク失敗修正**: "tool_use ids were found without tool_result blocks" エラーで失敗していた問題を修正（v2.1.122）
+- **Vertex AI / Bedrock session-title 生成 `invalid_request_error` 修正**（v2.1.122）
+- **Voice mode の Caps Lock キーバインド警告**: Caps Lock の特殊性により正しく動作しないため、エラー表示で誤認を防止（v2.1.122）
 - **Vim visual モード / visual-line モード**: `v` でキャラクタ選択、`V` で行選択。operators（`d`/`y`/`c` 等）と視覚フィードバック対応（v2.1.118）
 - **`/cost`・`/stats` を `/usage` に統合**: 単一 `/usage` コマンドのタブ UI に集約。`/cost`・`/stats` はタイピングショートカットとして残存し対応タブをオープン（v2.1.118）
 - **カスタムテーマ**: `/theme` から名前付きカスタムテーマ作成・切替、`~/.claude/themes/` の JSON を直接編集。**プラグインが `themes/` ディレクトリ配下でテーマ配布可能**（v2.1.118）
@@ -469,6 +494,28 @@ claude -p --json-schema '{"type":"object",...}' "query"
 ## Slack連携
 - `@Claude` メンションでバグレポート→PR作成のルーティング
 
+
+## Claude for Creative Work — クリエイティブツール 9 コネクタ ✅
+- **リリース状態**: ✅ GA（**全 Claude プランで即時利用可能**、2026-04-28〜）
+- **発表日**: 2026年4月28日（[Anthropic 公式 Newsroom](https://www.anthropic.com/news/claude-for-creative-work)）
+- **概要**: Claude を主要なクリエイティブアプリケーション内で動作させる **9 つのコネクタ**を一斉公開。プロのデザイナー・3D アーティスト・音楽プロデューサー・建築家・VJ など多様なクリエイティブワークフローを Claude 経由で操作可能に
+- **9 つのコネクタ**:
+
+| コネクタ | 機能概要 |
+|---------|---------|
+| **Adobe for Creativity** | Photoshop / Premiere / Express など Creative Cloud 50+ ツールへのアクセス、画像・動画・デザインの編集 |
+| **Affinity by Canva** | バッチ画像調整、レイヤーリネーム、ファイルエクスポート等の繰り返し作業を自動化 |
+| **Autodesk Fusion** | 3D モデルを自然言語の対話で作成・修正（サブスクリプション要） |
+| **Blender** | Python API への自然言語インタフェース、シーン解析、カスタムスクリプト生成、公式ドキュメントへの grounding |
+| **Ableton** | Live / Push の公式ドキュメントに grounded された応答 |
+| **Splice** | Claude 会話内から royalty-free サンプルカタログを検索 |
+| **SketchUp** | 自然言語の空間説明から 3D モデリングのスタート地点を生成、アプリ内で精緻化 |
+| **Resolume Arena & Resolume Wire** | VJ / ライブビジュアルアーティスト向け、ライブパフォーマンス中のリアルタイム制御 |
+
+- **Blender Foundation Corporate Patron**: Anthropic は Blender Development Fund の Corporate Patron 階層（**年間最低 €240,000**）に同日加入。Blender Python API のメンテ・拡張支援が用途。**Blender 経由のコネクタ実装は MCP ベースで他 LLM からも利用可能**（Blender のオープンソース・他 LLM 非排除原則を尊重）
+- **Claude Code への影響**: クリエイティブ系コーディングワークフロー（Blender Python スクリプト、Photoshop UXP プラグイン、SketchUp Ruby スクリプト等）で Claude Code から該当ツールを呼び出すパスが整備された。MCP サーバー実装は他 LLM CLI（OpenClaw 等）でも転用可能
+- **情報源**: [Anthropic 公式](https://www.anthropic.com/news/claude-for-creative-work) / [Blender 公式プレスリリース](https://www.blender.org/press/anthropic-joins-the-blender-development-fund-as-corporate-patron/) / [9to5Mac](https://9to5mac.com/2026/04/28/anthropic-releases-9-new-claude-connectors-for-creative-tools-including-blender-and-adobe/) / [MacRumors](https://www.macrumors.com/2026/04/28/claude-creative-tool-connectors/)
+
 ## Agent Teams 🔬
 - **リリース状態**: 🔬 実験的機能（`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` フラグで有効化、デフォルト無効）
 - 複数の独立セッションが並行動作・相互通信
@@ -615,6 +662,19 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - Anthropicはユーザー需要の急増を原因として説明（3月〜4月にかけて繰り返す障害パターン）
 - **情報源**: [CNBC](https://www.cnbc.com/2026/04/15/anthropic-outage-elevated-errors-claude-chatbot-code-api.html) / [TechRadar](https://www.techradar.com/news/live/claude-anthropic-down-outage-april-15-2026)
 
+### Claude.ai/API/Code Major Outage（2026年4月28日）✅ 解決済み
+- **発生**: 17:34 UTC（10:34 PT / 13:34 ET）／ **解決**: 18:52 UTC（11:52 PT / 14:52 ET）／ **継続時間**: 約 **78 分**
+- **重要度**: 🔴 Major Outage（status.claude.com 上で正式分類）
+- **影響範囲**: Claude.ai / Anthropic API / **Claude Code（ログイン経路）**
+- **症状**: Claude.ai ログイン認証エラー、API elevated error rate、Claude Code ログイン経路でも失敗
+- **規模**: Downdetector に **12,000 件超**のユーザー報告
+- **同日の関連インシデント**:
+  - **Claude Sonnet 4.5 elevated errors**（13:22–13:39 UTC、17 分、Partial Outage）
+  - **Claude Haiku 4.5 elevated errors**（11:53–12:44 UTC、51 分、Partial Outage）
+  - **Claude Code Code Review intermittently failing**（解決時刻 06:00 UTC、Partial Outage） — Code Review セッションが断続的に開始しない
+- **位置づけ**: 4 月の Anthropic Major クラス障害は **4/15（約 3 時間）→ 4/20 → 4/25（Opus 4.7 連続障害）→ 4/28** で **4 件目**。CoreWeave 提携・Google/Broadcom TPU 拡張などキャパシティ強化を進めているが、Claude Code/Cowork 採用拡大（NEC 30,000 人、Freshfields 5,700 人など大規模デプロイ続出）に追いついていない可能性
+- **情報源**: [Tom's Guide Live](https://www.tomsguide.com/ai/live/claude-april-28-2026) / [Rolling Out](https://rollingout.com/2026/04/28/anthropic-claude-outage-users-locked-out/) / [GV Wire](https://gvwire.com/2026/04/28/claude-ai-goes-down-for-thousands-of-users-tuesday-downdetector-shows/) / [Claude Status](https://status.claude.com/)
+
 ### Claudeパフォーマンス低下問題・ユーザー反発（2026年2月後半〜4月報道）
 - Anthropicがデフォルトの努力レベルをmediumに引き下げ（トークン節約目的）、ユーザーへの透明な通知なし
 - Stella Laurenzo（AMD AI部門SD）が6,852セッション分析で67%パフォーマンス低下を文書化。Microsoft研究者も同様の批判
@@ -746,6 +806,7 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 ## 更新履歴
 
+- 2026-04-29: **フルモード調査**（前回 4/28 ニュースモードで Layer 1 をスキップしたため、4/28 の 2 連続 CLI リリースを今回反映）。**Layer 1 CLI**: ① **v2.1.121（4/28 00:31 UTC）** — MCP `alwaysLoad` server config（tool-search 遅延ロードをスキップ）、`claude plugin prune`（orphaned 依存削除、`uninstall --prune` カスケード）、`/skills` type-to-filter 検索、PostToolUse hooks の `updatedToolOutput` が全ツール対応、フルスクリーンスクロール固定改善、オーバーフローダイアログのスクロール、`--dangerously-skip-permissions` の `.claude/skills/`/`.claude/agents/`/`.claude/commands/` 保護、メモリリーク 3 件 fix（多数画像/`/usage`/長時間ツール）、`/terminal-setup` で iTerm2 clipboard、claude.ai connectors 重複排除、Vertex X.509 mTLS、SDK `mcp_authenticate` の `redirectUri`、OpenTelemetry に `stop_reason`/`gen_ai.response.finish_reasons`/`user_system_prompt`、`CLAUDE_CODE_FORK_SUBAGENT=1` 外部ビルド対応、Microsoft 365 MCP OAuth 修正、Bash ツール起動ディレクトリ削除問題修正、`--resume` 堅牢化、tmux/GNOME/Konsole scrollback 重複修正、VSCode 音声/ネイティブ `/context`、LSP diagnostic 展開など 39 項目。② **v2.1.122（4/28 22:05 UTC）** — `ANTHROPIC_BEDROCK_SERVICE_TIER` 環境変数（`default`/`flex`/`priority`）、`/resume` の PR URL 検索（GitHub/GHE/GitLab/Bitbucket）、`/mcp` で claude.ai connectors 重複表示、OpenTelemetry 数値属性正規化＋`claude_code.at_mention` イベント、画像リサイズ 2,576px→2,000px max 修正、`/branch` フォーク失敗修正、Vertex/Bedrock session-title 生成 `invalid_request_error` 修正、Voice mode の Caps Lock キー警告。**Layer 2 公式（4/28）**: ③ **Claude for Creative Work** ✅ — **9 つの新コネクタ**（Adobe Creative Cloud / Blender / Ableton / Splice / Affinity by Canva / Autodesk Fusion / SketchUp / Resolume Arena & Wire）を全 Claude プランで即時 GA。**Anthropic が Blender Development Fund Corporate Patron 加入**（年間最低 €240,000、Blender Python API メンテ・拡張支援、MCP コネクタ実装は他 LLM からも利用可能）。④ **Claude.ai/API/Code Major Outage**（4/28 17:34–18:52 UTC、約 78 分、Downdetector 12,000 件超）— Claude Code ログイン経路にも影響、4 月 Major クラス障害は 4/15・4/20・4/25 に続く 4 件目。同日 Sonnet 4.5（17 分）・Haiku 4.5（51 分）も別個に Partial Outage、Code Review が断続失敗。Anthropic Newsroom 4/27 Sydney オフィス・Theo Hourmouzis ANZ GM、4/28 Claude for Creative Work が最新エントリ（[調査レポート](reports/2026-04-29_v2.1.121-122-and-claude-creative-work.md)）
 - 2026-04-28: **ニュースモード調査**。**Layer 1 CLI**: v2.1.119 が継続最新、新リリースなし。**Layer 2 公式**: ① **Claude Cowork on Amazon Bedrock GA**（4/21 AWS Machine Learning Blog 公開、4/27 AWS Weekly Roundup でハイライト紹介）— Cowork デスクトップアプリ + **Claude Code Desktop** を AWS Bedrock 経由で実行可能、Anthropic シート課金不要、AWS 従量課金のみ、データはユーザー AWS アカウント内（Bedrock 非保持）、IAM/Bedrock API キー認証、VPC エンドポイント、CloudTrail 監査、OpenTelemetry → CloudWatch、Anthropic-hosted の Chat/Computer Use/Skills Marketplace は除外。② **Anthropic Sydney オフィス正式オープン & Theo Hourmouzis ANZ GM 任命**（4/27、APAC 4 拠点目）。**Layer 3**: ③ **arXiv プレプリント「Dive into Claude Code」**（VILA-Lab、2604.14228、4/14 公開、4/27 IntelligentLiving 等で注目）— Claude Code コードベースの **1.6% のみが AI 決定ロジック / 98.4% が決定論的インフラ**、シンプルな while ループコア、**7 モードパーミッションシステム + ML 分類器**、**5 層 compaction パイプライン**、**4 拡張機構（MCP/Plugins/Skills/Hooks）**、worktree 分離 subagent delegation、append-oriented session storage を体系化。13 設計原則・5 ドライバーをマッピング、OpenClaw との対比。④ **コミュニティ: pentest-ai-agents**（4/27、0xSteph）— 28 専門 subagents で Claude Code を攻撃側セキュリティ研究アシスタント化する OSS。⑤ Claude.ai 軽微インシデント（4/27 14:13 UTC、約 1 分、billing 関連、Claude Code 影響なし）。利用環境テーブル「Desktop App (Cowork)」に Bedrock 経由配信 ✅ GA を追記（[調査レポート](reports/2026-04-28_cowork-on-bedrock-and-arxiv-paper.md)）
 - 2026-04-28: **Claude Design 深掘り調査**。Claude Design セクションを大幅拡充 — Anthropic Labs（2026年1月新設の実験プロダクト・インキュベーション部門）の第一弾、入力形式（テキスト/画像/DOCX/PPTX/XLSX/GitHub/ローカルディレクトリ/Figma）、デザインシステム自動抽出（コンポーネント/スタイリング/ファイル構成解析）、編集機能（インラインコメント/直接編集/調整スライダー）、エクスポート形式（ZIP/PDF/PPTX/Canva/HTML/Claude Code Hand off）、**Claude Code Hand off** の詳細（デザインファイル+全チャットログ+README+貼り付けプロンプトをバンドル化、Local/Web 選択可）、競合差別化（v0/Lovable/Bolt との中間ポジション）、既知の制限（リアルタイムコラボなし/ベクター非対応/ネイティブReactエクスポートなし/トークン消費が重い）、Canva 正式統合パートナー、Mike Krieger の Figma 取締役辞任、市場インパクト（Figma 株 7% 下落報道）等を追加（[深掘り調査](investigations/2026-04-28_claude-design.md)）
 - 2026-04-26: **ニュースモード調査**。**v2.1.120 事実上ロールバック判明**: 4/24 22:11 UTC に npm 公開された v2.1.120 が `claude --resume`/`--continue` 起動時クラッシュ（macOS で `g9H is not a function`、Linux Bun ネイティブで `UKH is not a function`、`onSessionRestored` フックが undefined を返すパターン）、`sandbox.enabled=false` でも `sandbox required but unavailable` を返す回帰（macOS）、auto-update が `manifest.json` 404 で失敗、ターミナルリサイズで UI 重複、`/mcp` メニュー WSL2 で凍結、CLAUDE.md 部分無視、`sandbox.excludedCommands` 不整合、macOS 26.4 worktree hang 等 **8 件超の重大回帰**。4/25 01:45–02:35 UTC のステータスインシデントとして記録、自動アップデートで影響ユーザーを v2.1.119 にダウングレード（`claude install 2.1.119` 手動コマンドも提供）。GitHub Releases・CHANGELOG.md には未掲載で正式リリースとしては扱われない。**Opus 4.7 連続障害**（4/25 に 3 件、最長 08:43–11:58 UTC 約 3h15m）、**claude.ai 障害**（4/25 18:42–19:02 UTC 約 20 分）。**v2.1.119 由来の `claude-opus-4-7` サイレント 1M モデル切替問題**も判明（v2.1.118 では正常、v2.1.119 から内部的に `[1m]` バリアントへルーティング、`CLAUDE_CODE_DISABLE_1M_CONTEXT=1` で回避）。前回 4/25 レポート（v2.1.120 リリースを認識せず）の訂正・補足を兼ねる（[調査レポート](reports/2026-04-26_v2.1.120-rollback-and-opus-incidents.md)）
