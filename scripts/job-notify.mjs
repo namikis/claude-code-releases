@@ -12,6 +12,7 @@ const [
   finishedAt = "",
   logfile = "",
   from = "claude-code-releases <onboarding@resend.dev>",
+  summary = "",
 ] = process.argv.slice(2);
 
 const apiKey = process.env.RESEND_API_KEY;
@@ -53,6 +54,55 @@ const statusColor = (
   }[statusLabel] || "#2563eb"
 );
 
+// レポート抜粋を「上位3項目 × 1行」に凝縮する。
+// 各項目はレポート内の太字キーワードを最大2個拾って "<strong>主</strong> — 補" 形式にする。
+function condenseSummaryToHtml(raw, maxItems = 3, maxTailChars = 50) {
+  if (!raw || !raw.trim()) return "";
+  const items = [];
+  for (const line of raw.split("\n")) {
+    const m = line.match(/^\s*\d+\.\s+(.+?)\s*$/);
+    if (!m) continue;
+    items.push(m[1]);
+    if (items.length >= maxItems) break;
+  }
+  if (items.length === 0) return "";
+
+  const truncate = (s, n) => (s.length > n ? s.slice(0, n) + "…" : s);
+
+  return items
+    .map((item, i) => {
+      const bolds = [...item.matchAll(/\*\*(.+?)\*\*/g)].map((mm) => mm[1].trim());
+      let line;
+      if (bolds.length >= 2) {
+        line = `<strong>${escapeHtml(bolds[0])}</strong> — ${escapeHtml(truncate(bolds[1], maxTailChars))}`;
+      } else if (bolds.length === 1) {
+        const tail = item
+          .replace(/\*\*[^*]+\*\*/, "")
+          .replace(/^[（(][^）)]*[）)]\s*/, "")
+          .replace(/^\s*[—–-]\s*/, "")
+          .split(/[。\n]/)[0]
+          .trim();
+        line = tail
+          ? `<strong>${escapeHtml(bolds[0])}</strong> — ${escapeHtml(truncate(tail, maxTailChars))}`
+          : `<strong>${escapeHtml(bolds[0])}</strong>`;
+      } else {
+        line = escapeHtml(truncate(item.split(/[。\n]/)[0].trim(), 80));
+      }
+      return `${i + 1}. ${line}`;
+    })
+    .join("<br>");
+}
+
+function summaryHtml(text) {
+  const inner = condenseSummaryToHtml(text);
+  if (!inner) return "";
+  return `
+  <div style="margin: 0 0 16px 0; padding: 12px 14px; border-radius: 8px; background: #eff6ff; border-left: 3px solid #2563eb;">
+    <h3 style="margin: 0 0 8px 0; font-size: 14px; color: #1e3a8a;">本日の主要トピック</h3>
+    <div style="margin: 0; font-size: 13px; line-height: 1.6; color: #1f2937;">${inner}</div>
+  </div>`;
+}
+
 const html = `
 <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 640px;">
   <h2 style="margin: 0 0 12px 0; font-size: 16px; color: #1a1a1a;">${escapeHtml(jobName)}</h2>
@@ -62,6 +112,7 @@ const html = `
     </span>
   </p>
   <p style="margin: 0 0 6px 0; color: #4a4a4a; font-size: 14px;">${escapeHtml(detail)}</p>
+  ${summaryHtml(summary)}
   <p style="margin: 0 0 2px 0; color: #6b7280; font-size: 13px;">終了コード: ${escapeHtml(exitCode)}</p>
   <p style="margin: 0 0 2px 0; color: #6b7280; font-size: 13px;">ホスト: ${escapeHtml(host)}</p>
   <p style="margin: 0 0 12px 0; color: #6b7280; font-size: 13px;">時刻: ${escapeHtml(finishedAt)}</p>

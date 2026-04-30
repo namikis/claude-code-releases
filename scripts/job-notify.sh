@@ -3,6 +3,10 @@
 # launchd ジョブ終了時のメール通知ヘルパー。
 # RESEND_API_KEY / NOTIFICATION_EMAIL が未設定なら何もしない。
 
+# source されたファイル自身の場所を解決し、関数内で BASH_SOURCE を参照しなくて済むようにする。
+JOB_NOTIFY_SCRIPT_DIR="${JOB_NOTIFY_SCRIPT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
+JOB_NOTIFY_PROJECT_DIR="${JOB_NOTIFY_PROJECT_DIR:-$(cd "${JOB_NOTIFY_SCRIPT_DIR}/.." && pwd)}"
+
 job_notify_load_env() {
   local env_file="${1:-}"
 
@@ -52,6 +56,22 @@ job_notify_log() {
   fi
 }
 
+# 当日のレポートから「主要トピック」セクションを抜粋してメール用要約として返す。
+# 当日のレポートが存在しない（差分なし等）場合は空文字列を返す。
+job_notify_extract_summary() {
+  local today report_file
+  today="$(date +%Y-%m-%d)"
+  # shellcheck disable=SC2012
+  report_file="$(ls "${JOB_NOTIFY_PROJECT_DIR}/reports/${today}"_*.md 2>/dev/null | tail -1 || true)"
+  [[ -n "$report_file" && -f "$report_file" ]] || return 0
+  awk '
+    /^### .*主要トピック/ { flag=1; next }
+    flag && /^---[[:space:]]*$/ { exit }
+    flag && /^## / { exit }
+    flag
+  ' "$report_file"
+}
+
 job_notify_on_exit() {
   local exit_code="${1:-1}"
   local api_key="${RESEND_API_KEY:-}"
@@ -88,6 +108,9 @@ job_notify_on_exit() {
     log_excerpt="(log unavailable)"
   fi
 
+  local summary
+  summary="$(job_notify_extract_summary 2>/dev/null || true)"
+
   local notify_err
   notify_err="$(printf '%s' "$log_excerpt" | "$node_bin" "${script_dir}/job-notify.mjs" \
     "$JOB_NOTIFY_NAME" \
@@ -98,6 +121,7 @@ job_notify_on_exit() {
     "$now" \
     "${JOB_NOTIFY_LOGFILE:-}" \
     "$from" \
+    "$summary" \
     2>&1 >/dev/null)"
 
   if [[ -n "$notify_err" ]]; then
