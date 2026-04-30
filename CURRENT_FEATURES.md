@@ -1,6 +1,6 @@
 # Claude Code 現行機能一覧
 
-**最終更新:** 2026-04-30（**Layer 1 CLI**: v2.1.123（4/29 03:29 UTC）— 4/28-29 で v2.1.121/122/123 と **約 27 時間で 3 リリース連続展開**。v2.1.123 は **`CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1` 設定下での OAuth 401 retry loop fix** 1 件のみのホットフィックス（v2.1.121-122 で導入された claude.ai connector OAuth フロー強化の副作用と推察）。**Layer 2（4/30 発効）**: ① **Sonnet 4.5 / Sonnet 4 の 1M context window beta retirement 発効**（`context-1m-2025-08-07` ベータヘッダーが今日無効化、両モデルで 200K 超リクエストはエラー、移行先は Sonnet 4.6 / Opus 4.6 — 1M GA・標準価格・サーチャージなし）。**Layer 3（4/29 FT スクープ）**: ② **Goldman Sachs が Hong Kong 拠点バンカーの Claude アクセスを遮断** — Anthropic との **契約厳格解釈**の結果、Hong Kong は Anthropic 公式の API/Claude.ai 利用可能リージョンリスト未掲載が背景。**Gemini・ChatGPT は引き続き利用可能**で Anthropic 製品固有の制限。米中 AI tension 継続コンテキスト。**Layer 2 障害（4/29）**: ③ Haiku 4.5 elevated errors（05:37-06:58 PT、81 分）、④ Opus 4.7 elevated errors（16:25-16:33 PT、8 分）— 4 月 Major クラス + Partial 合算 10 件超で構造的供給逼迫継続）
+**最終更新:** 2026-05-01（**ニュースモード**: 新 CLI リリースなし、v2.1.123 継続最新。**Layer 2 公式（4/30）**: ① **Claude Security 公開ベータ開始** — 旧 "Claude Code Security" 研究プレビュー（2026-02〜数百組織で運用）が **Claude Enterprise** 向け公開ベータへ昇格。Opus 4.7 駆動、`claude.ai/security` でアクセス、**GitHub ホストリポジトリ**対応、reasoning 型解析（パターンマッチではなくデータフロー追跡・コンポーネント間相互作用の理解）、各 finding に confidence/severity/impact/reproduction、multi-stage validation pipeline、scheduled scans、CSV/Markdown export、Slack/Jira webhook、**Claude Code on Web セッションへ直接遷移してパッチ開発**。Tech partners: CrowdStrike / Microsoft Security / Palo Alto Networks / SentinelOne / TrendAI / Wiz。Services partners: Accenture / BCG / Deloitte / Infosys / PwC。Team / Max は "coming soon"。② **Cyber Verification Program** — Opus 4.7 cyber safeguards に正当な防御目的研究がブロックされる組織向け vetting プログラム、TrendAI が第一陣参加。**Layer 3（4/29 Bloomberg/TechCrunch スクープ）**: ③ **Anthropic が $50B 規模の調達ラウンドを協議中、評価額 $850-900B** — 2 月の $380B から **約 2.4 倍**、ARR $30B+（一部 $40B 近辺）、エンタープライズ売上 80%、**5 月の取締役会で決定見込み、10 月 IPO 候補**、Goldman Sachs / JPMorgan / Morgan Stanley が IPO 主幹事候補で早期協議中。Claude Code / Cowork / Mythos 関連需要が成長ドライバー。**Layer 2 障害（4/30）**: ④ **Major クラス障害**（13:10 UTC〜、claude.ai + API unavailable + Haiku 4.5 elevated errors）— 4 月 Major 障害は 4/15・4/20・4/25・4/28 に続く 5 件目）
 
 
 Claude Codeは、コードベースの読み取り・ファイル編集・コマンド実行・開発ツール統合を行うAIコーディングアシスタント。ターミナル、IDE、デスクトップアプリ、ブラウザで利用可能。
@@ -568,6 +568,34 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - **関連既存プロダクト**: Claude Cowork内の「Design」プラグイン（Anthropic Verified、別製品）— デザインクリティーク、UXライティング、アクセシビリティ監査（WCAG 2.1 AA）、リサーチ統合、開発ハンドオフ。Claude Designは「ジェネレーター型」、Designプラグインは「レビュアー型」
 - **情報源**: [深掘り調査](investigations/2026-04-28_claude-design.md) / [Introducing Claude Design by Anthropic Labs](https://www.anthropic.com/news/claude-design-anthropic-labs) / [Get started with Claude Design (Help Center)](https://support.claude.com/en/articles/14604416-get-started-with-claude-design) / [Using Claude Design for prototypes and UX (公式チュートリアル)](https://claude.com/resources/tutorials/using-claude-design-for-prototypes-and-ux) / [TechCrunch](https://techcrunch.com/2026/04/17/anthropic-launches-claude-design-a-new-product-for-creating-quick-visuals/) / [VentureBeat](https://venturebeat.com/technology/anthropic-just-launched-claude-design-an-ai-tool-that-turns-prompts-into-prototypes-and-challenges-figma) / [The New Stack](https://thenewstack.io/anthropic-claude-design-launch/) / [Design プラグイン](https://claude.com/plugins/design)
 
+
+## Claude Security 🧪
+- **リリース状態**: 🧪 公開ベータ（2026-04-30〜）
+- **対象プラン**: **Claude Enterprise**（Claude Team / Max は "coming soon"）
+- **動作モデル**: **Claude Opus 4.7**
+- **サーフェス**: claude.ai サイドバー or **claude.ai/security**
+- **対応リポジトリ**: **GitHub ホスト**（GitLab / Bitbucket / self-hosted は未対応）
+- **概要**: AI 駆動のコードベース脆弱性スキャン製品。**旧 "Claude Code Security" 研究プレビュー**（2026-02〜数百組織で運用）が公開ベータへ昇格・改称。**Claude Code から派生した最初の独立製品**で、Claude Code on Web との統合がコア
+- **解析アプローチ**: パターンマッチではなく **reasoning 型** — セキュリティ研究者と同様にコンポーネント間の相互作用を理解、データフロー追跡、コード意図の reasoning。既存 SAST ツールが見逃した「decades-undetected」脆弱性を多数検出（先代 Opus 4.6 ベースで OSS production code 500+ vulnerabilities）
+- **各 Finding の情報**: Confidence rating / Severity（High/Medium/Low、エクスプロイト容易性ベース）/ Likely impact / Reproduction path / Affected files & line numbers / Recommended patch
+- **Multi-stage validation pipeline**: adversarial verification を経て初めて analyst に提示 → 誤検知大幅削減
+- **公開ベータ機能**: Scheduled scans（週次など）、Documented dismissal（理由記録・監査証跡）、CSV/Markdown export、Slack/Jira webhook、Triage tracking、サブディレクトリ単位スコープ（モノレポ対応）、ブランチ指定スキャン
+- **Claude Code 統合（重要）**: Finding を起点に **Claude Code on Web セッションを同じリポジトリコンテキストで起動**して直接パッチ開発可能。「セキュリティチームと開発チーム間の何日もの ping-pong を 1 セッションで完結」を主張
+- **Cyber Safeguards 連携**: Opus 4.7 内蔵 cyber safeguards により高リスク用途は自動ブロック → Cyber Verification Program で正当な防御目的研究の継続利用パスあり
+- **Tech Partners（Opus 4.7 を自社製品に組み込み）**: CrowdStrike（Falcon Platform / Project QuiltWorks）、Microsoft Security、Palo Alto Networks、SentinelOne、TrendAI、Wiz
+- **Services Partners（顧客導入支援）**: Accenture、BCG、Deloitte、Infosys、PwC
+- **顧客引用**: "Claude Security surfaced novel, high-quality findings...that helped us identify and address potential security issues" — Snowflake staff engineer
+- **Mythos との関係**: Mythos Preview は Project Glasswing で限定配布継続、Claude Security は Opus 4.7 駆動で広く Enterprise に提供（"supervised vulnerability discovery without Mythos access"）
+- **情報源**: [Claude Security 公式ページ](https://claude.com/product/claude-security) / [Claude.com Blog - public beta](https://claude.com/blog/claude-security-public-beta) / [SiliconANGLE](https://siliconangle.com/2026/04/30/anthropic-announces-claude-security-public-beta-find-fix-software-vulnerabilities/) / [The New Stack](https://thenewstack.io/anthropics-claude-security-beta/) / [SecurityWeek](https://www.securityweek.com/anthropic-unveils-claude-security-to-counter-ai-powered-exploit-surge/) / [Implicator](https://www.implicator.ai/anthropic-opens-claude-security-beta-as-mythos-access-fight-deepens/) / [調査レポート](reports/2026-05-01_claude-security-public-beta-and-50b-funding.md)
+
+## Cyber Verification Program 📢
+- **リリース状態**: 📢 受付開始（2026-04-30〜）
+- **概要**: **Claude Opus 4.7 内蔵の cyber safeguards** に正当な防御目的のセキュリティ研究がブロックされる組織向けの **vetting（資格認定）プログラム**。通過後は restricted version での継続利用が可能
+- **対象**: セキュリティリサーチャー、ペネトレーションテスト実施者、レッドチーミング、CTF チーム、脆弱性研究機関
+- **第一陣参加組織**: TrendAI（4/30 PRNewswire 発表）。CrowdStrike / Wiz など他 Technology Partners も同枠での運用と推察
+- **背景**: Opus 4.7 GA（2026-04-16）以降、cyber safeguards が "prohibited or high-risk cybersecurity uses" を自動検出・ブロックする仕様。Claude Security 公開ベータと同時に正式発表
+- **情報源**: [TrendAI™ and Anthropic Advance AI-Powered Vulnerability Detection (2026-04-30)](https://www.prnewswire.com/news-releases/trendai-and-anthropic-advance-ai-powered-vulnerability-detection-and-risk-mitigation-with-claude-opus-4-7--302759231.html) / [CrowdStrike - Claude Opus 4.7 Across Falcon Platform](https://www.crowdstrike.com/en-us/press-releases/crowdstrike-puts-claude-opus-4-7-to-work-across-falcon-platform-project-quiltworks/) / [Palo Alto Networks - AI-Driven Defense](https://www.paloaltonetworks.com/blog/2026/04/ai-driven-defense-anthropics-claude-opus/)
+
 ## Claude Managed Agents 🧪
 - **リリース状態**: 🧪 パブリックベータ（全APIアカウントにデフォルト有効）
 - **発表日**: 2026年4月8日
@@ -676,6 +704,15 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - **位置づけ**: 4 月の Anthropic Major クラス障害は **4/15（約 3 時間）→ 4/20 → 4/25（Opus 4.7 連続障害）→ 4/28** で **4 件目**。CoreWeave 提携・Google/Broadcom TPU 拡張などキャパシティ強化を進めているが、Claude Code/Cowork 採用拡大（NEC 30,000 人、Freshfields 5,700 人など大規模デプロイ続出）に追いついていない可能性
 - **情報源**: [Tom's Guide Live](https://www.tomsguide.com/ai/live/claude-april-28-2026) / [Rolling Out](https://rollingout.com/2026/04/28/anthropic-claude-outage-users-locked-out/) / [GV Wire](https://gvwire.com/2026/04/28/claude-ai-goes-down-for-thousands-of-users-tuesday-downdetector-shows/) / [Claude Status](https://status.claude.com/)
 
+### Claude.ai/API Major Outage（2026年4月30日）✅ 解決済み
+- **発生**: 13:10 UTC（06:10 PT、12:48 PT 開始ともされる）「**claude.ai and API unavailable**」investigating ステータス
+- **同時障害**: 14:01 UTC「**Claude Haiku 4.5 elevated errors**」investigating 開始
+- **重要度**: 🔴 Major Outage クラス（claude.ai + API 完全 unavailable）
+- **Claude Code 影響**: ログイン経路（Anthropic OAuth）依存のため認証障害発生想定
+- **位置づけ**: 4 月の Major クラス障害は **4/15（約 3 時間）→ 4/20 → 4/25（Opus 4.7 連続障害）→ 4/28（約 78 分）→ 4/30** で **5 件目**。Partial / Elevated 含めると 4 月で 12 件超
+- **背景**: CoreWeave 提携・Google/Broadcom TPU 拡張・$50B 調達でキャパシティ強化を進めるが、Freshfields（5,700 人）・NEC（30,000 人）・Goldman Sachs など大規模エンタープライズデプロイの加速に追いついていない構造的供給逼迫が継続
+- **情報源**: [Claude Status](https://status.claude.com/) / [DesignTAXI - Is Claude Down? April 29, 2026](https://community.designtaxi.com/topic/27733-is-claude-anthropic-ai-down-april-29-2026)
+
 ### Claudeパフォーマンス低下問題・ユーザー反発（2026年2月後半〜4月報道）
 - Anthropicがデフォルトの努力レベルをmediumに引き下げ（トークン節約目的）、ユーザーへの透明な通知なし
 - Stella Laurenzo（AMD AI部門SD）が6,852セッション分析で67%パフォーマンス低下を文書化。Microsoft研究者も同様の批判
@@ -690,6 +727,19 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - **Cowork 展開予定**: セキュリティ・コンプライアンス・トレーニングフレームワーク整合後に Cowork（Anthropic の agentic AI プラットフォーム）への拡大を計画
 - **市場インパクト**: RELX（LexisNexis 親会社）**株価が下落**。Harvey × OpenAI / Thomson Reuters CoCounsel / LexisNexis Protégé の既存法律 AI 競合からの移行を示唆
 - **情報源**: [Businesswire 公式プレス](https://www.businesswire.com/news/home/20260423837690/en/Freshfields-and-Anthropic-Team-Up-to-Co-Build-AI-Legal-Workflows-Deploying-Claude-Across-the-Firm-Globally) / [Law.com](https://www.law.com/legaltechnews/2026/04/23/freshfields-announces-anthropic-deal-deploys-claude-firmwide/) / [The Lawyer - Landmark AI Deal](https://www.thelawyer.com/freshfields-strikes-landmark-ai-deal-with-anthropic/) / [Investing.com - RELX 株価下落報道](https://www.investing.com/news/stock-market-news/relx-stock-falls-as-anthropic-partners-with-freshfields-on-legal-ai-93CH-4632084)
+
+### Anthropic $50B 調達ラウンド協議中・評価額 $850-900B（2026-04-29 Bloomberg/TechCrunch スクープ）
+- **報道日**: 2026-04-29（Bloomberg / TechCrunch 同日独立スクープ）
+- **ラウンド規模**: **$40-50B**（推定）
+- **ポストマネー評価額**: **$850-900B**（前回 2026-02 ラウンド $380B から **約 2.4 倍**）
+- **取締役会決定予定**: **2026 年 5 月**
+- **候補 IPO 時期**: **2026 年 10 月**。**IPO 主幹事候補**: Goldman Sachs / JPMorgan / Morgan Stanley が早期協議中
+- **ARR**: $30B+（一部ソースは $40B 近辺、2025 年末の $9B から大幅増）。**エンタープライズ売上比率約 80%**
+- **OpenAI 比較**: OpenAI の 2026-02 ポストマネー $852B を **Anthropic が抜く可能性**
+- **投資家動向**: 1 機関投資家が $5B コミット予定で CFO Krishna Rao への面会待ち。Anthropic は公式コメント拒否
+- **成長ドライバー**: ① Claude Code / Cowork、② Mythos 関連需要（連邦機関 + Project Glasswing 12 創設パートナー + 40+ 重要インフラ組織）、③ Sonnet 4.6 / Opus 4.7 アダプション、④ Freshfields・NEC・Goldman Sachs・Snowflake など大型エンタープライズ採用
+- **Claude Code への含意**: 評価額急騰は Claude Code・Cowork の収益貢献度を裏付け。10 月 IPO 候補の公表により 4/13 TradingKey 報道（IPO 噂、$380B 目標）が大幅上方修正。4/22 The Register 報道「Pro 試験的 Claude Code 削除」「Pro Opus 4.7 セッション 3 倍化」が背景の Pro/Max プラン構成見直し圧力につながる可能性
+- **情報源**: [Bloomberg - Over $900 Billion Valuation (2026-04-29)](https://www.bloomberg.com/news/articles/2026-04-29/anthropic-considering-funding-offers-at-over-900-billion-value) / [TechCrunch - $50B Round at $900B (2026-04-29)](https://techcrunch.com/2026/04/29/sources-anthropic-could-raise-a-new-50b-round-at-a-valuation-of-900b/) / [TheNextWeb](https://thenextweb.com/news/anthropic-900-billion-valuation-funding-round) / [The AI Insider](https://theaiinsider.tech/2026/04/30/anthropic-nears-50b-raise-at-up-to-900b-valuation-ahead-of-potential-ipo/) / [TechFundingNews](https://techfundingnews.com/anthropic-50b-round-900b-valuation-ipo-report/)
 
 ### Claude Code on Pro 試験的削除事件（2026-04-21〜22 発生、48 時間以内に撤回）
 - **経緯**: 2026-04-21 に無告知で Anthropic の pricing ページから Pro プラン（$20/月）の Claude Code 項目が削除、Help Center 記事タイトルと landing も更新。2026-04-22 に head of growth が「新規 prosumer signup の約 2% に対する小規模 A/B テスト」「既存 Pro/Max subscribers は影響なし」とコメントし、**pricing・docs の表記変更を revert**
@@ -757,11 +807,11 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 確度凡例: 📢 発表のみ（公式アナウンス済み・未提供） / ❓ 噂・未確認（リーク・メディア報道のみ）
 
-### Anthropic IPO計画 ❓
-- **確度**: ❓ 噂・未確認（金融分析サイトの投機的報道のみ）
-- **情報源**: [TradingKey](https://www.tradingkey.com/analysis/stocks/us-stocks/261773210-ai-anthropic-claude-mythos-ipo-tradingkey)
-- **概要**: 2026年10月にIPO予定、目標評価額$380B（3,800億ドル）。Mythosリリース遅延がIPOプロセスに影響する可能性あり。安全性重視の姿勢が機関投資家にアピールする一方、API収益予測下方修正・規制強化リスクも指摘
-- **最終確認日**: 2026-04-13
+### Anthropic IPO計画（2026 年 10 月候補） ❓
+- **確度**: ❓ 噂・未確認（**Bloomberg / TechCrunch ファイナンススクープ**で具体性大幅向上、ただし正式発表前）
+- **情報源**: [Bloomberg (2026-04-29)](https://www.bloomberg.com/news/articles/2026-04-29/anthropic-considering-funding-offers-at-over-900-billion-value) / [TechCrunch (2026-04-29)](https://techcrunch.com/2026/04/29/sources-anthropic-could-raise-a-new-50b-round-at-a-valuation-of-900b/) / [TradingKey](https://www.tradingkey.com/analysis/stocks/us-stocks/261773210-ai-anthropic-claude-mythos-ipo-tradingkey)
+- **概要**: 2026 年 10 月 IPO 候補。**直前ラウンド評価額が 2 月の $380B から $850-900B レンジへ大幅上方修正**（4/29 スクープ、5 月取締役会で決定見込み）。**主幹事候補**: Goldman Sachs / JPMorgan / Morgan Stanley が早期協議中。ARR $30B+（一部 $40B）、エンタープライズ 80%、Mythos 関連需要 + Claude Code / Cowork が主要成長ドライバー。OpenAI（$852B）を抜く可能性
+- **最終確認日**: 2026-05-01
 
 ### Anthropic Full-Stack AI Studio ❓
 - **確度**: ❓ 噂・未確認（同上記事内での言及。公式発表なし）
@@ -807,6 +857,7 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 ## 更新履歴
 
+- 2026-05-01: **ニュースモード調査**（新 CLI リリースなし、v2.1.123 継続最新）。**Layer 2 公式（4/30）**: ① **Claude Security 公開ベータ開始** — 旧 "Claude Code Security" 研究プレビュー（2026-02〜数百組織で運用）が **Claude Enterprise** 向け公開ベータへ昇格。Opus 4.7 駆動、`claude.ai/security`、GitHub ホストリポジトリ対応、reasoning 型解析（パターンマッチではなくデータフロー追跡）、Confidence/Severity/Impact/Reproduction、multi-stage validation pipeline、scheduled scans、CSV/Markdown export、Slack/Jira webhook、**Claude Code on Web セッションへ直接遷移してパッチ開発**。Tech partners: CrowdStrike / Microsoft Security / Palo Alto Networks / SentinelOne / TrendAI / Wiz。Services partners: Accenture / BCG / Deloitte / Infosys / PwC。Team/Max は "coming soon"。② **Cyber Verification Program** — Opus 4.7 cyber safeguards に正当な防御目的研究がブロックされる組織向け vetting プログラム、TrendAI が第一陣参加。**Layer 3（4/29 Bloomberg/TechCrunch スクープ）**: ③ **Anthropic が $50B 規模の調達ラウンドを協議中、評価額 $850-900B** — 2 月の $380B から **約 2.4 倍**、ARR $30B+（一部 $40B）、エンタープライズ 80%、5 月取締役会決定見込み、10 月 IPO 候補、Goldman Sachs / JPMorgan / Morgan Stanley が IPO 主幹事候補。**Layer 2 障害（4/30）**: ④ Major クラス障害（13:10 UTC〜、claude.ai + API unavailable + Haiku 4.5 elevated errors） — 4 月 Major 障害は 4/15・4/20・4/25・4/28 に続く 5 件目。Anthropic Newsroom は 4/28「Claude for Creative Work」が最新エントリで、Claude Security 発表は claude.com/blog プロダクトページ経由のみ Newsroom 未掲載（[調査レポート](reports/2026-05-01_claude-security-public-beta-and-50b-funding.md)）
 - 2026-04-30: **フルモード調査**。**Layer 1 CLI**: ① **v2.1.123（4/29 03:29 UTC）** — `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1` 設定下で OAuth が 401 → retry → 401 を繰り返す retry loop fix 1 件のみのホットフィックス。v2.1.121-122 で導入された claude.ai connector OAuth フロー強化（`mcp_authenticate` の `redirectUri` 対応 / Microsoft 365 MCP OAuth 修正）の副作用と推察。**4/28-29 で v2.1.121 → v2.1.122 → v2.1.123 と約 27 時間で 3 リリース連続展開**。**Layer 2（4/30 発効）**: ② **Sonnet 4.5 / Sonnet 4 の 1M context window beta retirement 発効**（`context-1m-2025-08-07` ヘッダー無効化、両モデルで silent fallback で 200K、200K 超リクエストはエラー、移行先は Sonnet 4.6 / Opus 4.6 — 1M GA・標準価格・サーチャージなし）。**Layer 3（4/29 FT スクープ）**: ③ **Goldman Sachs が Hong Kong 拠点バンカーの Anthropic Claude アクセスを遮断** — Anthropic との契約厳格解釈の結果、Hong Kong は Anthropic 公式の API/Claude.ai 利用可能リージョンリスト未掲載が背景。Gemini・ChatGPT は引き続き利用可能で Anthropic 製品固有の制限。米中 AI tension コンテキスト、Hong Kong 拠点 Claude Code 運用組織は Anthropic 利用規約上の準拠リスク再評価が必要。**Layer 2 障害（4/29）**: ④ Haiku 4.5 elevated errors（05:37-06:58 PT、81 分）、⑤ Opus 4.7 elevated errors（16:25-16:33 PT、8 分）— 4 月 Major クラス障害は 4/15・4/20・4/25・4/28 の 4 件、Partial/Elevated 含めると 10 件超。Anthropic Newsroom / Help Center / Platform Release Notes は 4/29-30 新規エントリなし（[調査レポート](reports/2026-04-30_v2.1.123-and-goldman-hong-kong.md)）
 - 2026-04-29: **フルモード調査**（前回 4/28 ニュースモードで Layer 1 をスキップしたため、4/28 の 2 連続 CLI リリースを今回反映）。**Layer 1 CLI**: ① **v2.1.121（4/28 00:31 UTC）** — MCP `alwaysLoad` server config（tool-search 遅延ロードをスキップ）、`claude plugin prune`（orphaned 依存削除、`uninstall --prune` カスケード）、`/skills` type-to-filter 検索、PostToolUse hooks の `updatedToolOutput` が全ツール対応、フルスクリーンスクロール固定改善、オーバーフローダイアログのスクロール、`--dangerously-skip-permissions` の `.claude/skills/`/`.claude/agents/`/`.claude/commands/` 保護、メモリリーク 3 件 fix（多数画像/`/usage`/長時間ツール）、`/terminal-setup` で iTerm2 clipboard、claude.ai connectors 重複排除、Vertex X.509 mTLS、SDK `mcp_authenticate` の `redirectUri`、OpenTelemetry に `stop_reason`/`gen_ai.response.finish_reasons`/`user_system_prompt`、`CLAUDE_CODE_FORK_SUBAGENT=1` 外部ビルド対応、Microsoft 365 MCP OAuth 修正、Bash ツール起動ディレクトリ削除問題修正、`--resume` 堅牢化、tmux/GNOME/Konsole scrollback 重複修正、VSCode 音声/ネイティブ `/context`、LSP diagnostic 展開など 39 項目。② **v2.1.122（4/28 22:05 UTC）** — `ANTHROPIC_BEDROCK_SERVICE_TIER` 環境変数（`default`/`flex`/`priority`）、`/resume` の PR URL 検索（GitHub/GHE/GitLab/Bitbucket）、`/mcp` で claude.ai connectors 重複表示、OpenTelemetry 数値属性正規化＋`claude_code.at_mention` イベント、画像リサイズ 2,576px→2,000px max 修正、`/branch` フォーク失敗修正、Vertex/Bedrock session-title 生成 `invalid_request_error` 修正、Voice mode の Caps Lock キー警告。**Layer 2 公式（4/28）**: ③ **Claude for Creative Work** ✅ — **9 つの新コネクタ**（Adobe Creative Cloud / Blender / Ableton / Splice / Affinity by Canva / Autodesk Fusion / SketchUp / Resolume Arena & Wire）を全 Claude プランで即時 GA。**Anthropic が Blender Development Fund Corporate Patron 加入**（年間最低 €240,000、Blender Python API メンテ・拡張支援、MCP コネクタ実装は他 LLM からも利用可能）。④ **Claude.ai/API/Code Major Outage**（4/28 17:34–18:52 UTC、約 78 分、Downdetector 12,000 件超）— Claude Code ログイン経路にも影響、4 月 Major クラス障害は 4/15・4/20・4/25 に続く 4 件目。同日 Sonnet 4.5（17 分）・Haiku 4.5（51 分）も別個に Partial Outage、Code Review が断続失敗。Anthropic Newsroom 4/27 Sydney オフィス・Theo Hourmouzis ANZ GM、4/28 Claude for Creative Work が最新エントリ（[調査レポート](reports/2026-04-29_v2.1.121-122-and-claude-creative-work.md)）
 - 2026-04-28: **ニュースモード調査**。**Layer 1 CLI**: v2.1.119 が継続最新、新リリースなし。**Layer 2 公式**: ① **Claude Cowork on Amazon Bedrock GA**（4/21 AWS Machine Learning Blog 公開、4/27 AWS Weekly Roundup でハイライト紹介）— Cowork デスクトップアプリ + **Claude Code Desktop** を AWS Bedrock 経由で実行可能、Anthropic シート課金不要、AWS 従量課金のみ、データはユーザー AWS アカウント内（Bedrock 非保持）、IAM/Bedrock API キー認証、VPC エンドポイント、CloudTrail 監査、OpenTelemetry → CloudWatch、Anthropic-hosted の Chat/Computer Use/Skills Marketplace は除外。② **Anthropic Sydney オフィス正式オープン & Theo Hourmouzis ANZ GM 任命**（4/27、APAC 4 拠点目）。**Layer 3**: ③ **arXiv プレプリント「Dive into Claude Code」**（VILA-Lab、2604.14228、4/14 公開、4/27 IntelligentLiving 等で注目）— Claude Code コードベースの **1.6% のみが AI 決定ロジック / 98.4% が決定論的インフラ**、シンプルな while ループコア、**7 モードパーミッションシステム + ML 分類器**、**5 層 compaction パイプライン**、**4 拡張機構（MCP/Plugins/Skills/Hooks）**、worktree 分離 subagent delegation、append-oriented session storage を体系化。13 設計原則・5 ドライバーをマッピング、OpenClaw との対比。④ **コミュニティ: pentest-ai-agents**（4/27、0xSteph）— 28 専門 subagents で Claude Code を攻撃側セキュリティ研究アシスタント化する OSS。⑤ Claude.ai 軽微インシデント（4/27 14:13 UTC、約 1 分、billing 関連、Claude Code 影響なし）。利用環境テーブル「Desktop App (Cowork)」に Bedrock 経由配信 ✅ GA を追記（[調査レポート](reports/2026-04-28_cowork-on-bedrock-and-arxiv-paper.md)）
