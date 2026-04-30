@@ -1,7 +1,8 @@
 ---
 name: suggest
-description: タスク完了後に改善提案を行うスキル。コード品質、プロジェクト構成、ワークフロー、ドキュメントなどの観点から改善点を簡潔に提示する。「/suggest」で手動呼び出し、またはCLAUDE.mdの指示によりタスク完了後に自動呼び出しされる。DO NOT TRIGGER when: ユーザーが明示的に改善提案を不要と指示した場合。
+description: タスク完了後に改善提案を行うスキル。コード品質、プロジェクト構成、ワークフロー、ドキュメントなどの観点から改善点を簡潔に提示する。`/suggest` で手動呼び出し専用。
 argument-hint: (引数なし)
+disable-model-invocation: true
 ---
 
 # Suggest スキル
