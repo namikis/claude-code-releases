@@ -5,6 +5,7 @@
   - [2026-04-24 週次: 04/17〜04/24](weekly-reports/2026-04-24_weekly.md)
   - [2026-04-18 週次: 04/11〜04/18](weekly-reports/2026-04-18_weekly.md)
 - **調査レポート**
+  - [2026-05-02 v2.1.126大型リリース・Pentagon 7社AI契約Anthropic除外継続](reports/2026-05-02_v2.1.126-and-pentagon-ai-deals.md)
   - [2026-05-01 Claude Security公開ベータ・$50B調達/$900B評価額・Cyber Verification Program](reports/2026-05-01_claude-security-public-beta-and-50b-funding.md)
   - [2026-04-30 v2.1.123 OAuth fix・Goldman Sachs Hong Kong遮断・Sonnet 4.5/4 1Mベータ廃止](reports/2026-04-30_v2.1.123-and-goldman-hong-kong.md)
   - [2026-04-29 v2.1.121-122・Claude for Creative Work（9コネクタ）・4/28大規模障害](reports/2026-04-29_v2.1.121-122-and-claude-creative-work.md)
