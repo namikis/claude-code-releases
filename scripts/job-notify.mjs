@@ -55,41 +55,79 @@ const statusColor = (
 );
 
 // レポート抜粋を「上位3項目 × 1行」に凝縮する。
-// 各項目はレポート内の太字キーワードを最大2個拾って "<strong>主</strong> — 補" 形式にする。
-function condenseSummaryToHtml(raw, maxItems = 3, maxTailChars = 50) {
-  if (!raw || !raw.trim()) return "";
-  const items = [];
+// レポートによって概要セクションが numbered list / markdown table のどちらでも
+// 来るため、両方をサポートして items 配列を作ってから condense する。
+const truncate = (s, n) => (s.length > n ? s.slice(0, n) + "…" : s);
+
+function condenseItem(text, maxTailChars) {
+  const bolds = [...text.matchAll(/\*\*(.+?)\*\*/g)].map((m) => m[1].trim());
+  if (bolds.length >= 2) {
+    return `<strong>${escapeHtml(bolds[0])}</strong> — ${escapeHtml(truncate(bolds[1], maxTailChars))}`;
+  }
+  if (bolds.length === 1) {
+    const tail = text
+      .replace(/\*\*[^*]+\*\*/g, "")
+      .replace(/^[（(][^）)]*[）)]\s*/, "")
+      .replace(/^\s*[—–-]\s*/, "")
+      .split(/[。\n]/)[0]
+      .trim();
+    return tail
+      ? `<strong>${escapeHtml(bolds[0])}</strong> — ${escapeHtml(truncate(tail, maxTailChars))}`
+      : `<strong>${escapeHtml(bolds[0])}</strong>`;
+  }
+  return escapeHtml(truncate(text.split(/[。\n]/)[0].trim(), 80));
+}
+
+function extractSummaryItems(raw) {
+  // 1) numbered list を最優先で探す
+  const ol = [];
   for (const line of raw.split("\n")) {
     const m = line.match(/^\s*\d+\.\s+(.+?)\s*$/);
-    if (!m) continue;
-    items.push(m[1]);
-    if (items.length >= maxItems) break;
+    if (m) ol.push(m[1]);
   }
+  if (ol.length > 0) return ol;
+
+  // 2) markdown table のデータ行を抽出（ヘッダー → 区切り行 → データ行 を期待）
+  const rows = [];
+  let state = "before"; // before | header | rows
+  for (const line of raw.split("\n")) {
+    const trimmed = line.trim();
+    if (!trimmed.startsWith("|")) {
+      if (state === "rows" && rows.length > 0) break;
+      state = "before";
+      continue;
+    }
+    if (/^\|[-:|\s]+\|$/.test(trimmed)) {
+      if (state === "header") state = "rows";
+      continue;
+    }
+    if (state === "before") {
+      state = "header";
+      continue;
+    }
+    if (state !== "rows") continue;
+    const cells = trimmed.split("|").map((c) => c.trim()).filter((c) => c.length > 0);
+    if (cells.length === 0) continue;
+    // 太字を含むセルのうち最も長いものを「内容セル」とする
+    const bolded = cells.filter((c) => /\*\*/.test(c));
+    let content;
+    if (bolded.length > 0) {
+      content = bolded.slice().sort((a, b) => b.length - a.length)[0];
+    } else {
+      content = cells[Math.min(2, cells.length - 1)];
+    }
+    if (content) rows.push(content);
+  }
+  return rows;
+}
+
+function condenseSummaryToHtml(raw, maxItems = 3, maxTailChars = 50) {
+  if (!raw || !raw.trim()) return "";
+  const items = extractSummaryItems(raw);
   if (items.length === 0) return "";
-
-  const truncate = (s, n) => (s.length > n ? s.slice(0, n) + "…" : s);
-
   return items
-    .map((item, i) => {
-      const bolds = [...item.matchAll(/\*\*(.+?)\*\*/g)].map((mm) => mm[1].trim());
-      let line;
-      if (bolds.length >= 2) {
-        line = `<strong>${escapeHtml(bolds[0])}</strong> — ${escapeHtml(truncate(bolds[1], maxTailChars))}`;
-      } else if (bolds.length === 1) {
-        const tail = item
-          .replace(/\*\*[^*]+\*\*/, "")
-          .replace(/^[（(][^）)]*[）)]\s*/, "")
-          .replace(/^\s*[—–-]\s*/, "")
-          .split(/[。\n]/)[0]
-          .trim();
-        line = tail
-          ? `<strong>${escapeHtml(bolds[0])}</strong> — ${escapeHtml(truncate(tail, maxTailChars))}`
-          : `<strong>${escapeHtml(bolds[0])}</strong>`;
-      } else {
-        line = escapeHtml(truncate(item.split(/[。\n]/)[0].trim(), 80));
-      }
-      return `${i + 1}. ${line}`;
-    })
+    .slice(0, maxItems)
+    .map((item, i) => `${i + 1}. ${condenseItem(item, maxTailChars)}`)
     .join("<br>");
 }
 

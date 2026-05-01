@@ -56,8 +56,10 @@ job_notify_log() {
   fi
 }
 
-# 当日のレポートから「主要トピック」セクションを抜粋してメール用要約として返す。
+# 当日のレポートから「## 概要」セクション全体を抜粋してメール用要約として返す。
 # 当日のレポートが存在しない（差分なし等）場合は空文字列を返す。
+# 抽出元を概要セクション全体にしているのは、レポートによって numbered list 形式
+# だったり markdown table 形式だったりするため。整形は呼び出し側（mjs）で行う。
 job_notify_extract_summary() {
   local today report_file
   today="$(date +%Y-%m-%d)"
@@ -65,8 +67,7 @@ job_notify_extract_summary() {
   report_file="$(ls "${JOB_NOTIFY_PROJECT_DIR}/reports/${today}"_*.md 2>/dev/null | tail -1 || true)"
   [[ -n "$report_file" && -f "$report_file" ]] || return 0
   awk '
-    /^### .*主要トピック/ { flag=1; next }
-    flag && /^---[[:space:]]*$/ { exit }
+    /^## 概要/ { flag=1; next }
     flag && /^## / { exit }
     flag
   ' "$report_file"
