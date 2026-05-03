@@ -5,6 +5,7 @@
   - [2026-04-24 週次: 04/17〜04/24](weekly-reports/2026-04-24_weekly.md)
   - [2026-04-18 週次: 04/11〜04/18](weekly-reports/2026-04-18_weekly.md)
 - **調査レポート**
+  - [2026-05-04 Code with Claude SF (5/6) 公式予告判明・5/5-5/7 Anthropicイベント連発週](reports/2026-05-04_code-with-claude-sf-officially-confirmed.md)
   - [2026-05-03 Hegseth「ideological lunatic」発言・White HouseによるMythos 70社拡大計画ブロック・5/5 Financial Services Briefing予告](reports/2026-05-03_hegseth-lunatic-and-mythos-expansion-block.md)
   - [2026-05-02 v2.1.126大型リリース・Pentagon 7社AI契約Anthropic除外継続](reports/2026-05-02_v2.1.126-and-pentagon-ai-deals.md)
   - [2026-05-01 Claude Security公開ベータ・$50B調達/$900B評価額・Cyber Verification Program](reports/2026-05-01_claude-security-public-beta-and-50b-funding.md)
