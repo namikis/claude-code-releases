@@ -5,6 +5,7 @@
   - [2026-04-24 週次: 04/17〜04/24](weekly-reports/2026-04-24_weekly.md)
   - [2026-04-18 週次: 04/11〜04/18](weekly-reports/2026-04-18_weekly.md)
 - **調査レポート**
+  - [2026-05-06 5/5 Financial Services Briefing で 10 Finance Agent Templates・M365完全統合GA・Moody's MCP App・Dimon×Amodei共演](reports/2026-05-06_finance-agents-m365-ga-and-moodys.md)
   - [2026-05-05 v2.1.128（45項目改善・--channelsコンソール対応）・Anthropic×Blackstone×Goldman Sachs $1.5B Enterprise AI JV・Jupiter-v1-pレッドチーム](reports/2026-05-05_v2.1.128-channels-console-auth-and-blackstone-jv.md)
   - [2026-05-04 Code with Claude SF (5/6) 公式予告判明・5/5-5/7 Anthropicイベント連発週](reports/2026-05-04_code-with-claude-sf-officially-confirmed.md)
   - [2026-05-03 Hegseth「ideological lunatic」発言・White HouseによるMythos 70社拡大計画ブロック・5/5 Financial Services Briefing予告](reports/2026-05-03_hegseth-lunatic-and-mythos-expansion-block.md)
