@@ -1,6 +1,6 @@
 # Claude Code 現行機能一覧
 
-**最終更新:** 2026-05-06（**ニュースモード**: **Layer 2 重大発表（5/5 The Briefing: Financial Services @ NYC）**: ① **10 種類の Finance Agent Templates** を Claude Cowork / Claude Code プラグインおよび Claude Managed Agents Cookbook として 5/5 GA — Pitch builder / Meeting preparer / Earnings reviewer / Model builder / Market researcher / Valuation reviewer / General ledger reconciler / Month-end closer / Statement auditor / KYC screener、Skills + Connectors + Subagents の 3 要素アーキテクチャ、Claude Opus 4.7 推奨（**Vals AI Finance Agent benchmark 64.37%**、業界トップ）。② **Microsoft 365 完全統合 GA** — Excel / PowerPoint / Word add-in が 5/5 で **アプリ間コンテキスト自動キャリーオーバー込みの統合体験として正式 GA**、**Claude for Outlook が新規ベータ launch**。Cowork が hub となり M365 / Claude Code 間でコンテキストブリッジ。③ **Moody's MCP App** — 600M 社の信用格付け / リスクデータが Claude にネイティブアプリとして埋め込み（共同顧客向け GA、KYC screener / Valuation reviewer / Pitch builder Finance Agent と直接連携）。④ **Dario Amodei × Jamie Dimon 初共同ステージ登壇** — JPMorgan Chase 会長兼 CEO がステージで「Claude に 20 分でダッシュボードを作らせた」と称賛、Amodei は Anthropic「80x growth」の根本的不確実性を率直に表明、両者とも雇用への悲観論を拒否。**戦略総括（Fortune 論調）**: 5/4 Blackstone × H&F × Goldman Sachs $1.5B JV と組み合わせて「**大規模機関 → DIY ツールスタック / 中規模企業 → JV 経由 implementation サービス**」の二段構え完成、Anthropic は単なる AI ソフト会社からウォール街の operating layer 構築へ脱皮。**Layer 3 リーク（5/5 Wes Roth）**: ⑤ 内部コードネーム **Claude Cardinal** — user activity / memory usage の **visual retrospective（視覚的振り返り）**、5/6 Code with Claude SF キーノートで発表される可能性（❓ 噂）。**Code with Claude SF（5/6 9:00 AM PT = 日本時間 5/7 1:00 AM 開催）はまだ開催前**で、Sonnet 4.8 / Claude Jupiter / Claude Cardinal / KAIROS 等のリーク・噂は ❓ 据え置き、結果は次回（5/7）レポートで一括反映予定。**Layer 1（CLI チェンジログ）はスキップ** — v2.1.128（5/4 23:01 UTC）以降の更新なし）
+**最終更新:** 2026-05-07（**フルモード**: **Code with Claude SF キーノート開催（5/6 9:00 AM PT）**で Anthropic CPO Ami Vora が **「No new model today」**と冒頭明言（Sonnet 4.8 / Jupiter / Cardinal は今回見送り）→ 代わりに **Claude Code 既存機能を一気に GA / 公開ベータ昇格**: ① **Code Review ✅ GA**（Anthropic 全チームで運用済み、$15-25/レビュー、平均 20 分）、② **Security Reviews ✅ GA**（自動セキュリティレビュー、`/security-review` 同梱）、③ **CI Auto-Fix ✅ GA**（PR の CI 失敗とレビューコメントを継続監視 → 自動修正、ループしない escalation 設計）、④ **Remote Agents ✅ GA**（旧 Remote Control から呼称・スコープ拡張、Pro / Max / Team / Enterprise）、⑤ **Outcomes 🧪 公開ベータ**（成功条件指定で自律反復、+10pt 自己評価成功率）、⑥ **Multi-Agent Orchestration 🧪 公開ベータ**（Managed Agents、Claude Code 側 Agent Teams は引き続き experimental）、⑦ **Dreaming 🔬 研究プレビュー**（過去セッション再点検・自己改善・memory artifact 生成、`/dream` コマンド）。**SpaceX Colossus 1 提携締結（5/6 同日発表）** — Memphis データセンター全容量、**300MW + 220,000 Nvidia GPU を 1 ヶ月以内に追加**、orbital compute 数 GW 計画。**Pro / Max / Enterprise の Claude Code 5 時間レート制限を倍増 + Pro / Max のピーク時間制限撤廃 + API Opus レート制限大幅引き上げ**。API トラフィック前年比 17 倍。**Layer 1**: 24 時間で **v2.1.129（5/6 01:40 UTC、--plugin-url + Homebrew/WinGet 自動更新 + ゲートウェイモデルディスカバリー opt-in 化 + Ctrl+R 全プロジェクト復帰、30+ 修正）→ v2.1.131（5/6 07:47 UTC、VS Code Windows 起動 + Mantle x-api-key 修正）→ v2.1.132（5/6 22:08 UTC キーノート後、CLAUDE_CODE_SESSION_ID + CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN + 外部 SIGINT graceful shutdown + stdio MCP メモリリーク修正、35+ 修正）** の 3 連続リリース（v2.1.130 は欠番））
 
 
 Claude Codeは、コードベースの読み取り・ファイル編集・コマンド実行・開発ツール統合を行うAIコーディングアシスタント。ターミナル、IDE、デスクトップアプリ、ブラウザで利用可能。
@@ -33,7 +33,7 @@ Claude Codeは、コードベースの読み取り・ファイル編集・コマ
 ### Git / GitHub / GitLab 連携
 - 変更のステージング、コミットメッセージ作成、ブランチ作成、PR作成
 - GitHub Actions / GitLab CI/CD でコードレビュー・Issueトリアージを自動化
-- **GitHub Code Review**（研究プレビュー、Team/Enterprise）: 複数エージェントが並行でPRを精査。重大度ランク付きインラインコメント。大規模PR（1,000行以上）で84%に平均7.5件の指摘。平均レビュー時間約20分。トークン課金（$15-25/レビュー）
+- **GitHub Code Review** ✅ **GA**（**2026-05-06 Code with Claude SF キーノートで GA 宣言**、Team/Enterprise 中心）: 複数エージェントが並行で PR を精査。重大度ランク付きインラインコメント。大規模 PR（1,000行以上）で84%に平均7.5件の指摘。平均レビュー時間約20分。トークン課金（$15-25/レビュー）。**Anthropic 内部「every team で利用」**（CPO Ami Vora）
 
 ### Computer Use（デスクトップ操作） 🔬
 - **リリース状態**: 🔬 研究プレビュー（Pro / Max、macOS限定）
@@ -56,14 +56,42 @@ Claude Codeは、コードベースの読み取り・ファイル編集・コマ
 - 拒否されたコマンドが通知表示され、`/permissions` → Recentタブで`r`キーによりリトライ可能（v2.1.89）
 - 「pushしないで」等の明示的ユーザー境界を尊重（v2.1.90で修正）
 
-### Remote Control
-- ローカルセッションをスマートフォンや別デバイスのブラウザから継続操作
+### Remote Agents（旧 Remote Control） ✅
+- **リリース状態**: ✅ **GA**（2026-05-06 Code with Claude SF キーノートで GA 宣言、旧 Remote Control 研究プレビューから昇格・呼称統一）
+- **対象プラン**: Pro / Max / Team / Enterprise（GA 化に伴うプラン拡大の有無は今後 Help Center で要確認）
+- ローカルセッションを **iOS / Android / ブラウザ** から継続操作。エージェントはローカルマシン上で動作（フルツールアクセス保持）し、モバイルからはチャットレベル制御のみ送受信
 - `/remote-control` または `--rc` フラグで有効化
+- **キーノート言及**: Vora 「control your laptop from your phone」
 
 ### Voice Mode（音声入力）
 - `/voice` で音声ディクテーションを切り替え
 - Push-to-talk方式（スペースバー長押し）
 - 20言語対応
+
+### Security Reviews（自動セキュリティレビュー） ✅
+- **リリース状態**: ✅ **GA**（2026-05-06 Code with Claude SF キーノートで GA 宣言）
+- **対象**: Claude Code 全プラン（具体的なプラン制限は今後の Help Center 更新待ち）
+- PR / コミットに対して自動的にセキュリティ脆弱性検出を実行。`/security-review` スラッシュコマンドでセッション中のペンディング変更を包括的レビューも可能
+- Anthropic 内部利用実績多数。**Claude Security**（claude.ai サイドバー / claude.ai/security、Enterprise 向け 🧪 公開ベータ）とは別製品で、こちらは Claude Code CLI / IDE 内のフロー
+- **情報源**: [Automated Security Reviews in Claude Code (Help Center)](https://support.claude.com/en/articles/11932705-automated-security-reviews-in-claude-code) / [claude-code-security-review (GitHub)](https://github.com/anthropics/claude-code-security-review)
+
+### CI Auto-Fix（PR 自動修正） ✅
+- **リリース状態**: ✅ **GA**（2026-05-06 Code with Claude SF キーノートで GA 宣言）
+- **対象**: Claude Code on Web の利用者（PR ベースのワークフロー）
+- PR の **CI 失敗とレビューコメントを継続監視** → ログ / フィードバックを読んで何を直すか判断 → 同一ブランチに自動 push
+- **ループしない設計**: 解決できない場合は試行内容を添えて人間にエスカレーション。Web 上の PR ビューの CI ステータスバー内トグルで有効化
+- **3 機能セット**（2026-03 リリース、5/6 GA 化）: ① PR を自動追跡、② CI 失敗を自動修正、③ レビューコメントを自動対応 — 完全自律 PR パイプラインを構成
+- **位置づけ**: Code Review（指摘）+ Security Reviews（脆弱性指摘）+ CI Auto-Fix（自動修正）で「PR の品質を Claude が一気通貫で担保」するストーリー
+- **情報源**: [PR Autofix with Claude Code (GitHub Marketplace)](https://github.com/marketplace/actions/pr-autofix-with-claude-code)
+
+### Dreaming（過去セッション再点検・自己改善） 🔬
+- **リリース状態**: 🔬 **研究プレビュー**（2026-05-06 launch、要 [アクセス申請](https://claude.com/form/claude-managed-agents)）
+- **対象**: Claude Managed Agents 利用者の中で申請通過した開発者（Claude Code 側で `/dream` コマンドが実装され連動、Managed Agents 側機能として正式発表）
+- エージェントが **過去のセッションを再点検し、自分が見落とした点・繰り返したミス・反復パターンを抽出して memory artifact を再構成**する自己改善機能
+- **動作モード**: ① **自動モード**（バックグラウンドの memory consolidation プロセスとしてセッション間に走る、stale notes prune・重複 merge・矛盾解消・CLAUDE.md 系リオーガナイズ）、② **手動モード**（`/dream` で明示起動、コミュニティでは "Auto Dream" / "AutoDream" で観測）
+- **Memory との関係**: Memory（既存 Public Beta）が「学んだことを記録」、Dreaming が「学んだことを精緻化・統合」。Multi-Agent Orchestration と組み合わせると複数エージェント間の共通学びを横断抽出可能
+- **想定ユースケース**: 法務 drafting / 大規模ログ分析 / ドキュメント品質チェック / writing automation。Claude Code では「同じバグパターンを毎週踏むチームのメモリを夜間に整理」用途
+- **情報源**: [Anthropic Blog - New in Claude Managed Agents（5/6）](https://claude.com/blog/new-in-claude-managed-agents) / [TestingCatalog - Anthropic debuts Dreaming](https://www.testingcatalog.com/anthropic-debuts-reaming-for-claude-managed-agents-in-new-preview/) / [US News - Dreaming Feature](https://money.usnews.com/investing/news/articles/2026-05-06/anthropic-unveils-dreaming-feature-to-help-its-ai-agents-self-improve)
 
 ---
 
@@ -254,6 +282,35 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - **Windows no-flicker モードでの日本語/韓国語/中国語文字化け修正**、`Ctrl+L` のプロンプト入力削除動作を画面再描画のみに統一（readline 互換）、Cursor/VS Code 1.92-1.104 統合ターミナルの過速トラックパッドスクロール修正（v2.1.126）
 - **Windows クリップボード EDR/SIEM テレメトリ漏洩修正**: コピー内容が EDR/SIEM のプロセスコマンドラインで公開されていた問題を修正、>22KB クリップボード未到達修正、PowerShell ツールの `--%` 誤判定（`git diff -- file` 等）修正（v2.1.126）
 - **Agent SDK 不正形式ツール名 hang 修正**: モデルが並列ツール呼び出しで不正形式ツール名を発行した際にハングする問題を修正（v2.1.126）
+- **`--plugin-url <url>` フラグ**: URL から **プラグイン .zip アーカイブ**を取得して当該セッションで使用（v2.1.129、v2.1.128 の `--plugin-dir <path>.zip` の URL 版）
+- **`CLAUDE_CODE_FORCE_SYNC_OUTPUT=1` 環境変数**: synchronized output を強制有効化（auto-detection が漏れる Emacs `eat` 等のターミナル向け、v2.1.129）
+- **`CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE` 環境変数**: Homebrew / WinGet インストール時に background で upgrade コマンド実行 → 再起動プロンプト（v2.1.129）
+- **`skillOverrides` 設定有効化**: `off` でモデルと `/` 双方から非表示、`user-invocable-only` でモデルからのみ非表示、`name-only` で description を畳む（v2.1.129）
+- **Gateway `/v1/models` ディスカバリーを opt-in 化**: `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1` で有効化。**v2.1.126〜v2.1.128 では自動有効**だったが、v2.1.129 で **opt-in に巻き戻し**
+- **Ctrl+R 履歴ピッカー全プロジェクト復帰**: v2.1.124 以前の挙動（全プロジェクト横断検索）に復帰。Ctrl+S で当該プロジェクト / セッションに絞り込み（v2.1.129）
+- **第三者デプロイメント spinner tips 抑制**: Bedrock / Vertex / Foundry / `ANTHROPIC_BASE_URL` ゲートウェイで first-party Anthropic surfaces を指す spinner tips を非表示（v2.1.129）
+- **`claude_code.pull_request.count` OTel メトリック拡張**: シェルコマンドだけでなく **MCP ツール経由**の PR / MR 作成もカウント（v2.1.129）
+- **ポリシー refusal エラーに API Request ID 添付**: サポートデバッグ容易化（v2.1.129）
+- **プラグイン manifest `themes` / `monitors` を `experimental` 配下推奨**: トップレベル宣言は引き続き動作するが `claude plugin validate` で警告（v2.1.129）
+- **VS Code 拡張 Windows 起動修正**: bundled SDK にハードコードされたビルドパス（`createRequire` polyfill バグ）（v2.1.131）
+- **Mantle エンドポイント x-api-key ヘッダー欠落修正**（v2.1.131）
+- **`CLAUDE_CODE_SESSION_ID` 環境変数**: Bash ツールサブプロセス環境にセッション ID を追加（hooks `session_id` と同一値）。telemetry / log correlation で Bash 側スクリプト・サブプロセスからセッションを識別可能に（v2.1.132）
+- **`CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN=1` 環境変数**: フルスクリーン alternate-screen レンダラーをオプトアウトして、**会話をターミナルのネイティブ scrollback に保持**。`/tui fullscreen` の逆操作（v2.1.132）
+- **Ctrl+V 画像ペーストに「Pasting...」フッター表示**（v2.1.132）
+- **外部 SIGINT で graceful shutdown**: IDE stop ボタン / `kill -INT` でターミナルモード復元 + `--resume` ヒント表示が走るように（v2.1.132）
+- **`--resume` の emoji split 破損修正**: ツールエラー truncation が emoji を分割した場合の `no low surrogate in string` 失敗 → 既存破損セッションも load 時に sanitize（v2.1.132）
+- **plan-mode `--permission-mode` flag が `-p --continue` / `--resume` で無視される問題修正**、`ExitPlanMode` 後の plan モード再適用問題（v2.1.132）
+- **`--effort` ピッカーが `CLAUDE_CODE_EFFORT_LEVEL` 環境変数 override を反映**（v2.1.132）
+- **stdio MCP サーバーが non-protocol データを stdout に書くと unbounded メモリ増加（10GB+ RSS）する問題修正**（v2.1.132）
+- **MCP サーバーが connect 後に `tools/list` 失敗で 0 ツール表示問題修正**: 1 回リトライ + `/mcp` で「connected · tools fetch failed」表示（v2.1.132）
+- **`/usage` Ctrl+S が Linux/X11 でクリップボードへスクリーンショットコピー時に hang する問題修正**（v2.1.132）
+- **`statusline context_window` トークンカウント**: 累積セッション合計 → 現在のコンテキスト使用量を表示するように修正（v2.1.132）
+- **macOS Alt+T（thinking toggle）が "Option as Meta" 未設定ターミナル（iTerm2 / Terminal.app デフォルト）で機能しない問題修正**（v2.1.132）
+- **Indic conjunct / ZWJ emoji ライン折り返し時のカーソル中央着地修正**（Ctrl+E / A / K / U / 矢印キー、v2.1.132）
+- **vim operators が NFD（decomposed）アクセント文字を含むテキストを破損させる問題修正**（v2.1.132）
+- **Cursor / VS Code 1.92–1.104 / JetBrains IDE 2025.2 のマウスホイールスクロール過速・誤方向問題修正**（v2.1.132）
+- **`/terminal-setup` Windows Terminal Shift+Enter 誤エラー修正**（natively サポートされている、v2.1.132）
+- **Bedrock / Vertex `ENABLE_PROMPT_CACHING_1H` 設定時の 400 エラー修正**（v2.1.132）
 - **Vim visual モード / visual-line モード**: `v` でキャラクタ選択、`V` で行選択。operators（`d`/`y`/`c` 等）と視覚フィードバック対応（v2.1.118）
 - **`/cost`・`/stats` を `/usage` に統合**: 単一 `/usage` コマンドのタブ UI に集約。`/cost`・`/stats` はタイピングショートカットとして残存し対応タブをオープン（v2.1.118）
 - **カスタムテーマ**: `/theme` から名前付きカスタムテーマ作成・切替、`~/.claude/themes/` の JSON を直接編集。**プラグインが `themes/` ディレクトリ配下でテーマ配布可能**（v2.1.118）
@@ -397,6 +454,12 @@ claude -p --json-schema '{"type":"object",...}' "query"
 | `--json-schema` | 構造化JSON出力 |
 | `--enable-auto-mode` | Auto Mode を有効化（Shift+Tab でサイクル切替） |
 | `--exclude-dynamic-system-prompt-sections` | printモードでクロスユーザープロンプトキャッシュ改善（v2.1.98） |
+| `--plugin-url <url>` | URL から **プラグイン .zip アーカイブ**を取得して当該セッションで使用（v2.1.129） |
+| `CLAUDE_CODE_FORCE_SYNC_OUTPUT=1` | synchronized output を強制有効化（auto-detection が漏れる Emacs `eat` 等向け、v2.1.129） |
+| `CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE` | Homebrew / WinGet で background upgrade + 再起動プロンプト（v2.1.129） |
+| `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1` | ゲートウェイ `/v1/models` 経由のモデル発見を **opt-in 有効化**（v2.1.126〜v2.1.128 の自動有効化を v2.1.129 で巻き戻し） |
+| `CLAUDE_CODE_SESSION_ID` | Bash ツールサブプロセス環境にセッション ID を渡す（hooks の `session_id` と同一値、telemetry / log correlation 向け、v2.1.132） |
+| `CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN=1` | フルスクリーン alternate-screen レンダラーをオプトアウト → 会話をターミナルのネイティブ scrollback に保持（v2.1.132） |
 
 ---
 
@@ -561,14 +624,18 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - **Claude Code への影響**: クリエイティブ系コーディングワークフロー（Blender Python スクリプト、Photoshop UXP プラグイン、SketchUp Ruby スクリプト等）で Claude Code から該当ツールを呼び出すパスが整備された。MCP サーバー実装は他 LLM CLI（OpenClaw 等）でも転用可能
 - **情報源**: [Anthropic 公式](https://www.anthropic.com/news/claude-for-creative-work) / [Blender 公式プレスリリース](https://www.blender.org/press/anthropic-joins-the-blender-development-fund-as-corporate-patron/) / [9to5Mac](https://9to5mac.com/2026/04/28/anthropic-releases-9-new-claude-connectors-for-creative-tools-including-blender-and-adobe/) / [MacRumors](https://www.macrumors.com/2026/04/28/claude-creative-tool-connectors/)
 
-## Agent Teams 🔬
-- **リリース状態**: 🔬 実験的機能（`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` フラグで有効化、デフォルト無効）
+## Agent Teams（Claude Code 側） 🔬 / Multi-Agent Orchestration（Managed Agents 側） 🧪
+- **リリース状態**:
+  - **Claude Code 側 Agent Teams** 🔬 実験的機能（`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` フラグで有効化、デフォルト無効）— 5/6 キーノート後も Managed Agents の Multi-Agent Orchestration 公開ベータ昇格に追随せず experimental 表記据え置き
+  - **Claude Managed Agents 側 Multi-Agent Orchestration** 🧪 **公開ベータ**（2026-05-06 Code with Claude SF キーノートで研究プレビュー → 公開ベータ昇格）
 - 複数の独立セッションが並行動作・相互通信
-- **lead / teammate モデル**: リードエージェントがタスク調整、サブタスク割当、結果マージ。teammate はリードのパーミッション設定を継承（`--dangerously-skip-permissions` もリードに追従）。spawn後は個別にteammate modeを変更可能
+- **lead / teammate モデル**: リードエージェントがタスク調整、サブタスク割当、結果マージ。teammate はリードのパーミッション設定を継承（`--dangerously-skip-permissions` もリードに追従）。spawn 後は個別に teammate mode を変更可能
 - **パーミッションバブルアップ**: teammate のツール許可要求はリードの UI にバブルアップして承認される。頻出操作は `permissions.allow` に事前登録しておくと摩擦が減る
-- **実行モード**: tmux / in-process
+- **実行モード**: tmux / in-process / split-pane（iTerm2 + `it2` CLI）
+- **使用例**: PR レビューを 3 体（セキュリティ / パフォーマンス / テストカバレッジ）並列、デバッグで複数仮説を別エージェントが互いに反証、リファクタを 4 体並列で別モジュール担当
+- **既知の制限**: in-process teammate での `/resume` / `/rewind` 非対応、タスクステータス遅延、ネストチーム不可、リーダー固定（昇格・委譲不可）
 - **既知の修正**: v2.1.114（2026-04-18）で teammate がツール許可をリクエストした際の permission dialog クラッシュ修正
-- **情報源**: [公式ドキュメント](https://code.claude.com/docs/en/agent-teams)
+- **情報源**: [公式ドキュメント](https://code.claude.com/docs/en/agent-teams) / [Multiagent Sessions (Managed Agents)](https://platform.claude.com/docs/en/managed-agents/multi-agent) / [Anthropic Blog - New in Claude Managed Agents（5/6）](https://claude.com/blog/new-in-claude-managed-agents)
 
 ## Agent SDK
 - Claude Codeのツール・機能を活用したカスタムエージェントを構築
@@ -650,7 +717,8 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - **カスタムツール**: `type: "custom"`で独自ツール定義可能。エージェントが`agent.custom_tool_use`イベント発行→アプリ側実行→`user.custom_tool_result`で返却
 - **Skills**: Anthropic組み込み（xlsx/pptx等）＋カスタムスキル対応。セッションあたり最大20スキル。オンデマンド読み込み
 - **MCPコネクタ**: リモートMCPサーバー（HTTP Streamable Transport）接続。Agent定義でURL宣言→Session作成時にVaultで認証
-- **研究プレビュー機能**: Outcomes（自己評価・成功率最大10pt向上）、Multi-agent（並列ワーク）、Memory（セッション間記憶）。要[アクセス申請](https://claude.com/form/claude-managed-agents)
+- **公開ベータ機能**（2026-05-06 Code with Claude SF キーノートで昇格）: **Outcomes** 🧪（成功条件を明示指定 → Claude が自律反復で達成、自己評価成功率最大 +10pt）、**Multi-Agent Orchestration** 🧪（リードエージェントが複数サブエージェントへ並列タスク分解 / 委任 / 統合、time-to-completion・品質双方向上）、**Memory** 🧪（セッション間記憶、既存公開ベータ）
+- **研究プレビュー機能**（2026-05-06 launch）: **Dreaming** 🔬 — 過去セッション再点検で自己改善・memory artifact 生成、自動 / 手動（`/dream`）モード。要[アクセス申請](https://claude.com/form/claude-managed-agents)
 - **アーキテクチャ**: Brain/Hands/Session分離設計。p50 TTFT約60%削減、p95で90%超改善。各コンポーネント独立障害・交換可能
 - **価格（ベータ）**: 入力 $3-5/Mトークン、出力 $15-25/Mトークン（Sonnet/Opus）、アクティブランタイム $0.08/時間
 - **Credential Vault**: OAuth（自動トークンリフレッシュ対応）＋静的ベアラートークン。対応: Slack、GitHub、Linear、ClickUp、Notion。Vaultあたり最大20認証情報
@@ -812,6 +880,22 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - CoreWeaveのプラットフォームに主要AIモデルプロバイダー10社中9社が参加
 - **情報源**: [CNBC](https://www.cnbc.com/2026/04/10/coreweave-anthropic-claude-ai-deal.html) / [Bloomberg](https://www.bloomberg.com/news/articles/2026-04-10/anthropic-agrees-to-rent-coreweave-ai-capacity-to-power-claude)
 
+### SpaceX Colossus 1 提携 + Claude Code レート制限倍増（2026-05-06）
+- **発表日**: 2026-05-06（Code with Claude SF キーノート同日発表、Bloomberg / CNBC / Engadget スクープ）
+- **コンピュート規模**:
+  - **Colossus 1（Memphis、TN）の全容量** を Anthropic に開放
+  - **300MW 以上の AI コンピュート容量**を **1 ヶ月以内** に追加
+  - **220,000+ Nvidia GPU** を確保
+  - 計画: SpaceX と協業して **multi-gigawatt の orbital AI コンピュート容量**（衛星コンステレーション基盤）を開発する意向（FCC ペーパー提出済み）
+- **戦略的位置づけ**: SpaceX は 2026 年初頭に **xAI と合併**、Musk は AI 領域に深く関与。Anthropic（Claude）と xAI（Grok）は競合だが、SpaceX は中立的な infra 提供者ロール（Tesla の電力 / Starlink の通信に近い汎用インフラ層）として整理。Anthropic は **Amazon（既存メイン基盤）+ Google（Broadcom TPU 提携、2027 稼働予定）+ CoreWeave（4/10 提携）+ SpaceX Colossus 1（5/6 提携）** の 4 軸インフラ体制が確立
+- **Musk コメント**: 「Anthropic team に impressed、Claude が beneficial になる確率は probably」と発言。一方で「Claude が harm を引き起こす場合はコンピュートを reclaim する権利留保」も明言
+- **Claude Code レート制限倍増（同日適用）**:
+  - **Pro / Max / Enterprise の 5 時間ウィンドウのレート制限を倍増**（コンピュート供給量増を即座にユーザー還元）
+  - **Pro / Max のピーク時間制限を撤廃**（過去にユーザー reaction で問題化していた "peak hours" restrictions を完全削除）
+  - **API の Claude Opus モデルのレート制限を大幅引き上げ**
+- **IPO 文脈**: Bloomberg / CoinDesk が「**Anthropic の 6 月 IPO 想定**（4/29 スクープの $850-900B 評価額）の追い風」と評価。Pre-IPO Perpetual Futures（OKX 取扱）の文脈で OpenAI / SpaceX / Anthropic のプレ IPO トリオが連結
+- **情報源**: [Bloomberg - Anthropic Inks Computing Deal With SpaceX](https://www.bloomberg.com/news/articles/2026-05-06/anthropic-inks-computing-deal-with-spacex-to-meet-ai-demand) / [CNBC - Anthropic, SpaceX announce compute deal](https://www.cnbc.com/2026/05/06/anthropic-spacex-data-center-capacity.html) / [Engadget - Anthropic is doubling Claude Code rate limits after deal with SpaceX](https://www.engadget.com/2166315/anthropic-is-doubling-claude-code-rate-limits-after-deal-with-spacex/) / [PCWorld - Anthropic doubles Claude Code limits, thanks to a deal with SpaceX](https://www.pcworld.com/article/3132997/anthropic-doubles-claude-code-limits-thanks-to-a-deal-with-spacex.html) / [Inc.](https://www.inc.com/ben-sherry/anthropic-and-spacex-just-announced-a-colossal-deal-to-supercharge-claude-ai/91341165) / [CoinDesk](https://www.coindesk.com/tech/2026/05/06/anthropic-signs-elon-musk-s-spacex-for-colossus-1-compute-ahead-of-june-ipo) / [Spyglass](https://spyglass.org/anthropic-spacex-xai-data-centers/)
+
 ### キリスト教指導者サミット（2026年4月11日報道）
 - Anthropicが本社（サンフランシスコ）に15名の著名なキリスト教思想家を招き、Claudeの道徳的形成・倫理に関する2日間の会合を開催
 - 議題: Claudeの「精神的発達」、「Claudeは神の子か」という問い、AI倫理の宗教的視点
@@ -875,26 +959,20 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - **情報源**: [Anthropic Newsroom（5/5）](https://www.anthropic.com/news/finance-agents) / [Fortune（5/5）](https://fortune.com/2026/05/05/anthropic-wall-street-financial-services-agents-jamie-dimon/) / [Bloomberg（5/5）](https://www.bloomberg.com/news/articles/2026-05-05/anthropic-unveils-ai-agents-to-field-financial-services-tasks) / [The Register（5/5）](https://www.theregister.com/2026/05/05/anthropic_unleashes_finance_agents_claude/)
 - **最終確認日**: 2026-05-06
 
-### Code with Claude SF（5/6 main, 5/7 Extended） 📢
-- **確度**: 📢 公式アナウンス済み（[Anthropic 公式ブログ 2026-03-18](https://claude.com/blog/code-with-claude-san-francisco-london-tokyo) で正式告知、`claude.com/code-with-claude` にランディングページあり）。**前回 5/3 レポートでは「❓ 5/6 Anthropic Developer Event」として噂扱いしていたが、claude.com 配下の公式 events 系ページを確認していなかった調査ミスを訂正、📢 へ昇格**
-- **日時**: **2026-05-06（Wed）8:00 AM–8:00 PM PT**（Main Day、SF）／**2026-05-07（Thu）Code with Claude: Extended SF**（インディ開発者・スタートアップファウンダー向け companion event）
-- **形式**: In-person + Livestream 配信併用、**いずれも参加無料**。In-person はランダム選抜、申込は **2026 年 4 月初旬で締切済み**。Livestream は引き続き登録可能（[`claude.com/code-with-claude/register-livestream`](https://claude.com/code-with-claude/register-livestream)）
-- **3 都市開催**: SF（5/6 main + 5/7 Extended）/ London（5/19 main + 5/20 Extended）/ Tokyo（6/10 main + 6/11 Extended）
-- **タイムテーブル（SF, PT）**: 9:00–10:00 AM **Opening Keynote**（Anthropic Leadership 登壇） / 10:30 AM–12:30 PM Morning Sessions（3 トラック並走）/ 12:30 PM–6:15 PM Afternoon Workshops & Talks / 5:45 PM–8:00 PM Evening Reception
-- **3 トラック**: ① **Research**（モデル能力・将来ロードマップ）/ ② **Claude Platform**（production-grade agents 構築）/ ③ **Claude Code**（long-horizon・multi-repo・並列エージェント・運用インフラ）
-- **主要登壇者（Anthropic）**: **Ami Vora**（CPO）/ **Boris Cherny**（Head of Claude Code）/ **Cat Wu**（Product Lead, Claude Code）/ **Angela Jiang**（Product Lead, Claude Platform）/ **Dianne Penn**（Head of Product, Research）。**外部スピーカー所属**: Netflix / GitHub / Datadog / Cursor / Vercel
-- **新機能発表予告**: 公式ブログ・ランディングページ双方で**「live demos of the latest capabilities」「demos of new capabilities and conversations with the teams behind Claude」と明記**。新製品機能のライブデモが公式予告されている → **Sonnet 4.8 / Claude Jupiter / KAIROS / Computer Use ベータ昇格 / Routines GA 化** などのリーク・予測候補のうちいずれか or 複数が発表される蓋然性が高い（個別具体は ❓ 噂のまま）
-- **情報源**: [Code with Claude（公式）](https://claude.com/code-with-claude) / [San Francisco 詳細](https://claude.com/code-with-claude/san-francisco) / [公式ブログ 3/18](https://claude.com/blog/code-with-claude-san-francisco-london-tokyo) / [Tokyo](https://claude.com/code-with-claude/tokyo) / [EventBrowse](https://eventbrowse.com/event/anthropic-code-with-claude-sf-2026/) / [TestingCatalog Jupiter-v1-p（5/1）](https://www.testingcatalog.com/anthropic-tests-jupiter-v1-p-before-potential-launch-on-may-6/) / [TestingCatalog (X)](https://x.com/testingcatalog/status/2034426076663828529)
-- **追加シグナル（5/5〜5/6）**: ① TestingCatalog が 5/1 に **Anthropic Jupiter-v1-p（惑星名コードネーム）レッドチーム実施**を報告。2025-05 の Neptune コードネーム → Claude 4 ファミリー発表のパターンを踏襲する場合、**5/6 SF キーノートでの新モデル発表確度がさらに上昇**。Opus 4.7 は存在するが Sonnet 4.7 / Haiku 4.7 が欠落しているため、Sonnet ティアリフレッシュ説と Mythos foundation 上の新世代説が並立。② **5/5 Wes Roth (X) リーク**: 内部コードネーム **Claude Cardinal** — user activity / memory usage の **visual retrospective（視覚的振り返り）**機能、5/6 SF キーノートで発表される可能性（❓ 噂）。③ **5/5 Financial Services Briefing が Finance Agent Templates / M365 統合 / Moody's を出し切った**ため、5/6 SF キーノートはコア開発者プロダクト（CLI / Cowork / Models）にフォーカスする蓋然性が高い
-- **最終確認日**: 2026-05-06
+### Code with Claude SF（5/6 main, 5/7 Extended） ✅ 開催済み・主要発表反映
+- **確度**: ✅ 開催済み（**2026-05-06 9:00 AM PT メインキーノート**、Ami Vora CPO 主導、3 トラック並走 + イブニングレセプション）。**主要発表は CURRENT_FEATURES.md 上部の Code Review / Security Reviews / CI Auto-Fix / Remote Agents / Agent Teams / Managed Agents Outcomes・Multi-Agent・Dreaming / SpaceX Colossus 1 提携 + レート制限倍増 セクションに既に反映**
+- **キーノート総括**: Vora 「**No new model today**」と冒頭明言 → Sonnet 4.8 / Jupiter / Cardinal は今回見送り、**Claude Code 既存機能の GA / 公開ベータ昇格 + コンピュート増強でユーザー体験改善**にフォーカス。API トラフィック前年比 **17 倍**を成長指標として提示
+- **5/7 Code with Claude: Extended SF**（インディ開発者・スタートアップファウンダー向け companion event、コミュニティトーク + workshop 中心）も予定通り開催
+- **次回予定**: London 5/19 main + 5/20 Extended / Tokyo 6/10 main + 6/11 Extended
+- **情報源**: [Simon Willison Live blog (5/6)](https://simonwillison.net/2026/May/6/code-w-claude-2026/) / [Code with Claude（公式）](https://claude.com/code-with-claude) / [San Francisco 詳細](https://claude.com/code-with-claude/san-francisco) / [Tokyo](https://claude.com/code-with-claude/tokyo) / [公式ブログ 3/18](https://claude.com/blog/code-with-claude-san-francisco-london-tokyo)
+- **最終確認日**: 2026-05-07
 
 ### Claude Cardinal（user activity / memory usage の visual retrospective） ❓
-- **確度**: ❓ 噂・未確認（5/5 Wes Roth (X) リークによる内部コードネーム言及のみ。Anthropic 公式の確認・否定なし）
-- **情報源**: [Wes Roth (X) - Cardinal リーク（5/5）](https://x.com/WesRoth/status/2050168360420151591)
-- **概要**: ユーザー対話の「visual retrospective（視覚的振り返り）」機能。user activity / memory usage の visual analytics と推察される。Claude Code セッションサマリーの強化版 / メモリ管理 UI / usage tracking 系統と連動する可能性
-- **既存機能との違い**: 2026-03-12 launch の「interactive charts and diagrams」機能（Claude メインアプリ向け、無料プラン含む全プランで会話内で chart 生成）とは別物。Cardinal は **「ユーザー自身の使い方を視覚化する」メタな retrospective ツール**と位置づけられる
-- **発表期待**: **5/6 Code with Claude SF キーノート**（9:00 AM PT）で発表される可能性
-- **最終確認日**: 2026-05-06
+- **確度**: ❓ 噂・未確認継続（5/5 Wes Roth (X) リーク言及のみ、**5/6 Code with Claude SF キーノートでは発表されず**）
+- **情報源**: [Wes Roth (X) - Cardinal リーク（5/5）](https://x.com/WesRoth/status/2050168360420151591) / [Simon Willison Live blog (5/6)](https://simonwillison.net/2026/May/6/code-w-claude-2026/)（キーノート全発表が記録されており、Cardinal の名前は登場しない）
+- **概要**: ユーザー対話の「visual retrospective（視覚的振り返り）」機能。user activity / memory usage の visual analytics と推察される
+- **5/6 キーノート結果**: Vora 「No new model today」発言と整合し、**新 UI / 新ビジュアル機能の発表もなし**。Cardinal は引き続き内部コードネームのまま、5/19 London / 6/10 Tokyo 等の後続イベントもしくは独立ローンチで顕在化する可能性
+- **最終確認日**: 2026-05-07
 
 ### Claude for Nonprofits ウェビナー（5/6） 📢
 - **確度**: 📢 公式アナウンス済み（Anthropic 公式 webinars ページ）
@@ -961,6 +1039,7 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 ## 更新履歴
 
+- 2026-05-07: **フルモード調査**。**Code with Claude SF キーノート開催（5/6 9:00 AM PT、Cordis Reactor）**、Anthropic CPO Ami Vora が **「No new model today」**と冒頭明言（Sonnet 4.8 / Jupiter / Cardinal 全て見送り）。**Claude Code 既存機能を一気に GA / 公開ベータ昇格**: ① **Code Review ✅ GA**（Anthropic 全チーム運用済み、$15-25/レビュー、平均 20 分）、② **Security Reviews ✅ GA**（自動セキュリティレビュー、`/security-review` 同梱、Claude Security 公開ベータとは別製品）、③ **CI Auto-Fix ✅ GA**（PR の CI 失敗とレビューコメントを継続監視 → 自動修正、ループしない escalation 設計）、④ **Remote Agents ✅ GA**（旧 Remote Control から呼称・スコープ拡張、Pro / Max / Team / Enterprise）、⑤ **Outcomes 🧪 公開ベータ**（成功条件指定で自律反復、+10pt 自己評価成功率）、⑥ **Multi-Agent Orchestration 🧪 公開ベータ**（Managed Agents、Claude Code 側 Agent Teams は引き続き experimental 据え置き）、⑦ **Dreaming 🔬 研究プレビュー**（過去セッション再点検・自己改善・memory artifact 生成、`/dream` コマンド、Managed Agents で要アクセス申請）。**SpaceX Colossus 1 提携締結**（5/6 同日発表、Bloomberg / CNBC / Engadget スクープ） — Memphis データセンター全容量、**300MW + 220,000 Nvidia GPU を 1 ヶ月以内に追加**、orbital compute 数 GW 計画、Anthropic は Amazon + Google/Broadcom TPU + CoreWeave + SpaceX の 4 軸インフラ体制確立。**Pro / Max / Enterprise の Claude Code 5 時間レート制限を倍増 + Pro / Max のピーク時間制限撤廃 + API Opus レート制限大幅引き上げ**。API トラフィック前年比 17 倍。**Layer 1**: 24 時間で 3 連続 CLI リリース — **v2.1.129（5/6 01:40 UTC）**: `--plugin-url <url>` で URL からプラグイン .zip 取得、`CLAUDE_CODE_FORCE_SYNC_OUTPUT=1`、`CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE`（Homebrew / WinGet 自動更新）、`skillOverrides` 有効化、**ゲートウェイ `/v1/models` ディスカバリーを opt-in 化**（v2.1.126〜v2.1.128 自動有効を巻き戻し、`CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1`）、**Ctrl+R 履歴ピッカー全プロジェクト復帰**（v2.1.124 以前の挙動）、`claude_code.pull_request.count` OTel が MCP 経由 PR/MR もカウント、policy refusal エラーに API Request ID、30+ 修正（`/context` ASCII grid 1.6k トークン浪費修正、`Bash(mkdir *)`/`Bash(touch *)` allow ルール尊重、wake-from-sleep OAuth refresh レース、1H prompt cache TTL silent ダウングレード等）。**v2.1.131（5/6 07:47 UTC）**: VS Code 拡張 Windows 起動失敗（`createRequire` polyfill バグ）、Mantle x-api-key ヘッダー欠落の 2 件ホットフィックス。**v2.1.132（5/6 22:08 UTC、キーノート後リリース）**: `CLAUDE_CODE_SESSION_ID`（Bash サブプロセスへセッション ID）、`CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN=1`（フルスクリーンレンダラー opt-out で scrollback 保持）、Ctrl+V 画像ペースト「Pasting...」フッター、**外部 SIGINT で graceful shutdown**、`--resume` の emoji split 破損修正、plan-mode `--permission-mode` flag 修正、`/effort` 環境変数 override 反映、**stdio MCP メモリリーク修正（10GB+ RSS）**、MCP `tools/list` 失敗時 retry & 表示、`/usage` Linux/X11 hang、statusline コンテキスト累積誤計算、Indic / ZWJ emoji カーソル中央着地、vim NFD アクセント破損、Cursor / VS Code / JetBrains マウスホイール過速、Bedrock/Vertex 1H caching 400 等 35+ 修正。v2.1.130 は欠番（内部 release rolled back の可能性）。CURRENT_FEATURES.md: ① ヘッダー全面書換、② 主要機能セクションに **Security Reviews ✅ GA / CI Auto-Fix ✅ GA / Dreaming 🔬 研究プレビュー** を新規追加、③ Remote Control を **Remote Agents ✅ GA** に改称・状態昇格、④ GitHub Code Review を研究プレビュー → ✅ **GA** に昇格、⑤ Agent Teams セクションを Multi-Agent Orchestration（Managed Agents）公開ベータ情報を含むように拡張、⑥ Claude Managed Agents セクションを Outcomes/Multi-agent/Memory **公開ベータ**化 + Dreaming 🔬 研究プレビュー追加に更新、⑦ CLI フラグテーブルに `--plugin-url`/`CLAUDE_CODE_FORCE_SYNC_OUTPUT`/`CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE`/`CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY`/`CLAUDE_CODE_SESSION_ID`/`CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN` を追記、⑧ CLI 詳細リストに v2.1.129/131/132 の主要変更を追加、⑨ **SpaceX Colossus 1 提携 + Claude Code レート制限倍増 セクションを CoreWeave 提携の直後に新規追加**、⑩ Code with Claude SF（予定・未確認情報）を「✅ 開催済み・主要発表反映」へ降格、⑪ Claude Cardinal を「5/6 キーノートで発表されず ❓ 据え置き」に更新（[調査レポート](reports/2026-05-07_code-with-claude-sf-keynote-and-v2.1.129-132.md)）
 - 2026-05-06: **ニュースモード調査**（**新 CLI リリースなし**、v2.1.128 が継続最新、Layer 1 スキップ）。**Layer 2 重大発表（5/5 The Briefing: Financial Services @ NYC で実施）**: ① **10 種類の Finance Agent Templates GA** — Pitch builder / Meeting preparer / Earnings reviewer / Model builder / Market researcher / Valuation reviewer / General ledger reconciler / Month-end closer / Statement auditor / KYC screener、Claude Cowork / Claude Code プラグインおよび Claude Managed Agents Cookbook として提供、**Skills + Connectors + Subagents の 3 要素 reference architecture**、推奨モデル Claude Opus 4.7（**Vals AI Finance Agent benchmark 64.37%**、業界トップ）。② **Microsoft 365 完全統合 GA** — Excel / PowerPoint / Word add-in が 5/5 で「アプリ間コンテキスト自動キャリーオーバー込みの統合 UX」として正式 GA、**Claude for Outlook が新規ベータ launch**、Cowork が hub になり M365 ↔ Claude Code 間でコンテキストブリッジ。③ **Moody's MCP App** — 600M 社の信用格付け / リスク独自データを Claude にネイティブアプリとして埋め込み（共同顧客向け GA、KYC screener / Valuation reviewer / Pitch builder Finance Agent と直接連携）。④ **Dario Amodei × Jamie Dimon 初共同ステージ登壇** — JPMorgan Chase 会長兼 CEO がステージで「Claude に 20 分でダッシュボードを作らせた」と称賛、Amodei は Anthropic「80x growth」の根本的不確実性を率直表明、両者とも雇用への悲観論を拒否。**戦略総括（Fortune 論調）**: 5/4 Blackstone × H&F × Goldman Sachs $1.5B JV と組み合わせ「**大規模機関 → DIY ツールスタック / 中規模企業 → JV 経由 implementation サービス**」の二段構え完成、Anthropic は単なる AI ソフト会社からウォール街の **operating layer 構築**へ脱皮（The Register は 64.37% を independent deployment には不十分と評し、「Human in the Loop」原則の延長と論評）。**Layer 3 リーク（5/5 Wes Roth X 投稿）**: ⑤ 内部コードネーム **Claude Cardinal** — user activity / memory usage の **visual retrospective（視覚的振り返り）**機能、5/6 Code with Claude SF キーノートで発表される可能性（❓ 噂・未確認）。**Code with Claude SF（5/6 9:00 AM PT = 日本時間 5/7 1:00 AM 開催）はまだ開催前**で、Sonnet 4.8 / Claude Jupiter / Claude Cardinal / KAIROS 等のリーク・噂は ❓ 据え置き、結果は次回（5/7）レポートで一括反映予定。CURRENT_FEATURES.md: ① ヘッダー全面書換、② Microsoft Office Add-ins セクションを「5/5 で M365 完全統合 GA」「Outlook ベータ追加」に大幅更新、Excel Add-in の Moody's 連携を「Claude ネイティブアプリ（MCP）として深化」に書換、③ **Finance Agent Templates セクションを Slack 連携の前に新規追加**（10 テンプレートの一覧表 / 3 要素アーキテクチャ / Vals AI 64.37% / Moody's 連携 / M365 連携 / Dimon 共演）、④ The Briefing: Financial Services セクションを「📢 開催予定」から「✅ 開催済み・主要発表は上部セクションに反映」に降格、⑤ Code with Claude SF セクションに「Wes Roth Cardinal リーク」「5/5 Briefing 後の SF キーノート位置づけ」を追加シグナルとして追記、⑥ **「Claude Cardinal（visual retrospective、❓ 噂）」を予定・未確認情報に新規追加**（[調査レポート](reports/2026-05-06_finance-agents-m365-ga-and-moodys.md)）
 - 2026-05-05: **フルモード調査**。**v2.1.128（5/4 23:01 UTC リリース、約 45 項目の改善）** を反映（前回 5/4 朝レポートの後にデプロイ）。**v2.1.127 は欠番**（GitHub Releases / CHANGELOG.md ともになし、4/24 v2.1.124-125 同様の内部スキップ）。**Layer 1 主要変更**: ① **`--channels` がコンソール（API key）認証をサポート**（旧来 claude.ai login 限定、managed settings は `channelsEnabled: true` 必須）→ Channels をエージェントワークフローに組み込んだ自動化用途（CI/サーバ常駐 bot 等）の選択肢が広がる、② **`/color` 引数なしでランダム色選択**、③ **`/mcp` がツール数表示** + 0-tools サーバー警告マーク、④ **`--plugin-dir` が `.zip` プラグインアーカイブをサポート**、⑤ **`/model` ピッカーで Opus 4.7 重複削除**（現行 Opus は単に「Opus」表示）、⑥ **サブプロセス（Bash / hooks / MCP / LSP）が `OTEL_*` 環境変数を継承しない**（重要なテレメトリ分離改善）、⑦ **MCP `workspace` が予約サーバー名に**、⑧ **MCP 再接続ツール一覧 flood 抑制**（server prefix サマリ）、⑨ **SDK ホストへ `localSettings` 提案**（Always allow が `.claude/settings.local.json` へ書き込まれる）、⑩ **`EnterWorktree` のブランチ作成元を `origin/<default-branch>` から local HEAD に修正**（未 push コミットドロップ回帰修正）、⑪ Auto mode classifier エラーヒント、⑫ **サブエージェント進捗サマリーのプロンプトキャッシュミス修正**（cache_creation 約 3 倍 → 1/3 に削減）。45 項目以上のバグ修正（focus mode dimming、Kitty `4;0;` 通知、ドラッグ&ドロップ画像ハング、>10MB stdin クラッシュループ、長 URL 折り返しクリック、`/plugin` Components パネル、MCP 画像ドロップ、フェンスドコードブロック空白、`/config` タブナビゲーション、markdown リンク OSC 8 fallback、1M context autocompact false-block、並列シェル read-only 失敗 sibling キャンセル、Bedrock global.* 回帰、vim Space 標準準拠、OSC 9;4 progress indicator ちらつき、`/rename` コンパクト境界、stale `installed_plugins.json`、`/plugin update` npm 検出、アイドルサブエージェント無限サマリー等）。**Layer 2 重大発表（5/4）**: **Anthropic × Blackstone × Hellman & Friedman × Goldman Sachs が $1.5B Enterprise AI サービス会社を共同設立** — Anthropic / Blackstone / H&F が **各 $300M コミット**、GIC / Apollo / General Atlantic / Leonard Green / Sequoia がコンソーシアム、PE 傘下のヘルスケア / 製造業 / 金融 / リテール / 不動産が初期ターゲット、**エンジニアを中規模企業内に派遣して Claude を中核業務に embed する垂直統合戦略**、Fortune は「Anthropic takes shot at consulting industry」と報じる。**同日 OpenAI も類似 JV を発表** → AI モデル提供だけでなく実装サービス領域への両社競合へ。**Layer 3**: TestingCatalog（5/1）が **Jupiter-v1-p（Anthropic 内部惑星名コードネーム）レッドチームテスト**を報告 — 2025-05 Neptune → Claude 4 ファミリー発表パターンを踏襲する場合、**5/6 SF キーノートでの新モデル発表確度上昇**。本日 5/5 は **The Briefing: Financial Services**（11:00 AM EST、NYC livestream、C-suite 向け）を予定通り開催。CURRENT_FEATURES.md: ① ヘッダー全面書換、② CLI フラグテーブル `--channels` 説明拡張、③ スラッシュコマンド `/color` ランダム選択、④ MCP セクションに `workspace` 予約名 / 再接続 flood 抑制 / OTEL_* 非継承 / API key 認証 channels を追記、⑤ Anthropic-Blackstone-H&F-Goldman Sachs JV セクションを Freshfields 直前に新規追加、⑥ The Briefing / Code with Claude SF の最終確認日を 5/5 に更新（Code with Claude SF には Jupiter-v1-p シグナルを追記）（[調査レポート](reports/2026-05-05_v2.1.128-channels-console-auth-and-blackstone-jv.md)）
 - 2026-05-04: **ニュースモード調査**（新 CLI リリースなし、v2.1.126 継続最新）。**主要な訂正**: 前回 5/3 レポートで「❓ 5/6 Anthropic Developer Event（メディア予測のみ）」として「噂」扱いしていたイベントが、**実は 2026-03-18 に Anthropic 公式ブログで「Code with Claude SF/London/Tokyo」として正式アナウンス済み**だったことが判明。前回調査では `anthropic.com/events` のみ確認し `claude.com/code-with-claude` 配下の公式 events 系ページを見落としたのが原因 → **❓ 噂 → 📢 公式予告へステータス変更**。判明した詳細: ① **Code with Claude SF: 5/6（Wed）8 AM–8 PM PT、9-10 AM Opening Keynote、Claude Code/Platform/Research の 3 トラック**、登壇者 Ami Vora（CPO）/ Boris Cherny（Head of Claude Code）/ Cat Wu / Angela Jiang / Dianne Penn（Head of Product, Research）、外部スピーカー Netflix / GitHub / Datadog / Cursor / Vercel、In-person 申込締切済み・Livestream 無料登録継続、**「live demos of new capabilities」公式予告あり**。② **5/7 Code with Claude: Extended SF**（インディ開発者・スタートアップファウンダー向け）。③ 3 都市開催: London 5/19 main + 5/20 Extended、Tokyo 6/10 main + 6/11 Extended。**Layer 2 追加公式予告**: ④ **Claude for Nonprofits ウェビナー**（5/6 10:00 AM PT、Projects/Skills/Connectors を grant writing デモで実演）、⑤ **Claude for Financial Services: Putting agents to work ウェビナー**（5/7、エージェント実運用フォーカス、5/5 Briefing と合わせて金融セクター 3 連続コミュニケーション）。**結論: 5/5〜5/7 は Anthropic イベント連発週、特に 5/6 SF Keynote は新製品・新機能発表のメインステージとなる蓋然性が高い**（Sonnet 4.8 / Claude Jupiter / KAIROS / Computer Use ベータ昇格 / Routines GA 化などの個別具体は依然 ❓ 噂のまま、5/6 で動きがあれば次回更新）。**Layer 3 続報**: 5/3〜5/4 で Pentagon-Anthropic 関連・Mythos・$50B 調達ラウンドに新たな公的進展なし。CURRENT_FEATURES.md: 予定・未確認情報セクションで「Anthropic Developer Event（5/6 予測）❓」を「Code with Claude SF（5/6 main, 5/7 Extended）📢」へ昇格・置換、「Claude for Nonprofits ウェビナー（5/6）📢」「Claude for Financial Services: Putting agents to work（5/7 ウェビナー）📢」を新規追加（[調査レポート](reports/2026-05-04_code-with-claude-sf-officially-confirmed.md)）
