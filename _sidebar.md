@@ -6,6 +6,7 @@
   - [2026-04-24 週次: 04/17〜04/24](weekly-reports/2026-04-24_weekly.md)
   - [2026-04-18 週次: 04/11〜04/18](weekly-reports/2026-04-18_weekly.md)
 - **調査レポート**
+  - [2026-05-08 5/7 Office 4アプリ クロスアプリ統合GA公式ブログ・Snyk×Claude AI Security統合・Bloomberg消費者向けClaude強化スクープ](reports/2026-05-08_office-cross-app-ga-and-snyk-claude-integration.md)
   - [2026-05-07 Code with Claude SF キーノート（Code Review/Security Reviews/CI Auto-Fix/Remote Agents GA・Outcomes/Multi-Agent 公開β・Dreaming 研究PV・SpaceX Colossus 1 提携・レート倍増）+ v2.1.129/131/132](reports/2026-05-07_code-with-claude-sf-keynote-and-v2.1.129-132.md)
   - [2026-05-06 5/5 Financial Services Briefing で 10 Finance Agent Templates・M365完全統合GA・Moody's MCP App・Dimon×Amodei共演](reports/2026-05-06_finance-agents-m365-ga-and-moodys.md)
   - [2026-05-05 v2.1.128（45項目改善・--channelsコンソール対応）・Anthropic×Blackstone×Goldman Sachs $1.5B Enterprise AI JV・Jupiter-v1-pレッドチーム](reports/2026-05-05_v2.1.128-channels-console-auth-and-blackstone-jv.md)
