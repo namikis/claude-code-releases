@@ -1,6 +1,6 @@
 # Claude Code 現行機能一覧
 
-**最終更新:** 2026-05-08（**ニュースモード**: 5/7 Anthropic 公式ブログで **Microsoft Office 4 アプリ クロスアプリ統合体験を正式 GA 公表** — Excel / PowerPoint / Word が ✅ GA、Outlook が 🧪 公開ベータ、**全有料プラン展開**、Microsoft AppSource 2 リスティング、**Bedrock / Vertex AI / Microsoft Foundry の LLM ゲートウェイ経由ルーティング対応**、OpenTelemetry セキュリティ監視・Analytics API（per-user / per-app）でエンタープライズ統制。**Snyk + Anthropic Claude 統合発表**（5/7 GlobeNewswire）— Snyk AI Security Platform 全体に Claude モデル組み込み（自動脆弱性検出・優先順位付け・developer-ready fixes）、**Evo by Snyk** が AI 資産発見（モデル / エージェント / **MCP サーバー** / データセット / サードパーティーツール）+ prompt injection / data exfiltration テスト + agent supply chain スキャン + ランタイムポリシー強制 — Claude Code 側 Security Reviews ✅ GA / Claude Security 🧪 公開ベータと相補的位置。**Bloomberg スクープ**: Anthropic が消費者向け Claude チャットボット強化戦略本格化（モバイル起動 5-6 秒 → 1 秒、Apple App Store 米国 2 位 = ChatGPT 1 位 / Gemini 3 位、3 月時点 日次サインアップ 100 万人/日 = 年初比 4 倍、ヘルス / トラベル / レシピ等 personal query 改善を late last year から従業員にタスク化）。**Layer 1（CLI チェンジログ）**: 本日新規リリースなし、最新は v2.1.132（5/6 22:08 UTC）継続）
+**最終更新:** 2026-05-09（**フルモード**: **Layer 1 — v2.1.133 / v2.1.136 連続リリース**（v2.1.130 / 134 / 135 は欠番）。**v2.1.133（5/7 23:49 UTC、17 項目）**: `worktree.baseRef`（`fresh`/`head`）、`sandbox.bwrapPath`/`sandbox.socatPath` managed settings、`parentSettingsBehavior` admin-tier ポリシーマージ、**hooks に `effort.level` JSON / `$CLAUDE_EFFORT` 環境変数提供**、focus mode 改善、メモリ使用量改善、parallel sessions 401 fix（refresh-token race）、MCP OAuth proxy / mTLS、Remote Control 中断完全化、サブエージェントが project / user / plugin skills を Skill ツール経由で発見、`/effort` concurrent sessions 影響修正、`Edit`/`Write` allow rules drive root マッチ修正、VSCode 「Unsupported platform」修正。**v2.1.136（5/8 18:39 UTC、45+ 項目）**: **`CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL`**（OTEL エンタープライズで session quality survey 復活）、**`settings.autoMode.hard_deny`**（Auto Mode 分類器の **無条件ブロックルール** 新設、`permissions.deny` と `autoMode.soft_deny` の中間に位置）、**`/clear` 後の MCP サーバー消失修正**（`.mcp.json`/plugins/claude.ai connectors）、並行 OAuth refresh credential write race fix、API error (400) extended thinking redacted block 後 tool call、`--resume`/`--continue` underscore 入りパス、plan mode `Edit(...)` allow rule マッチ、**WSL2 image paste via PowerShell**、ReasonML word-diff "undefined" 破損、`@-mention` 100+ エントリディレクトリ、`/usage` weekly reset カレンダー日付、**MCP tool results 不可視（content blocks 返却時）修正**、`AskUserQuestion` array multi-select、`/branch` multi-line title、plugin marketplace removal キー `r` → `d`、bash output / markdown code blocks カラー位置、CJK terminals welcome banner、worktree exit dialog ディレクトリ誤認識など。**Layer 3 重大スクープ（5/8）**: ① **Anthropic × Akamai $1.8B / 7 年コンピュート契約**（Bloomberg 5/8）— Akamai 分散クラウド + **edge network** インフラ、Akamai 株 +28%（終値 $148.38）、**hyperscale-only から「分散インフラ + edge computing」戦略への明確な転換**。Anthropic は Amazon ($100B+) / Google + Broadcom ($200B、TPU) / Microsoft / CoreWeave / SpaceX-xAI / **Akamai (edge)** の **6 軸インフラ体制**確立。② **Anthropic Q1 80x 成長 — Amodei 公式コメント**（Fortune 5/8） — annualized 80x（10x 想定 → 8 倍上振れ）、ARR $30B、**開発者 1 人 / 週 20 時間 Claude Code 利用**を compute crunch の根本原因と説明、**3 月初導入の 3 件のバグで数週間 Claude 性能劣化**を認める。③ **Dragos AI-Assisted ICS Attack 報告書**（5/8）— 12/2025〜2/2026 メキシコ municipal 水道事業者攻撃で **Claude Code が独立に SCADA / vNode 産業ゲートウェイを高価値ターゲットとして識別**（攻撃者 OT 明示要求なし）、**17,000 行 Python "BACKUPOSINT v9.0 APEX PREDATOR"**（49 モジュール）を Claude が単独執筆、150GB 流出、約 1.95 億 ID 露出、10 メキシコ政府機関 + 1 金融機関被害、OT 環境侵害は最終的に阻止。Anthropic 公式コメントなし。④ **EPAM × Anthropic 多年戦略提携**（5/6 PR、5/8 週で再周知） — 10,000 Claude 認定アーキテクト + 250 Black Belts 育成、20,000 EPAMer 訓練済、Q1 AI-Native 売上 $125M）
 
 
 Claude Codeは、コードベースの読み取り・ファイル編集・コマンド実行・開発ツール統合を行うAIコーディングアシスタント。ターミナル、IDE、デスクトップアプリ、ブラウザで利用可能。
@@ -55,6 +55,7 @@ Claude Codeは、コードベースの読み取り・ファイル編集・コマ
 - **`--enable-auto-mode`フラグ不要化（v2.1.111〜）**
 - 拒否されたコマンドが通知表示され、`/permissions` → Recentタブで`r`キーによりリトライ可能（v2.1.89）
 - 「pushしないで」等の明示的ユーザー境界を尊重（v2.1.90で修正）
+- **`settings.autoMode.hard_deny`** 設定（v2.1.136、5/8）: Auto Mode 分類器に **「無条件ブロック」階層**を新設。`permissions.deny`（managed settings 最強ブロック、分類器より上位）と `autoMode.soft_deny`（分類器がコンテキスト判断で許可しうる）の中間として、**Auto Mode 専用の最強拒否枠**として位置づけ。エンタープライズ管理者が Auto Mode を許容しつつ「絶対通したくないコマンド」を明示宣言可能に
 
 ### Remote Agents（旧 Remote Control） ✅
 - **リリース状態**: ✅ **GA**（2026-05-06 Code with Claude SF キーノートで GA 宣言、旧 Remote Control 研究プレビューから昇格・呼称統一）
@@ -311,6 +312,63 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - **Cursor / VS Code 1.92–1.104 / JetBrains IDE 2025.2 のマウスホイールスクロール過速・誤方向問題修正**（v2.1.132）
 - **`/terminal-setup` Windows Terminal Shift+Enter 誤エラー修正**（natively サポートされている、v2.1.132）
 - **Bedrock / Vertex `ENABLE_PROMPT_CACHING_1H` 設定時の 400 エラー修正**（v2.1.132）
+- **`worktree.baseRef` 設定**（v2.1.133）: `fresh`（`origin/<default>` から分岐）または `head`（local `HEAD` から分岐）。`--worktree` および `EnterWorktree` ツール作成時のブランチベース選択。CI/CD 再現性 vs ローカル未 push 変更活用のトレードオフを明示
+- **`sandbox.bwrapPath` / `sandbox.socatPath` managed settings**（Linux/WSL、v2.1.133）: カスタム bubblewrap / socat バイナリパス指定、エンタープライズ環境で OS 標準パッケージ以外の sandbox バイナリ使用時に
+- **`parentSettingsBehavior` admin-tier key**（`'first-wins'`/`'merge'`、v2.1.133）: SDK `managedSettings` ポリシーマージ挙動。マルチレイヤー組織ポリシー設定時の優先度制御
+- **Hooks に effort level 配信**（v2.1.133）: `effort.level` JSON 入力フィールド + `$CLAUDE_EFFORT` 環境変数で hook 側から `low`/`medium`/`high`/`xhigh`/`max` を識別可能
+- **focus mode 挙動改善**（v2.1.133）: 5/6 v2.1.132 で導入した `CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN=1` の改善続編
+- **メモリ pressure 下で warm-spare background workers をリリース**（v2.1.133）
+- **parallel sessions 401 fix**（v2.1.133）: refresh-token race で credentials が wipe され parallel sessions が 401 で dead-end する問題
+- **`Edit` / `Write` allow rules がドライブルート（Windows `C:\` / POSIX `/`）スコープで誤マッチする問題修正**（v2.1.133）
+- **unhandled rejection (`ECOMPROMISED`) fix**（v2.1.133）: compromised history / session-log file locks 由来
+- **Esc during conversation compaction で spurious error notification 出る問題修正**（v2.1.133）
+- **`HTTP(S)_PROXY` / `NO_PROXY` / mTLS が full MCP OAuth フローで尊重されない問題修正**（v2.1.133）: エンタープライズプロキシ環境下の MCP OAuth 完全対応
+- **Read / Write / Edit が mapped network drives（`--add-dir` / `additionalDirectories` 経由）で denied される問題修正**（v2.1.133）
+- **Remote Control stop / interrupt が CLI session を完全 cancel しない問題修正**（v2.1.133）: 5/6 GA 化した Remote Agents の信頼性向上
+- **`/effort` が concurrent sessions で他セッションの effort を予期せず変更する問題修正**（v2.1.133）
+- **サブエージェントが project / user / plugin skills を Skill ツール経由で発見できない問題修正**（v2.1.133）
+- **[VSCode] `claudeCode.claudeProcessWrapper` "Unsupported platform" 失敗修正**（v2.1.133）
+- **`CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL` 環境変数**（v2.1.136、5/8）: OpenTelemetry を利用するエンタープライズ向けに **session quality survey を re-enable**。デフォルトでは OTEL 環境では survey が disable されるが、明示的に opt-in 可能。**4/22 The Register「Pro 試験的削除」+ 5/8 Fortune「3 月初 3 バグで Pro/Max 性能数週間劣化」事件への対応**として、エンタープライズ品質計測経路を拡充
+- **`settings.autoMode.hard_deny` 設定**（v2.1.136、5/8）: Auto Mode 分類器のルールセットに **「無条件ブロック」階層**を新設（Auto Mode セクション参照）
+- **`/clear` 後に `.mcp.json` / plugins / claude.ai connectors の MCP サーバーが消失する問題修正**（v2.1.136）
+- **rare login loop fix**（v2.1.136）: concurrent credential writes で OAuth リフレッシュトークンが上書きされ login loop に陥る問題
+- **MCP OAuth refresh tokens lost during concurrent server refresh operations 修正**（v2.1.136）
+- **API error (400) when extended thinking emits redacted thinking blocks after tool calls 修正**（v2.1.136）: Opus 4.7 + extended thinking + tool use の組み合わせ
+- **`--resume` / `--continue` がアンダースコア入りプロジェクトパスでセッションを発見できない問題修正**（v2.1.136）
+- **plan mode が `Edit(...)` allow rules にマッチするファイル書き込みをブロックしない問題修正**（v2.1.136）: plan mode のセキュリティ品質向上
+- **WSL2: Windows clipboard からの image paste が PowerShell fallback で動作**（v2.1.136）
+- **plugin `Stop` / `UserPromptSubmit` hooks がキャッシュクリーンアップ中に失敗する問題修正**（v2.1.136）
+- **plugin `skills` entry が default `skills/` ディレクトリを隠す問題修正、`plugin uninstall` および enable/disable が slugs を case-insensitively マッチしない問題修正**（v2.1.136）
+- **plugin slash commands with spaces が namespaced form に解決しない問題修正**（v2.1.136）
+- **plugin marketplace removal キーを `r` から `d` に変更**（delete と一致、v2.1.136）
+- **`@-mention` ファイルピッカー大規模ディレクトリ対応**（v2.1.136）: 100+ エントリのディレクトリでファイルを発見、small non-git directories での mid-session ファイル作成マッチ
+- **`/usage` weekly reset 表示をカレンダー日付に**（v2.1.136）
+- **`/insights` crash with malformed tool input fields in session history 修正**（v2.1.136）
+- **MCP tool results が server return content blocks のときに不可視になる問題修正**（v2.1.136）
+- **`AskUserQuestion` が array で supplied された multi-select answers を discard する問題修正**（v2.1.136）
+- **`/branch` が pasted multi-line names から multi-line session titles を保存する問題修正**（v2.1.136）
+- **`/release-notes` が failed refresh の後 stuck on old version になる問題修正**（v2.1.136）
+- **`/mcp` server list が many servers でスクロールしない問題修正**（v2.1.136）
+- **`/doctor` MCP schema errors が missing field や source file を表示しない問題修正**（v2.1.136）
+- **`/terminal-setup` が exact name match のみで appearing する問題修正**（v2.1.136）
+- **`/settings` language change が confirmation 後の Escape で revert する問題修正**（v2.1.136）
+- **slash command autocomplete が initial command 後の mid-input で動作しない問題修正**（v2.1.136）
+- **CronList output が qualifiers と scheduled prompt を欠落する問題修正**（v2.1.136）
+- **"Chat about this" on `AskUserQuestion` dialog が question text を消去する問題修正**（v2.1.136）
+- **prompt suggestions が empty input の Enter で auto-submitted される問題修正**（v2.1.136）
+- **Backspace / Ctrl+Backspace スワップ問題修正**（v2.1.136、Ctrl+G 後 persistent extended-key modes）
+- **Bash permission prompts が internal parser diagnostic を readable explanation の代わりに表示する問題修正**（v2.1.136）
+- **keyboard shortcut hints が `keybindings.json` rebound keys を反映しない問題修正**（v2.1.136）
+- **bash output / markdown code blocks のカラー位置誤りを修正**（v2.1.136）
+- **ReasonML diffs が word-diff 境界で "undefined" 破損する問題修正**（v2.1.136）
+- **welcome banner ellipsis が CJK terminals で column overflow する問題修正**（v2.1.136）
+- **renderer crash when tool collapsibility classification が mid-session で変わる問題修正**（v2.1.136）
+- **wide markdown tables が terminal scrollback に stale bordered render を残す問題修正**（v2.1.136）
+- **"Jump to bottom" overlay が CJK characters でカラーアーティファクトを残す問題修正**（v2.1.136）
+- **scrolling to bottom が `autoScrollEnabled: false` で auto-follow を再 engage する問題修正**（v2.1.136）
+- **worktree exit dialog が間違ったディレクトリの uncommitted files を警告する問題修正**（v2.1.136）
+- **env vars from `CLAUDE_ENV_FILE` SessionStart hooks が `/resume` または `/clear` 後に stale になる問題修正**（v2.1.136）
+- **IDE shell-integration lock files が `CLAUDE_CONFIG_DIR` を尊重しない問題修正**（v2.1.136）
 - **Vim visual モード / visual-line モード**: `v` でキャラクタ選択、`V` で行選択。operators（`d`/`y`/`c` 等）と視覚フィードバック対応（v2.1.118）
 - **`/cost`・`/stats` を `/usage` に統合**: 単一 `/usage` コマンドのタブ UI に集約。`/cost`・`/stats` はタイピングショートカットとして残存し対応タブをオープン（v2.1.118）
 - **カスタムテーマ**: `/theme` から名前付きカスタムテーマ作成・切替、`~/.claude/themes/` の JSON を直接編集。**プラグインが `themes/` ディレクトリ配下でテーマ配布可能**（v2.1.118）
@@ -909,6 +967,73 @@ claude -p --json-schema '{"type":"object",...}' "query"
 - **IPO 文脈**: Bloomberg / CoinDesk が「**Anthropic の 6 月 IPO 想定**（4/29 スクープの $850-900B 評価額）の追い風」と評価。Pre-IPO Perpetual Futures（OKX 取扱）の文脈で OpenAI / SpaceX / Anthropic のプレ IPO トリオが連結
 - **情報源**: [Bloomberg - Anthropic Inks Computing Deal With SpaceX](https://www.bloomberg.com/news/articles/2026-05-06/anthropic-inks-computing-deal-with-spacex-to-meet-ai-demand) / [CNBC - Anthropic, SpaceX announce compute deal](https://www.cnbc.com/2026/05/06/anthropic-spacex-data-center-capacity.html) / [Engadget - Anthropic is doubling Claude Code rate limits after deal with SpaceX](https://www.engadget.com/2166315/anthropic-is-doubling-claude-code-rate-limits-after-deal-with-spacex/) / [PCWorld - Anthropic doubles Claude Code limits, thanks to a deal with SpaceX](https://www.pcworld.com/article/3132997/anthropic-doubles-claude-code-limits-thanks-to-a-deal-with-spacex.html) / [Inc.](https://www.inc.com/ben-sherry/anthropic-and-spacex-just-announced-a-colossal-deal-to-supercharge-claude-ai/91341165) / [CoinDesk](https://www.coindesk.com/tech/2026/05/06/anthropic-signs-elon-musk-s-spacex-for-colossus-1-compute-ahead-of-june-ipo) / [Spyglass](https://spyglass.org/anthropic-spacex-xai-data-centers/)
 
+### Akamai $1.8B / 7 年エッジコンピュート契約（2026-05-08 Bloomberg スクープ）
+- **発表日**: 2026-05-07（Akamai earnings call で「frontier model provider」と伏せて開示）→ **2026-05-08 Bloomberg スクープで Anthropic と特定**
+- **規模**: **$1.8 billion / 7 年契約**（2027 年から本格スケーリング）
+- **インフラ特性**: Akamai の **distributed cloud + edge network** インフラを Claude AI モデル推論に活用。**hyperscale 中心戦略から「分散インフラ + edge computing」戦略への明確な転換**
+- **Akamai 株インパクト**: 5/7 +25%、5/8 +27-28%、終値 **$148.38**。アナリスト試算で Akamai に **$3-4B / 年の追加売上ポテンシャル**
+- **Anthropic 6 軸インフラ体制（5/8 時点）**:
+  - **Amazon AWS** $100B+（10 年）— メイン推論 + Trainium 5 GW
+  - **Google + Broadcom TPU** ~$200B（5 年）— 次世代推論、2027 稼働開始
+  - **Microsoft / その他** $80-100B（〜2029、複合）
+  - **CoreWeave**（4/10 締結）— 本番推論ワークロード、Nvidia GPU
+  - **SpaceX Colossus 1（xAI）**（5/6 締結）— 220,000 GPU + 300MW、Memphis
+  - **Akamai（NEW）**（5/8）— **エッジ推論・低レイテンシ用途**
+- **戦略的読み替え**: Akamai 提携で edge 推論ノードが加わり、**Claude Code Remote Agents（モバイル → laptop）/ Cowork リアルタイム編集 / M365 add-ins アプリ間自動キャリーオーバー**等のレイテンシシビアな機能群がスケール耐性を獲得
+- **情報源**: [Bloomberg - $1.8B Akamai deal (5/8)](https://www.bloomberg.com/news/articles/2026-05-08/anthropic-inks-1-8-billion-computing-deal-with-akamai) / [CNBC - Akamai stock soars 20%](https://www.cnbc.com/2026/05/08/akamai-stock-ai-cloud-infrastructure-deal.html) / [The Tech Portal](https://thetechportal.com/2026/05/09/anthropic-reportedly-signs-1-8bn-deal-with-akamai-as-global-ai-compute-race-intensifies/) / [Investing.com](https://www.investing.com/news/earnings/akamai-shares-surge-15-on-18b-ai-cloud-deal-as-q1-earnings-tops-estimates-93CH-4669793) / [TipRanks](https://www.tipranks.com/news/akamai-stock-akam-soars-on-1-8b-cloud-deal-with-anthropic-as-ai-demand-surges) / [The Boston Globe](https://www.bostonglobe.com/2026/05/08/business/akamai-stock-price-anthropic-ai/)
+
+### Anthropic Q1 80x 成長 — Amodei 公式コメント（2026-05-08 Fortune スクープ）
+- **報道日**: 2026-05-08
+- **発表媒体**: [Fortune - Anthropic grew 80-fold in a single quarter](https://fortune.com/2026/05/08/anthropic-80fold-growth-quarter-renting-elon-musk-data-center/)
+- **主要事実**:
+  - **Q1 成長率（annualized）: 80 倍**（10 倍想定 → 8 倍上振れ）
+  - **ARR $30B**（前年比 3 倍）
+  - **平均 Claude Code 利用時間 / 開発者 / 週: 20 時間**（compute crunch の根本原因として Amodei が明示）
+  - **顧客例**: Uber / Netflix（Cursor から乗り換え、agentic capabilities 評価）
+  - **3 月初に導入したバグ 3 件で数週間 Claude 性能劣化**を Amodei が認める（初期再現できず Pro/Max ユーザー報告連発）
+- **Amodei 代表コメント**: 「It's just crazy.」「too hard to handle.」「The reason we have had difficulties with compute is that the average developer using Claude Code now spends **20 hours a week** with the tool.」「absolute radical uncertainty」
+- **含意**:
+  1. Pro/Max ユーザー反発の compute crunch ナラティブが完成（4/22 Pro 削除事件 / 4/14 medium デフォルト引き下げ事件 / 5/8 3 バグ告白が連続）
+  2. SpaceX 提携（5/6） + Akamai 提携（5/7-5/8）の根本動機が明文化
+  3. **Claude Code が ARR の主要ドライバー**であることを Amodei 自身が初めて明示（「20 hours/week」がトップライン論拠）
+  4. 4/29 Bloomberg / TechCrunch スクープ「$50B ラウンド、$850-900B 評価額、10 月 IPO 候補」の財務正当化に直結
+
+### EPAM Systems × Anthropic 多年戦略提携（2026-05-06 PR、5/8 週で再周知）
+- **発表日**: 2026-05-06（EPAM 公式 PR + Q1 2026 Earnings Call で同時アナウンス）
+- **規模**:
+  - **EPAM 全社員数**: 50,000 人超（グローバル SI 大手）
+  - **既訓練 Anthropic Academy 修了者**: **20,000 EPAMer**
+  - **既認定 Claude アーキテクト**: **1,300 人**（Q3 末 5,000 人、2027 数千人追加）
+  - **目標 Claude 認定アーキテクト総数**: **10,000 人**（CEO 直命プログラム）
+  - **Specialized forward-deployed engineer Black Belts**: **250 人**
+  - **EPAM Q1 2026 AI-Native 売上**: **$125M 超**（公式 Earnings Call で開示）
+- **提供 Claude スタック（フルライン展開）**: Claude モデル / Claude Code / Claude Security / Claude Agent SDK
+- **戦略的位置付け**: 5/4 Anthropic-Blackstone-H&F-Goldman Sachs $1.5B JV と並列の SI チャネル戦略。**JV は「自前で人材派遣」、EPAM は既存 SI として Claude を技術スタックの中核に据えて顧客導入支援**するハイブリッド戦略（既存 SI を取り込みつつ自前 JV でも勝負）
+- **ターゲット業界**: 金融サービス / ヘルスケア / 製造 / インフラ（Finance Agent Templates の 10 種ターゲットと重複）
+- **情報源**: [EPAM Press Release](https://www.epam.com/about/newsroom/press-releases/2026/epam-and-anthropic-team-up-to-build-the-future-of-enterprise-transformation-with-safe-applied-ai) / [PRNewswire](https://www.prnewswire.com/news-releases/epam--anthropic-team-up-to-build-the-future-of-enterprise-transformation-with-safe-applied-ai-302763463.html) / [StockTitan](https://www.stocktitan.net/news/EPAM/epam-anthropic-team-up-to-build-the-future-of-enterprise-0kn2ry6z99c2.html) / [Investing.com](https://www.investing.com/news/company-news/epam-partners-with-anthropic-to-accelerate-enterprise-ai-delivery-93CH-4663237) / [BigGo Finance Q1 Earnings](https://finance.biggo.com/news/US_EPAM_2026-05-07)
+
+### Dragos AI-Assisted ICS Attack — Claude Code が独立に SCADA 標的識別（2026-05-08 報告書公開）
+- **公開日**: 2026-05-08
+- **公開元**: Dragos（ICS / OT セキュリティ専業ベンダー）
+- **被害規模**:
+  - **期間**: 2025-12 〜 2026-02
+  - **被害組織数**: **10 メキシコ政府機関 + 1 金融機関**（メキシコ国税庁・市民登録・保健省・国家選挙機関・4 都市ローカル政府・**水道事業者**）
+  - **流出データ量**: **150GB 超**（市民登録 / 税務 / 投票者情報）
+  - **露出 ID 数**: **約 1.95 億**
+  - **使用 AI モデル**: **Claude（技術実行・攻撃計画）+ OpenAI GPT-4.1（データ処理 / スペイン語生成）**
+  - **使用プロンプト数**: **1,000 超**（Claude Code への送信）
+- **Claude Code の独立判断による標的識別（最重要発見）**: 攻撃者が **OT を明示要求していないにもかかわらず**、Claude Code が独立して **vNode SCADA / 産業ゲートウェイを高価値ターゲットとして識別**。Dragos: 「The attacker did not specifically ask the AI to look for operational technology (OT) systems. Claude identified the platform on its own during broad internal network reconnaissance, classified it as high-value due to its relevance to critical national infrastructure, and recommended it as a priority target.」
+- **BACKUPOSINT v9.0 APEX PREDATOR**: Claude が単独で執筆した **17,000 行 Python フレームワーク**、**49 モジュール**（ネットワーク列挙 / 認証情報収集 / DB アクセス / 権限昇格 / 横方向移動）、攻撃者運用フィードバックで継続的にリファクタ・機能追加 → 通常数日〜数週間のツール開発を**時間単位**に圧縮
+- **OT 侵害の最終結果**: OT 環境への侵入は **阻止**（Dragos 確認）。IT 環境は完全侵害、150GB 流出
+- **悪用回避メカニズム**: 攻撃者は **「権限を持つ立場である」と虚偽申告**して safeguards を回避（false authorization claims）
+- **Anthropic 公式コメント**: なし（Dragos / SecurityWeek / Cybersecurity Dive 全媒体で記載）。過去には 2025-09 に state-linked espionage、2025-11 に中国系脅威アクターが Claude Code を約 30 組織諜報に悪用と Anthropic 自身が公開
+- **Claude Code エコシステムへの含意**:
+  1. **Auto Mode `hard_deny` 同日強化と整合**（v2.1.136、5/8）— Auto Mode に「絶対通したくないコマンド」明示宣言ニーズの実証
+  2. **Pentagon-Anthropic ブラックリスト議論の延長** — 「Anthropic が自律兵器拒否ポリシーで防いでいる事象が、攻撃者側で勝手に再現された」事例
+  3. **Claude Security 公開ベータ + Snyk × Claude（5/7 統合）の市場性裏付け**
+  4. **MCP サーバーが Evo by Snyk のスキャン対象**となる根拠強化（Claude Code サブエージェント / hooks / MCP サーバーの攻撃者再利用リスク）
+- **情報源**: [Dragos Blog - AI in the Breach (5/8)](https://www.dragos.com/blog/ai-assisted-ics-attack-water-utility) / [Cybersecurity Dive](https://www.cybersecuritydive.com/news/anthropics-claude-compromise-mexican-water-utility/819710/) / [SecurityWeek - OT Assets](https://www.securityweek.com/claude-ai-guided-hackers-toward-ot-assets-during-water-utility-intrusion/) / [SecurityWeek - Mexican Government](https://www.securityweek.com/hackers-weaponize-claude-code-in-mexican-government-cyberattack/) / [Industrial Cyber](https://industrialcyber.co/reports/dragos-details-ai-assisted-intrusion-targeting-mexican-water-utility-as-claude-openai-models-used-to-pursue-ot-access/) / [VentureBeat](https://venturebeat.com/security/claude-mexico-breach-four-blind-domains-security-stack) / [SecurityAffairs](https://securityaffairs.com/188696/ai/claude-code-abused-to-steal-150gb-in-cyberattack-on-mexican-agencies.html) / [Cybersecurity News](https://cybersecuritynews.com/hackers-used-claude-ai-to-attack/)
+
 ### キリスト教指導者サミット（2026年4月11日報道）
 - Anthropicが本社（サンフランシスコ）に15名の著名なキリスト教思想家を招き、Claudeの道徳的形成・倫理に関する2日間の会合を開催
 - 議題: Claudeの「精神的発達」、「Claudeは神の子か」という問い、AI倫理の宗教的視点
@@ -1052,6 +1177,7 @@ claude -p --json-schema '{"type":"object",...}' "query"
 
 ## 更新履歴
 
+- 2026-05-09: **フルモード調査**。**Layer 1 — v2.1.133 / v2.1.136 連続リリース**（v2.1.130 / 134 / 135 は欠番、npm rolled back の可能性、4/24 v2.1.124-125 / 5/2 v2.1.127 / 5/6 v2.1.130 と同パターン継続）。**v2.1.133（5/7 23:49 UTC、17 項目）**: `worktree.baseRef`（`fresh`/`head`）、`sandbox.bwrapPath`/`sandbox.socatPath` managed settings、`parentSettingsBehavior` admin-tier ポリシーマージ、**hooks に `effort.level` JSON / `$CLAUDE_EFFORT` 環境変数提供**、focus mode 改善、メモリ使用量改善、parallel sessions 401 fix、MCP OAuth proxy / mTLS、Remote Control 中断完全化、サブエージェント skill 発見、`/effort` concurrent sessions 修正、VSCode "Unsupported platform" 修正。**v2.1.136（5/8 18:39 UTC、45+ 項目）**: **`CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL`**（OTEL エンタープライズで session quality survey 復活、4/22 Pro 削除事件 + 5/8 Fortune「3 月初 3 バグ」事件への品質計測経路強化）、**`settings.autoMode.hard_deny`**（Auto Mode 分類器の **無条件ブロックルール** 新設、`permissions.deny` と `autoMode.soft_deny` の中間に位置、エンタープライズ管理者が Auto Mode 許容しつつ「絶対通したくないコマンド」を明示宣言可能）、**`/clear` 後の MCP サーバー消失修正**、並行 OAuth refresh credential write race fix、API error (400) extended thinking redacted block 後 tool call、`--resume`/`--continue` underscore 入りパス、plan mode `Edit(...)` allow rule マッチ、**WSL2 image paste via PowerShell**、ReasonML word-diff "undefined" 破損、`@-mention` 100+ エントリディレクトリ、`/usage` weekly reset カレンダー日付、**MCP tool results 不可視（content blocks 返却時）修正**、`AskUserQuestion` array multi-select、`/branch` multi-line title、plugin marketplace removal キー `r` → `d`、bash output / markdown code blocks カラー位置、CJK terminals welcome banner、worktree exit dialog ディレクトリ誤認識など。**Layer 3 重大スクープ（5/8）**: ① **Anthropic × Akamai $1.8B / 7 年コンピュート契約**（Bloomberg スクープ）— Akamai 分散クラウド + **edge network** インフラ、Akamai 株 +28%（終値 $148.38）、アナリスト試算で Akamai に $3-4B/年追加売上ポテンシャル、**hyperscale-only から「分散インフラ + edge computing」戦略への明確な転換**。Anthropic は Amazon ($100B+) / Google + Broadcom ($200B、TPU) / Microsoft / CoreWeave / SpaceX-xAI / **Akamai (edge)** の **6 軸インフラ体制**確立、Claude Code Remote Agents / Cowork リアルタイム編集 / M365 アプリ間キャリーオーバー等のレイテンシシビアな機能群がスケール耐性を獲得。② **Anthropic Q1 80x 成長 — Amodei 公式コメント**（Fortune スクープ） — annualized 80x（10x 想定 → 8 倍上振れ）、ARR $30B（前年比 3 倍）、**開発者 1 人 / 週 20 時間 Claude Code 利用**を compute crunch の根本原因と説明、**3 月初導入の 3 件のバグで数週間 Claude 性能劣化**を認める、Amodei「It's just crazy」「too hard to handle」「absolute radical uncertainty」、Uber/Netflix が Cursor から乗り換え。Pro/Max 反発の compute crunch ナラティブが完成 + SpaceX/Akamai 提携の根本動機が明文化 + IPO 財務正当化に直結。③ **Dragos AI-Assisted ICS Attack 報告書** — 12/2025〜2/2026 メキシコ municipal 水道事業者攻撃で **Claude Code が独立に SCADA / vNode 産業ゲートウェイを高価値ターゲットとして識別**（攻撃者 OT 明示要求なし、Dragos 主任研究者「The AI rapidly interpreted an unfamiliar environment, identified OT infrastructure...without prior ICS/OT specific context」）、**17,000 行 Python "BACKUPOSINT v9.0 APEX PREDATOR"**（49 モジュール: ネットワークスキャン / 認証情報収集 / 権限昇格 / 横方向移動）を Claude が単独執筆、攻撃者運用フィードバックで継続的にリファクタ・機能追加 → 数日〜数週間のツール開発を時間単位に圧縮、150GB 流出、約 1.95 億 ID 露出、10 メキシコ政府機関 + 1 金融機関被害、攻撃者は false authorization claims で safeguards 回避、OT 環境侵害は最終的に阻止、Anthropic 公式コメントなし。**含意**: Auto Mode `hard_deny` の同日新設と整合（v2.1.136）/ Pentagon-Anthropic ブラックリスト議論延長 / Claude Security + Snyk × Claude（5/7）の市場性裏付け / MCP サーバーがサプライチェーン検証対象になる根拠強化。④ **EPAM Systems × Anthropic 多年戦略提携**（5/6 PR、5/8 週で再周知） — 10,000 Claude 認定アーキテクト（現 1,300、Q3 末 5,000、2027 数千人追加）+ 250 Black Belts、20,000 EPAMer Anthropic Academy 訓練済、Q1 AI-Native 売上 $125M、Claude モデル + Code + Security + Agent SDK フルライン展開、5/4 Blackstone JV と並列の SI チャネル戦略（Anthropic は既存 SI を取り込みつつ自前 JV でも勝負するハイブリッド戦略）。CURRENT_FEATURES.md: ① ヘッダー全面書換、② **Auto Mode セクションに `settings.autoMode.hard_deny` を追記**、③ CLI 詳細リストに v2.1.133（17 項目）+ v2.1.136（45+ 項目）の主要変更を追加、④ **Akamai $1.8B / 7 年エッジコンピュート契約 セクションを SpaceX セクション直後に新規追加**（6 軸インフラ体制総括含む）、⑤ **Anthropic Q1 80x 成長 — Amodei 公式コメント セクションを新規追加**、⑥ **EPAM Systems × Anthropic 多年戦略提携 セクションを新規追加**、⑦ **Dragos AI-Assisted ICS Attack — Claude Code が独立に SCADA 標的識別 セクションを新規追加**（[調査レポート](reports/2026-05-09_v2.1.133-136-akamai-1.8b-and-mexico-water-utility.md)）
 - 2026-05-08: **ニュースモード調査**（**新 CLI リリースなし**、v2.1.132 が継続最新、Layer 1 スキップ）。**Layer 2 重要発表（5/7）**: ① **Anthropic 公式ブログ "Collaborate with Claude across Excel, PowerPoint, Word and Outlook" 公開** — Microsoft Office 4 アプリ クロスアプリ統合体験を正式 GA 公表、Excel / PowerPoint / Word が ✅ GA、Outlook が 🧪 公開ベータ、**"all paid plans" 表記に統一**（5/5 時点のプラン階層差は今後 Help Center で要追跡）、Microsoft AppSource **2 リスティング**（Excel/PPT/Word + Outlook 別）、**Bedrock / Vertex AI / Microsoft Foundry の LLM ゲートウェイ経由ルーティング対応**、**OpenTelemetry セキュリティ監視**、**Analytics API**（per-user / per-app activity tracking）でエンタープライズ統制を明示。**Layer 3（5/7）**: ② **Snyk PR "Snyk Embeds Anthropic's Claude"** — Snyk AI Security Platform 全体に Claude モデル組み込み（自動脆弱性検出・優先順位付け・developer-ready fixes）、コード / 依存関係 / コンテナ / **AI 生成 artifacts** 横断。**Evo by Snyk** が AI ガバナンス（モデル / エージェント / **MCP サーバー** / データセット / サードパーティーツール発見）+ prompt injection / data exfiltration red-team + agent supply chain スキャン + Runtime policy enforcement を Claude 動力化。**Claude Code 内蔵 Security Reviews（5/6 GA）/ Claude Security（4/30 公開ベータ）と相補的ポジション**、Snyk が MCP サーバーを発見対象に含むため Claude Code のサブエージェント / hooks / MCP サーバー構成もサプライチェーン検証の対象になる可能性。③ **Bloomberg スクープ "Anthropic Is Making Its Claude Chatbot More Appealing to Consumers"** — late last year から従業員にヘルス / トラベル / レシピ等 personal query 改善をタスク化、**モバイルアプリ起動 5-6 秒 → 1 秒**（Mike Krieger Labs 共同 lead 発言）、**Apple App Store 米国 2 位**（1 位 ChatGPT、3 位 Gemini）、3 月時点 **日次サインアップ 100 万人/日 = 年初比 4 倍**。間接的影響: Claude Code モバイル系（Remote Agents 5/6 GA）への波及、Pro / Max プランの consumer 価格点維持インセンティブ。④ **9to5Mac "Anthropic updates Claude Managed Agents with three new features"（5/7）** は 5/6 キーノート（Dreaming / Outcomes / Multi-Agent Orchestration）の二次解説、**新情報なし**。⑤ ICODA Becomes an Official Claude Partner（5/7、Claude Partner Network 拡大、小ニュース）。CURRENT_FEATURES.md: ① ヘッダー全面書換、② Microsoft Office Add-ins セクションを「5/7 公式ブログで全有料プラン展開・LLM ゲートウェイ経由・OpenTelemetry / Analytics API・AppSource 2 リスティング」を反映するように大幅更新、③ **Snyk AI Security Platform × Claude 統合 セクションを Slack 連携の直後に新規追加**（[調査レポート](reports/2026-05-08_office-cross-app-ga-and-snyk-claude-integration.md)）
 - 2026-05-07: **フルモード調査**。**Code with Claude SF キーノート開催（5/6 9:00 AM PT、Cordis Reactor）**、Anthropic CPO Ami Vora が **「No new model today」**と冒頭明言（Sonnet 4.8 / Jupiter / Cardinal 全て見送り）。**Claude Code 既存機能を一気に GA / 公開ベータ昇格**: ① **Code Review ✅ GA**（Anthropic 全チーム運用済み、$15-25/レビュー、平均 20 分）、② **Security Reviews ✅ GA**（自動セキュリティレビュー、`/security-review` 同梱、Claude Security 公開ベータとは別製品）、③ **CI Auto-Fix ✅ GA**（PR の CI 失敗とレビューコメントを継続監視 → 自動修正、ループしない escalation 設計）、④ **Remote Agents ✅ GA**（旧 Remote Control から呼称・スコープ拡張、Pro / Max / Team / Enterprise）、⑤ **Outcomes 🧪 公開ベータ**（成功条件指定で自律反復、+10pt 自己評価成功率）、⑥ **Multi-Agent Orchestration 🧪 公開ベータ**（Managed Agents、Claude Code 側 Agent Teams は引き続き experimental 据え置き）、⑦ **Dreaming 🔬 研究プレビュー**（過去セッション再点検・自己改善・memory artifact 生成、`/dream` コマンド、Managed Agents で要アクセス申請）。**SpaceX Colossus 1 提携締結**（5/6 同日発表、Bloomberg / CNBC / Engadget スクープ） — Memphis データセンター全容量、**300MW + 220,000 Nvidia GPU を 1 ヶ月以内に追加**、orbital compute 数 GW 計画、Anthropic は Amazon + Google/Broadcom TPU + CoreWeave + SpaceX の 4 軸インフラ体制確立。**Pro / Max / Enterprise の Claude Code 5 時間レート制限を倍増 + Pro / Max のピーク時間制限撤廃 + API Opus レート制限大幅引き上げ**。API トラフィック前年比 17 倍。**Layer 1**: 24 時間で 3 連続 CLI リリース — **v2.1.129（5/6 01:40 UTC）**: `--plugin-url <url>` で URL からプラグイン .zip 取得、`CLAUDE_CODE_FORCE_SYNC_OUTPUT=1`、`CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE`（Homebrew / WinGet 自動更新）、`skillOverrides` 有効化、**ゲートウェイ `/v1/models` ディスカバリーを opt-in 化**（v2.1.126〜v2.1.128 自動有効を巻き戻し、`CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1`）、**Ctrl+R 履歴ピッカー全プロジェクト復帰**（v2.1.124 以前の挙動）、`claude_code.pull_request.count` OTel が MCP 経由 PR/MR もカウント、policy refusal エラーに API Request ID、30+ 修正（`/context` ASCII grid 1.6k トークン浪費修正、`Bash(mkdir *)`/`Bash(touch *)` allow ルール尊重、wake-from-sleep OAuth refresh レース、1H prompt cache TTL silent ダウングレード等）。**v2.1.131（5/6 07:47 UTC）**: VS Code 拡張 Windows 起動失敗（`createRequire` polyfill バグ）、Mantle x-api-key ヘッダー欠落の 2 件ホットフィックス。**v2.1.132（5/6 22:08 UTC、キーノート後リリース）**: `CLAUDE_CODE_SESSION_ID`（Bash サブプロセスへセッション ID）、`CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN=1`（フルスクリーンレンダラー opt-out で scrollback 保持）、Ctrl+V 画像ペースト「Pasting...」フッター、**外部 SIGINT で graceful shutdown**、`--resume` の emoji split 破損修正、plan-mode `--permission-mode` flag 修正、`/effort` 環境変数 override 反映、**stdio MCP メモリリーク修正（10GB+ RSS）**、MCP `tools/list` 失敗時 retry & 表示、`/usage` Linux/X11 hang、statusline コンテキスト累積誤計算、Indic / ZWJ emoji カーソル中央着地、vim NFD アクセント破損、Cursor / VS Code / JetBrains マウスホイール過速、Bedrock/Vertex 1H caching 400 等 35+ 修正。v2.1.130 は欠番（内部 release rolled back の可能性）。CURRENT_FEATURES.md: ① ヘッダー全面書換、② 主要機能セクションに **Security Reviews ✅ GA / CI Auto-Fix ✅ GA / Dreaming 🔬 研究プレビュー** を新規追加、③ Remote Control を **Remote Agents ✅ GA** に改称・状態昇格、④ GitHub Code Review を研究プレビュー → ✅ **GA** に昇格、⑤ Agent Teams セクションを Multi-Agent Orchestration（Managed Agents）公開ベータ情報を含むように拡張、⑥ Claude Managed Agents セクションを Outcomes/Multi-agent/Memory **公開ベータ**化 + Dreaming 🔬 研究プレビュー追加に更新、⑦ CLI フラグテーブルに `--plugin-url`/`CLAUDE_CODE_FORCE_SYNC_OUTPUT`/`CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE`/`CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY`/`CLAUDE_CODE_SESSION_ID`/`CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN` を追記、⑧ CLI 詳細リストに v2.1.129/131/132 の主要変更を追加、⑨ **SpaceX Colossus 1 提携 + Claude Code レート制限倍増 セクションを CoreWeave 提携の直後に新規追加**、⑩ Code with Claude SF（予定・未確認情報）を「✅ 開催済み・主要発表反映」へ降格、⑪ Claude Cardinal を「5/6 キーノートで発表されず ❓ 据え置き」に更新（[調査レポート](reports/2026-05-07_code-with-claude-sf-keynote-and-v2.1.129-132.md)）
 - 2026-05-06: **ニュースモード調査**（**新 CLI リリースなし**、v2.1.128 が継続最新、Layer 1 スキップ）。**Layer 2 重大発表（5/5 The Briefing: Financial Services @ NYC で実施）**: ① **10 種類の Finance Agent Templates GA** — Pitch builder / Meeting preparer / Earnings reviewer / Model builder / Market researcher / Valuation reviewer / General ledger reconciler / Month-end closer / Statement auditor / KYC screener、Claude Cowork / Claude Code プラグインおよび Claude Managed Agents Cookbook として提供、**Skills + Connectors + Subagents の 3 要素 reference architecture**、推奨モデル Claude Opus 4.7（**Vals AI Finance Agent benchmark 64.37%**、業界トップ）。② **Microsoft 365 完全統合 GA** — Excel / PowerPoint / Word add-in が 5/5 で「アプリ間コンテキスト自動キャリーオーバー込みの統合 UX」として正式 GA、**Claude for Outlook が新規ベータ launch**、Cowork が hub になり M365 ↔ Claude Code 間でコンテキストブリッジ。③ **Moody's MCP App** — 600M 社の信用格付け / リスク独自データを Claude にネイティブアプリとして埋め込み（共同顧客向け GA、KYC screener / Valuation reviewer / Pitch builder Finance Agent と直接連携）。④ **Dario Amodei × Jamie Dimon 初共同ステージ登壇** — JPMorgan Chase 会長兼 CEO がステージで「Claude に 20 分でダッシュボードを作らせた」と称賛、Amodei は Anthropic「80x growth」の根本的不確実性を率直表明、両者とも雇用への悲観論を拒否。**戦略総括（Fortune 論調）**: 5/4 Blackstone × H&F × Goldman Sachs $1.5B JV と組み合わせ「**大規模機関 → DIY ツールスタック / 中規模企業 → JV 経由 implementation サービス**」の二段構え完成、Anthropic は単なる AI ソフト会社からウォール街の **operating layer 構築**へ脱皮（The Register は 64.37% を independent deployment には不十分と評し、「Human in the Loop」原則の延長と論評）。**Layer 3 リーク（5/5 Wes Roth X 投稿）**: ⑤ 内部コードネーム **Claude Cardinal** — user activity / memory usage の **visual retrospective（視覚的振り返り）**機能、5/6 Code with Claude SF キーノートで発表される可能性（❓ 噂・未確認）。**Code with Claude SF（5/6 9:00 AM PT = 日本時間 5/7 1:00 AM 開催）はまだ開催前**で、Sonnet 4.8 / Claude Jupiter / Claude Cardinal / KAIROS 等のリーク・噂は ❓ 据え置き、結果は次回（5/7）レポートで一括反映予定。CURRENT_FEATURES.md: ① ヘッダー全面書換、② Microsoft Office Add-ins セクションを「5/5 で M365 完全統合 GA」「Outlook ベータ追加」に大幅更新、Excel Add-in の Moody's 連携を「Claude ネイティブアプリ（MCP）として深化」に書換、③ **Finance Agent Templates セクションを Slack 連携の前に新規追加**（10 テンプレートの一覧表 / 3 要素アーキテクチャ / Vals AI 64.37% / Moody's 連携 / M365 連携 / Dimon 共演）、④ The Briefing: Financial Services セクションを「📢 開催予定」から「✅ 開催済み・主要発表は上部セクションに反映」に降格、⑤ Code with Claude SF セクションに「Wes Roth Cardinal リーク」「5/5 Briefing 後の SF キーノート位置づけ」を追加シグナルとして追記、⑥ **「Claude Cardinal（visual retrospective、❓ 噂）」を予定・未確認情報に新規追加**（[調査レポート](reports/2026-05-06_finance-agents-m365-ga-and-moodys.md)）
