@@ -6,6 +6,7 @@
   - [2026-04-24 週次: 04/17〜04/24](weekly-reports/2026-04-24_weekly.md)
   - [2026-04-18 週次: 04/11〜04/18](weekly-reports/2026-04-18_weekly.md)
 - **調査レポート**
+  - [2026-05-10 v2.1.137（VSCode Windows ホットフィックス）/ v2.1.138（内部修正）+ Anthropic Alignment Science「Teaching Claude Why」公開（Haiku 4.5 以降 agentic misalignment 0%・blackmail 96%→0%）+ IPO $1 兆ドル観測再活性化 + Cursor+Opus 4.6 PocketOS 9 秒 DB 消去事件報道波](reports/2026-05-10_v2.1.137-138-and-blackmail-safety-milestone.md)
   - [2026-05-09 v2.1.133/136 連続リリース（hooks effort.level・worktree.baseRef・autoMode hard_deny・OTEL feedback survey 復活）+ Akamai $1.8B エッジコンピュート契約・Amodei 80x 成長公式コメント・Dragos AI-Assisted ICS Attack（Claude Code が独立に SCADA 標的識別）・EPAM 戦略提携](reports/2026-05-09_v2.1.133-136-akamai-1.8b-and-mexico-water-utility.md)
   - [2026-05-08 5/7 Office 4アプリ クロスアプリ統合GA公式ブログ・Snyk×Claude AI Security統合・Bloomberg消費者向けClaude強化スクープ](reports/2026-05-08_office-cross-app-ga-and-snyk-claude-integration.md)
   - [2026-05-07 Code with Claude SF キーノート（Code Review/Security Reviews/CI Auto-Fix/Remote Agents GA・Outcomes/Multi-Agent 公開β・Dreaming 研究PV・SpaceX Colossus 1 提携・レート倍増）+ v2.1.129/131/132](reports/2026-05-07_code-with-claude-sf-keynote-and-v2.1.129-132.md)
