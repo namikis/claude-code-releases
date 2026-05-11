@@ -6,6 +6,7 @@
   - [2026-04-24 週次: 04/17〜04/24](weekly-reports/2026-04-24_weekly.md)
   - [2026-04-18 週次: 04/11〜04/18](weekly-reports/2026-04-18_weekly.md)
 - **調査レポート**
+  - [2026-05-12 v2.1.139 大型機能リリース（Agent View 研究プレビュー = 並行セッション一画面管理・/goal 自律ゴール駆動実行・/scroll-speed・claude plugin details・Transcript navigation・Hook args exec form & continueOnBlock・API キー時 Remote Control/schedule/claude.ai MCP 無効化セキュリティ強化・50+ バグ修正）+ Agent view in Claude Code 公式ブログ + Claude Platform on AWS GA（Anthropic ネイティブ Platform を AWS IAM/CloudTrail/統合請求経由で提供、Bedrock とは別経路、18 リージョン）](reports/2026-05-12_v2.1.139-agent-view-and-claude-platform-aws.md)
   - [2026-05-10 v2.1.137（VSCode Windows ホットフィックス）/ v2.1.138（内部修正）+ Anthropic Alignment Science「Teaching Claude Why」公開（Haiku 4.5 以降 agentic misalignment 0%・blackmail 96%→0%）+ IPO $1 兆ドル観測再活性化 + Cursor+Opus 4.6 PocketOS 9 秒 DB 消去事件報道波](reports/2026-05-10_v2.1.137-138-and-blackmail-safety-milestone.md)
   - [2026-05-09 v2.1.133/136 連続リリース（hooks effort.level・worktree.baseRef・autoMode hard_deny・OTEL feedback survey 復活）+ Akamai $1.8B エッジコンピュート契約・Amodei 80x 成長公式コメント・Dragos AI-Assisted ICS Attack（Claude Code が独立に SCADA 標的識別）・EPAM 戦略提携](reports/2026-05-09_v2.1.133-136-akamai-1.8b-and-mexico-water-utility.md)
   - [2026-05-08 5/7 Office 4アプリ クロスアプリ統合GA公式ブログ・Snyk×Claude AI Security統合・Bloomberg消費者向けClaude強化スクープ](reports/2026-05-08_office-cross-app-ga-and-snyk-claude-integration.md)
