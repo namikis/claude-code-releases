@@ -34,6 +34,8 @@
         <string>/usr/local/bin:/usr/bin:/bin:/Users/tairyu/.local/bin</string>
         <key>HOME</key>
         <string>/Users/tairyu</string>
+        <key>JOB_NOTIFY_EMAIL</key>
+        <string>koudoldk@icloud.com</string>
     </dict>
 </dict>
 </plist>
