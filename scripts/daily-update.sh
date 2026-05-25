@@ -96,7 +96,8 @@ while (( attempt <= MAX_ATTEMPTS )); do
   fi
   log "WARN: 調査エージェントが異常終了しました (試行 ${attempt}/${MAX_ATTEMPTS})"
   if (( attempt < MAX_ATTEMPTS )); then
-    backoff=$(( 30 * attempt ))
+    # 試行1失敗→5分、試行2失敗→15分（API側の一時障害に対応）
+    if (( attempt == 1 )); then backoff=300; else backoff=900; fi
     log "  ${backoff}秒待機してリトライします..."
     sleep "$backoff"
   fi
