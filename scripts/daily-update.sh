@@ -80,21 +80,49 @@ fi
 log "Step 2: 調査エージェントを実行中（${HISTORY_LABEL}）..."
 cd "$PROJECT_DIR"
 
+# 1試行あたりの上限秒数。claude CLI が socket デッドロック等でハングした場合に
+# bash が永久に wait しないよう、watcher プロセスから SIGTERM → SIGKILL を送る。
+AGENT_TIMEOUT_SEC=3600
 MAX_ATTEMPTS=3
 attempt=1
 agent_ok=0
 while (( attempt <= MAX_ATTEMPTS )); do
-  if "$CLAUDE_BIN" \
+  "$CLAUDE_BIN" \
     --agent claude-code-feature-research \
     --allowedTools "WebSearch,WebFetch,Read,Write,Bash,Glob,Grep,Edit" \
     --print \
     --output-format text \
     "$AGENT_PROMPT" \
-    >> "$LOGFILE" 2>&1; then
+    >> "$LOGFILE" 2>&1 &
+  claude_pid=$!
+
+  (
+    sleep "$AGENT_TIMEOUT_SEC"
+    if kill -0 "$claude_pid" 2>/dev/null; then
+      echo "[$(date '+%Y-%m-%d %H:%M:%S')] WARN: 調査エージェントが${AGENT_TIMEOUT_SEC}秒でタイムアウト。SIGTERMを送信" >> "$LOGFILE"
+      kill -TERM "$claude_pid" 2>/dev/null || true
+      sleep 30
+      if kill -0 "$claude_pid" 2>/dev/null; then
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] WARN: SIGTERMで終了せず。SIGKILLを送信" >> "$LOGFILE"
+        kill -KILL "$claude_pid" 2>/dev/null || true
+      fi
+    fi
+  ) &
+  watcher_pid=$!
+  disown "$watcher_pid" 2>/dev/null || true
+
+  set +e
+  wait "$claude_pid"
+  claude_exit=$?
+  set -e
+  kill "$watcher_pid" 2>/dev/null || true
+  wait "$watcher_pid" 2>/dev/null || true
+
+  if (( claude_exit == 0 )); then
     agent_ok=1
     break
   fi
-  log "WARN: 調査エージェントが異常終了しました (試行 ${attempt}/${MAX_ATTEMPTS})"
+  log "WARN: 調査エージェントが異常終了しました (試行 ${attempt}/${MAX_ATTEMPTS}, exit=${claude_exit})"
   if (( attempt < MAX_ATTEMPTS )); then
     # 試行1失敗→5分、試行2失敗→15分（API側の一時障害に対応）
     if (( attempt == 1 )); then backoff=300; else backoff=900; fi
