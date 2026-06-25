@@ -1,6 +1,7 @@
 - [現行機能一覧](CURRENT_FEATURES.md)
 - [実行履歴](HISTORY.md)
 - **週次レポート**
+  - [2026-06-25 週次: 06/18〜06/25](weekly-reports/2026-06-25_weekly.md)
   - [2026-06-18 週次: 06/11〜06/18](weekly-reports/2026-06-18_weekly.md)
   - [2026-06-11 週次: 06/04〜06/11](weekly-reports/2026-06-11_weekly.md)
   - [2026-05-28 週次: 05/21〜05/28](weekly-reports/2026-05-28_weekly.md)
